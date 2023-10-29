@@ -1,12 +1,9 @@
 {
   "name": "azurerm-vscode-tools",
   "displayName": "Azure Resource Manager (ARM) Tools",
-  "description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
   "version": "0.0.1",
-  "publisher": "msazurermtools",
-  "config": {
-    "ARM_LANGUAGE_SERVER_NUGET_VERSION": ""
-  },
+  "private": "false",
+  "description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
   "categories": [
     "Azure",
     "Programming Languages",
@@ -14,11 +11,6 @@
     "Formatters",
     "Snippets"
   ],
-  "capabilities": {
-    "virtualWorkspaces": {
-      "supported": false
-    }
-  },
   "keywords": [
     "Azure Template",
     "ARM",
@@ -26,158 +18,45 @@
     "Azure",
     "Snippets"
   ],
-  "repository": {
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git",
-    "type": "git"
-  },
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
   "bugs": {
     "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
   },
-  "galleryBanner": {
-    "color": "E7F1FA",
-    "theme": "light"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
   },
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
   "license": "MIT",
-  "icon": "AzureRMTools128x128.png",
-  "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-  "engines": {
-    "$comment": "Must match version of @types/vscode in devDepndencies",
-    "vscode": "1.62.0"
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
   },
-  "preview": true,
-  "activationEvents": [
-    "onLanguage:arm-template",
-    "onLanguage:json",
-    "onLanguage:jsonc",
-    "onCommand:azurerm-vscode-tools.sortTemplate",
-    "onCommand:azurerm-vscode-tools.sortFunctions",
-    "onCommand:azurerm-vscode-tools.sortOutputs",
-    "onCommand:azurerm-vscode-tools.sortParameters",
-    "onCommand:azurerm-vscode-tools.sortResources",
-    "onCommand:azurerm-vscode-tools.sortVariables",
-    "onCommand:azurerm-vscode-tools.selectParameterFile",
-    "onCommand:azurerm-vscode-tools.openParameterFile",
-    "onCommand:azurerm-vscode-tools.openTemplateFile",
-    "onCommand:azurerm-vscode-tools.codeLens.openLinkedTemplateFile",
-    "onCommand:azurerm-vscode-tools.codeLens.reloadLinkedTemplateFile",
-    "onCommand:azurerm-vscode-tools.codeLens.gotoParameterValue",
-    "onCommand:azurerm-vscode-tools.codeAction.addAllMissingParameters",
-    "onCommand:azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
-    "onCommand:azurerm-vscode-tools.codeAction.extractParameter",
-    "onCommand:azurerm-vscode-tools.codeAction.extractVariable",
-    "onCommand:azurerm-vscode-tools.insertItem",
-    "onCommand:azurerm-vscode-tools.insertParameter",
-    "onCommand:azurerm-vscode-tools.insertVariable",
-    "onCommand:azurerm-vscode-tools.insertOutput",
-    "onCommand:azurerm-vscode-tools.insertFunction",
-    "onCommand:azurerm-vscode-tools.insertResource",
-    "onCommand:azurerm-vscode-tools.developer.resetGlobalState",
-    "onCommand:azurerm-vscode-tools.developer.showInsertionContext",
-    "onCommand:azurerm-vscode-tools.developer.showAvailableResourceTypesAndVersions"
-  ],
+  "publisher": "msazurermtools",
+  "type": "module",
+  "main": "main",
+  "scripts": {
+    "$lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
+    "$lint-fix": "tslint --project tsconfig.json -t verbose --fix",
+    "all": "npm i && npm test && npm    run lint",
+    "build": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -p ./",
+    "build-grammars": "gulp build-grammars",
+    "compile": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -watch -p ./",
+    "get-language-server": "gulp get-language-server",
+    "lint": "",
+    "package": "npm run webpack-prod && npm run get-language-server && gulp package",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
+    "pretest-dev": "npm run build && npm run webpack",
+    "pretest": "npm run build && npm run webpack-prod",
+    "test": "gulp test",
+    "verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle",
+    "vscode:prepublish": "gulp error-vsce-package",
+    "watch-grammars": "gulp watch-grammars",
+    "webpack": "gulp webpack-dev",
+    "webpack-prod": "gulp webpack-prod",
+    "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats"
+  },
   "contributes": {
-    "grammars": [
-      {
-        "language": "arm-template",
-        "scopeName": "source.json.arm-template",
-        "path": "dist/grammars/JSONC.arm.tmLanguage.json"
-      },
-      {
-        "scopeName": "source.tle.arm-template",
-        "path": "dist/grammars/arm-expression-string.tmLanguage.json"
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "Azure Resource Manager Tools",
-      "properties": {
-        "azureResourceManagerTools.autoDetectJsonTemplates": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enables auto-detection of deployment template files with the extension *.json or *.jsonc. If set to true (default), the editor language will automatically be set to Azure Resource Manager Template for any *.json/*.jsonc file which contains an appropriate Azure Resource Manager Template schema."
-        },
-        "azureResourceManagerTools.languageServer.path": {
-          "type": "string",
-          "description": "Override the default location of the language server assembly folder or file path (requires restart)"
-        },
-        "azureResourceManagerTools.languageServer.waitForDebugger": {
-          "type": "boolean",
-          "default": false,
-          "description": "If set to true, the language server process will wait in startup until a debugger is attached, and then will force a break (requires restart)"
-        },
-        "azureResourceManagerTools.languageServer.traceLevel": {
-          "type": "string",
-          "enum": [
-            "Trace",
-            "Debug",
-            "Information",
-            "Warning",
-            "Error",
-            "Critical",
-            "None"
-          ],
-          "default": "Warning",
-          "description": "Sets the trace (log) level in the Output window for the Azure Template Language Server (requires restart)"
-        },
-        "azureResourceManagerTools.languageServer.dotnetExePath": {
-          "type": "string",
-          "description": "(Requires restart) If specified, overrides the use of a local version of dotnet core the extension and instead points to another installed version of dotnet.exe (must match the version needed by the extension)"
-        },
-        "azureResourceManagerTools.checkForLatestSchema": {
-          "type": "boolean",
-          "description": "Check if the schema for deployment templates is using an out-of-date version and suggest updating",
-          "default": true
-        },
-        "azureResourceManagerTools.checkForMatchingParameterFiles": {
-          "type": "boolean",
-          "description": "Check if an opened template file has a matching params file and ask to use it",
-          "default": true
-        },
-        "azureResourceManagerTools.parameterFiles": {
-          "type": "object",
-          "description": "Specifies which parameter file to use for each given template file. Specifying the parameter file allows more thorough validation.",
-          "default": {},
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "azureResourceManagerTools.codelens.enable": {
-          "type": "boolean",
-          "description": "Enables or disables all Code Lens features",
-          "default": true
-        },
-        "azureResourceManagerTools.codelens.parameters": {
-          "type": "boolean",
-          "description": "Enables Code Lens for parameter definitions and values",
-          "default": true
-        },
-        "azureResourceManagerTools.codelens.resourceChildren": {
-          "type": "boolean",
-          "description": "Enables Code Lens that displays the parent and children of each resource",
-          "default": true
-        }
-      }
-    },
-    "views": {
-      "explorer": [
-        {
-          "id": "azurerm-vscode-tools.template-outline",
-          "name": "ARM Template Outline",
-          "when": "showAzureTemplateView"
-        }
-      ]
-    },
-    "languages": [
-      {
-        "id": "arm-template",
-        "aliases": [
-          "Azure Resource Manager Template"
-        ],
-        "configuration": "dist/grammars/jsonc.arm.language-configuration.json",
-        "mimetypes": []
-      }
-    ],
     "commands": [
       {
         "$comment": "============= Developer commands =============",
@@ -359,6 +238,98 @@
         "command": "azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
         "enablement": "azurerm-vscode-tools-hasTemplateFile",
         "$enablement.comment": "Shows up when it's a param file, but only enabled if there is an associated template file"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Azure Resource Manager Tools",
+      "properties": {
+        "azureResourceManagerTools.autoDetectJsonTemplates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables auto-detection of deployment template files with the extension *.json or *.jsonc. If set to true (default), the editor language will automatically be set to Azure Resource Manager Template for any *.json/*.jsonc file which contains an appropriate Azure Resource Manager Template schema."
+        },
+        "azureResourceManagerTools.languageServer.path": {
+          "type": "string",
+          "description": "Override the default location of the language server assembly folder or file path (requires restart)"
+        },
+        "azureResourceManagerTools.languageServer.waitForDebugger": {
+          "type": "boolean",
+          "default": false,
+          "description": "If set to true, the language server process will wait in startup until a debugger is attached, and then will force a break (requires restart)"
+        },
+        "azureResourceManagerTools.languageServer.traceLevel": {
+          "type": "string",
+          "enum": [
+            "Trace",
+            "Debug",
+            "Information",
+            "Warning",
+            "Error",
+            "Critical",
+            "None"
+          ],
+          "default": "Warning",
+          "description": "Sets the trace (log) level in the Output window for the Azure Template Language Server (requires restart)"
+        },
+        "azureResourceManagerTools.languageServer.dotnetExePath": {
+          "type": "string",
+          "description": "(Requires restart) If specified, overrides the use of a local version of dotnet core the extension and instead points to another installed version of dotnet.exe (must match the version needed by the extension)"
+        },
+        "azureResourceManagerTools.checkForLatestSchema": {
+          "type": "boolean",
+          "description": "Check if the schema for deployment templates is using an out-of-date version and suggest updating",
+          "default": true
+        },
+        "azureResourceManagerTools.checkForMatchingParameterFiles": {
+          "type": "boolean",
+          "description": "Check if an opened template file has a matching params file and ask to use it",
+          "default": true
+        },
+        "azureResourceManagerTools.parameterFiles": {
+          "type": "object",
+          "description": "Specifies which parameter file to use for each given template file. Specifying the parameter file allows more thorough validation.",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "azureResourceManagerTools.codelens.enable": {
+          "type": "boolean",
+          "description": "Enables or disables all Code Lens features",
+          "default": true
+        },
+        "azureResourceManagerTools.codelens.parameters": {
+          "type": "boolean",
+          "description": "Enables Code Lens for parameter definitions and values",
+          "default": true
+        },
+        "azureResourceManagerTools.codelens.resourceChildren": {
+          "type": "boolean",
+          "description": "Enables Code Lens that displays the parent and children of each resource",
+          "default": true
+        }
+      }
+    },
+    "grammars": [
+      {
+        "language": "arm-template",
+        "scopeName": "source.json.arm-template",
+        "path": "dist/grammars/JSONC.arm.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.tle.arm-template",
+        "path": "dist/grammars/arm-expression-string.tmLanguage.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "arm-template",
+        "aliases": [
+          "Azure Resource Manager Template"
+        ],
+        "configuration": "dist/grammars/jsonc.arm.language-configuration.json",
+        "mimetypes": []
       }
     ],
     "menus": {
@@ -608,29 +579,58 @@
           "group": "navigation@2"
         }
       ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "azurerm-vscode-tools.template-outline",
+          "name": "ARM Template Outline",
+          "when": "showAzureTemplateView"
+        }
+      ]
     }
   },
-  "main": "main",
-  "scripts": {
-    "vscode:prepublish": "gulp error-vsce-package",
-    "build": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -p ./",
-    "compile": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -watch -p ./",
-    "get-language-server": "gulp get-language-server",
-    "$lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
-    "lint": "",
-    "$lint-fix": "tslint --project tsconfig.json -t verbose --fix",
-    "package": "npm run webpack-prod && npm run get-language-server && gulp package",
-    "pretest": "npm run build && npm run webpack-prod",
-    "pretest-dev": "npm run build && npm run webpack",
-    "test": "gulp test",
-    "all": "npm i && npm test && npm    run lint",
-    "webpack": "gulp webpack-dev",
-    "webpack-prod": "gulp webpack-prod",
-    "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
-    "build-grammars": "gulp build-grammars",
-    "watch-grammars": "gulp watch-grammars",
-    "verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle",
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
+  "activationEvents": [
+    "onLanguage:arm-template",
+    "onLanguage:json",
+    "onLanguage:jsonc",
+    "onCommand:azurerm-vscode-tools.sortTemplate",
+    "onCommand:azurerm-vscode-tools.sortFunctions",
+    "onCommand:azurerm-vscode-tools.sortOutputs",
+    "onCommand:azurerm-vscode-tools.sortParameters",
+    "onCommand:azurerm-vscode-tools.sortResources",
+    "onCommand:azurerm-vscode-tools.sortVariables",
+    "onCommand:azurerm-vscode-tools.selectParameterFile",
+    "onCommand:azurerm-vscode-tools.openParameterFile",
+    "onCommand:azurerm-vscode-tools.openTemplateFile",
+    "onCommand:azurerm-vscode-tools.codeLens.openLinkedTemplateFile",
+    "onCommand:azurerm-vscode-tools.codeLens.reloadLinkedTemplateFile",
+    "onCommand:azurerm-vscode-tools.codeLens.gotoParameterValue",
+    "onCommand:azurerm-vscode-tools.codeAction.addAllMissingParameters",
+    "onCommand:azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
+    "onCommand:azurerm-vscode-tools.codeAction.extractParameter",
+    "onCommand:azurerm-vscode-tools.codeAction.extractVariable",
+    "onCommand:azurerm-vscode-tools.insertItem",
+    "onCommand:azurerm-vscode-tools.insertParameter",
+    "onCommand:azurerm-vscode-tools.insertVariable",
+    "onCommand:azurerm-vscode-tools.insertOutput",
+    "onCommand:azurerm-vscode-tools.insertFunction",
+    "onCommand:azurerm-vscode-tools.insertResource",
+    "onCommand:azurerm-vscode-tools.developer.resetGlobalState",
+    "onCommand:azurerm-vscode-tools.developer.showInsertionContext",
+    "onCommand:azurerm-vscode-tools.developer.showAvailableResourceTypesAndVersions"
+  ],
+  "config": {
+    "ARM_LANGUAGE_SERVER_NUGET_VERSION": ""
+  },
+  "dependencies": {
+    "fs-extra": "11.1.1",
+    "moment": "2.29.4",
+    "opn": "5.5.0",
+    "strip-json-comments": "5.0.1",
+    "vscode-azureextensionui": "0.36.0",
+    "vscode-jsonrpc": "8.2.0",
+    "vscode-languageclient": "9.0.1"
   },
   "devDependencies": {
     "@types/decompress": "4.2.6",
@@ -644,12 +644,12 @@
     "@types/vscode": "1.83.1",
     "@types/webpack": "5.28.4",
     "@vscode/test-electron": "2.3.6",
-    "mocha-junit-reporter": "2.2.1",
-    "mocha-multi-reporters": "1.5.1",
     "glob": "10.3.10",
     "glob-promise": "6.0.5",
     "gulp": "4.0.2",
     "mocha": "10.2.0",
+    "mocha-junit-reporter": "2.2.1",
+    "mocha-multi-reporters": "1.5.1",
     "nuget": "2.0.2",
     "recursive-readdir": "2.2.3",
     "rimraf": "5.0.5",
@@ -657,33 +657,33 @@
     "source-map-support": "0.5.21",
     "ts-node": "10.9.1",
     "typescript": "5.2.2",
+    "typescript-esbuild": "0.3.1",
     "vsce": "1.85.0",
     "vscode-azureextensiondev": "0.10.4",
     "vscode-test": "1.5.2",
     "webpack": "5.89.0",
-    "webpack-cli": "5.1.4",
-    "typescript-esbuild": "0.3.1"
-  },
-  "dependencies": {
-    "fs-extra": "11.1.1",
-    "moment": "2.29.4",
-    "opn": "5.5.0",
-    "strip-json-comments": "5.0.1",
-    "vscode-azureextensionui": "0.36.0",
-    "vscode-jsonrpc": "8.2.0",
-    "vscode-languageclient": "9.0.1"
+    "webpack-cli": "5.1.4"
   },
   "extensionDependencies": [
     "ms-dotnettools.vscode-dotnet-runtime"
   ],
-  "type": "module",
-  "private": "false",
+  "engines": {
+    "$comment": "Must match version of @types/vscode in devDepndencies",
+    "vscode": "1.62.0"
+  },
   "publishConfig": {
     "access": "public"
   },
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
+  "icon": "AzureRMTools128x128.png",
+  "galleryBanner": {
+    "color": "E7F1FA",
+    "theme": "light"
+  },
+  "preview": true,
+  "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+  "capabilities": {
+    "virtualWorkspaces": {
+      "supported": false
+    }
   }
 }
