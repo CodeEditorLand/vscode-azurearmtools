@@ -32,7 +32,7 @@
     "email": "nikola@nikolahristov.tech",
     "url": "https://nikolahristov.tech"
   },
-  "publisher": "msazurermtools",
+  "publisher": "playform",
   "type": "module",
   "main": "main",
   "scripts": {
