@@ -7,8 +7,19 @@
 import * as assert from "assert";
 import { Uri } from "vscode";
 import { parseError } from "vscode-azureextensionui";
-import { assertNever, LinkedFileLoadState, notifications, notifyTemplateGraphAvailable } from "../../extension.bundle";
-import { ExpectedDiagnostics, IExpectedDiagnostic, simplifyBadTypeResourceMessage, testDiagnostics, testDiagnosticsFromUri } from "../support/diagnostics";
+import {
+	assertNever,
+	LinkedFileLoadState,
+	notifications,
+	notifyTemplateGraphAvailable,
+} from "../../extension.bundle";
+import {
+	ExpectedDiagnostics,
+	IExpectedDiagnostic,
+	simplifyBadTypeResourceMessage,
+	testDiagnostics,
+	testDiagnosticsFromUri,
+} from "../support/diagnostics";
 import { ensureLanguageServerAvailable } from "../support/ensureLanguageServerAvailable";
 import { resolveInTestFolder } from "../support/resolveInTestFolder";
 import { writeToLog } from "../support/testLog";
@@ -16,172 +27,237 @@ import { testWithLanguageServerAndRealFunctionMetadata } from "../support/testWi
 import { isWin32 } from "../testConstants";
 
 suite("Linked templates functional tests", () => {
-    // <TC> in strings will be replaced with ${testCase}
-    function tcString(s: string, testCase: string): string {
-        return s.replace(/<TC>/g, testCase);
-    }
+	// <TC> in strings will be replaced with ${testCase}
+	function tcString(s: string, testCase: string): string {
+		return s.replace(/<TC>/g, testCase);
+	}
 
-    // <TC> in strings will be replaced with ${testCase}
-    function tcDiagnostics(ed: ExpectedDiagnostics, testCase: string): ExpectedDiagnostics {
-        if (ed.length === 0) {
-            return [];
-        } else if (typeof ed[0] === 'string') {
-            return (<string[]>ed).map((s: string) => tcString(<string>s, testCase));
-        } else {
-            return (<IExpectedDiagnostic[]>ed).map((d: IExpectedDiagnostic) => {
-                const d2 = Object.assign({}, d, { message: tcString(d.message, testCase) });
-                return d2;
-            });
-        }
-    }
+	// <TC> in strings will be replaced with ${testCase}
+	function tcDiagnostics(
+		ed: ExpectedDiagnostics,
+		testCase: string
+	): ExpectedDiagnostics {
+		if (ed.length === 0) {
+			return [];
+		} else if (typeof ed[0] === "string") {
+			return (<string[]>ed).map((s: string) =>
+				tcString(<string>s, testCase)
+			);
+		} else {
+			return (<IExpectedDiagnostic[]>ed).map((d: IExpectedDiagnostic) => {
+				const d2 = Object.assign({}, d, {
+					message: tcString(d.message, testCase),
+				});
+				return d2;
+			});
+		}
+	}
 
-    async function waitForGraphAvailable(mainTemplate: string, childTemplate: string): Promise<void> {
-        await new Promise<void>((resolve, reject): void => {
-            try {
-                const disposable = notifyTemplateGraphAvailable(e => {
-                    if (Uri.parse(e.rootTemplateUri).fsPath === mainTemplate) {
-                        writeToLog(`Graph available notification for ${mainTemplate}... Looking for child in the graph: ${childTemplate}`);
-                        const child = e.linkedTemplates.find(lt => Uri.parse(lt.fullUri).fsPath === childTemplate);
-                        let ready: boolean;
-                        if (child) {
-                            switch (child.loadState) {
-                                case LinkedFileLoadState.Loading:
-                                case LinkedFileLoadState.NotLoaded:
-                                    writeToLog(`...${child.originalPath}: load state = ${child.loadState}, therefore not ready yet`);
-                                    // Still loading
-                                    ready = false;
-                                    break;
+	async function waitForGraphAvailable(
+		mainTemplate: string,
+		childTemplate: string
+	): Promise<void> {
+		await new Promise<void>((resolve, reject): void => {
+			try {
+				const disposable = notifyTemplateGraphAvailable((e) => {
+					if (Uri.parse(e.rootTemplateUri).fsPath === mainTemplate) {
+						writeToLog(
+							`Graph available notification for ${mainTemplate}... Looking for child in the graph: ${childTemplate}`
+						);
+						const child = e.linkedTemplates.find(
+							(lt) =>
+								Uri.parse(lt.fullUri).fsPath === childTemplate
+						);
+						let ready: boolean;
+						if (child) {
+							switch (child.loadState) {
+								case LinkedFileLoadState.Loading:
+								case LinkedFileLoadState.NotLoaded:
+									writeToLog(
+										`...${child.originalPath}: load state = ${child.loadState}, therefore not ready yet`
+									);
+									// Still loading
+									ready = false;
+									break;
 
-                                case LinkedFileLoadState.LoadFailed:
-                                case LinkedFileLoadState.NotSupported:
-                                case LinkedFileLoadState.SuccessfullyLoaded:
-                                case LinkedFileLoadState.TooDeep:
-                                    writeToLog(`...${child.originalPath}: load state = ${child.loadState} => READY`);
-                                    // Load completed or succeeded
-                                    ready = true;
-                                    break;
+								case LinkedFileLoadState.LoadFailed:
+								case LinkedFileLoadState.NotSupported:
+								case LinkedFileLoadState.SuccessfullyLoaded:
+								case LinkedFileLoadState.TooDeep:
+									writeToLog(
+										`...${child.originalPath}: load state = ${child.loadState} => READY`
+									);
+									// Load completed or succeeded
+									ready = true;
+									break;
 
-                                default:
-                                    assertNever(child.loadState);
-                            }
-                        } else {
-                            ready = false;
-                            writeToLog(`... child not found in graph yet`);
-                        }
+								default:
+									assertNever(child.loadState);
+							}
+						} else {
+							ready = false;
+							writeToLog(`... child not found in graph yet`);
+						}
 
-                        if (ready) {
-                            writeToLog(`...READY`);
-                            disposable.dispose();
-                            resolve();
-                        } else {
-                            writeToLog(`... not ready yet`);
-                        }
-                    }
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
-    }
+						if (ready) {
+							writeToLog(`...READY`);
+							disposable.dispose();
+							resolve();
+						} else {
+							writeToLog(`... not ready yet`);
+						}
+					}
+				});
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
 
-    // <TC> in strings will be replaced with ${testCase}
-    function createLinkedTemplateTest(
-        testCase: string, // testcase name, e.g. "tc01", and the filename would be tc01.json
-        testDescription: string,
-        options: {
-            //CONSIDER: group into single object for mainTemplate
-            mainTemplateFile: string;
-            mainParametersFile?: string;
-            mainTemplateExpected: ExpectedDiagnostics;
-            // tslint:disable-next-line: no-suspicious-comment
-            // TODO: This is a hack.  We need better way to determine when validation is completely done
-            /**
-             * If specified, wait for a diagnostic to match the following substring before continuing with checks
-             */
-            waitForDiagnosticSubstring?: string;
+	// <TC> in strings will be replaced with ${testCase}
+	function createLinkedTemplateTest(
+		testCase: string, // testcase name, e.g. "tc01", and the filename would be tc01.json
+		testDescription: string,
+		options: {
+			//CONSIDER: group into single object for mainTemplate
+			mainTemplateFile: string;
+			mainParametersFile?: string;
+			mainTemplateExpected: ExpectedDiagnostics;
+			// tslint:disable-next-line: no-suspicious-comment
+			// TODO: This is a hack.  We need better way to determine when validation is completely done
+			/**
+			 * If specified, wait for a diagnostic to match the following substring before continuing with checks
+			 */
+			waitForDiagnosticSubstring?: string;
 
-            linkedTemplates: {
-                parentTemplateFile: string;
-                linkedTemplateFile: string;
-                expected: ExpectedDiagnostics;
-                // If specified, wait for a diagnostic to match the following substring between continuing with checks
-                waitForDiagnosticSubstring?: string;
-            }[];
-        }
-    ): void {
-        testWithLanguageServerAndRealFunctionMetadata(
-            `${testCase}/${testDescription}`,
-            async () => {
-                const mainTemplatePath = resolveInTestFolder(tcString(options.mainTemplateFile, testCase));
-                assert(mainTemplatePath);
+			linkedTemplates: {
+				parentTemplateFile: string;
+				linkedTemplateFile: string;
+				expected: ExpectedDiagnostics;
+				// If specified, wait for a diagnostic to match the following substring between continuing with checks
+				waitForDiagnosticSubstring?: string;
+			}[];
+		}
+	): void {
+		testWithLanguageServerAndRealFunctionMetadata(
+			`${testCase}/${testDescription}`,
+			async () => {
+				const mainTemplatePath = resolveInTestFolder(
+					tcString(options.mainTemplateFile, testCase)
+				);
+				assert(mainTemplatePath);
 
-                // Make sure the language server starts up
-                const client = await ensureLanguageServerAvailable();
-                client.onNotification(notifications.Diagnostics.codeAnalysisStarting, async (args: notifications.Diagnostics.ICodeAnalysisStartingArgs) => {
-                    //testLog.writeLine(JSON.stringify(args, null, 2));
-                });
+				// Make sure the language server starts up
+				const client = await ensureLanguageServerAvailable();
+				client.onNotification(
+					notifications.Diagnostics.codeAnalysisStarting,
+					async (
+						args: notifications.Diagnostics.ICodeAnalysisStartingArgs
+					) => {
+						//testLog.writeLine(JSON.stringify(args, null, 2));
+					}
+				);
 
-                // Create promise to wait for child graphs to be available
-                let waitForChildPromises: Promise<unknown>[] = [];
-                for (const expectedLinkedTemplate of options.linkedTemplates) {
-                    // Wait for child template's graph to be available
-                    const childPath = resolveInTestFolder(tcString(expectedLinkedTemplate.linkedTemplateFile, testCase));
-                    const parentPath = resolveInTestFolder(tcString(expectedLinkedTemplate.parentTemplateFile, testCase));
-                    waitForChildPromises.push(waitForGraphAvailable(parentPath, childPath));
-                }
-                const waitAllForChildPromises = Promise.all(waitForChildPromises);
+				// Create promise to wait for child graphs to be available
+				let waitForChildPromises: Promise<unknown>[] = [];
+				for (const expectedLinkedTemplate of options.linkedTemplates) {
+					// Wait for child template's graph to be available
+					const childPath = resolveInTestFolder(
+						tcString(
+							expectedLinkedTemplate.linkedTemplateFile,
+							testCase
+						)
+					);
+					const parentPath = resolveInTestFolder(
+						tcString(
+							expectedLinkedTemplate.parentTemplateFile,
+							testCase
+						)
+					);
+					waitForChildPromises.push(
+						waitForGraphAvailable(parentPath, childPath)
+					);
+				}
+				const waitAllForChildPromises =
+					Promise.all(waitForChildPromises);
 
-                // Open and test diagnostics for the main template file
-                writeToLog("Testing diagnostics in main template.");
-                // tslint:disable-next-line: no-any
-                await testDiagnostics(
-                    mainTemplatePath,
-                    {
-                        parametersFile: options.mainParametersFile ? tcString(options.mainParametersFile, testCase) : undefined,
-                        waitForDiagnosticsFilter: async (results): Promise<boolean> => {
-                            await waitAllForChildPromises;
-                            if (options.waitForDiagnosticSubstring) {
-                                // tslint:disable-next-line: no-non-null-assertion
-                                return results.diagnostics.some(d => d.message.includes(options.waitForDiagnosticSubstring!));
-                            }
-                            return true;
-                        },
-                        transformResults: simplifyBadTypeResourceMessage
-                    },
-                    tcDiagnostics(options.mainTemplateExpected, testCase)
-                );
+				// Open and test diagnostics for the main template file
+				writeToLog("Testing diagnostics in main template.");
+				// tslint:disable-next-line: no-any
+				await testDiagnostics(
+					mainTemplatePath,
+					{
+						parametersFile: options.mainParametersFile
+							? tcString(options.mainParametersFile, testCase)
+							: undefined,
+						waitForDiagnosticsFilter: async (
+							results
+						): Promise<boolean> => {
+							await waitAllForChildPromises;
+							if (options.waitForDiagnosticSubstring) {
+								// tslint:disable-next-line: no-non-null-assertion
+								return results.diagnostics.some((d) =>
+									d.message.includes(
+										options.waitForDiagnosticSubstring!
+									)
+								);
+							}
+							return true;
+						},
+						transformResults: simplifyBadTypeResourceMessage,
+					},
+					tcDiagnostics(options.mainTemplateExpected, testCase)
+				);
 
-                writeToLog("Diagnostics in main template were correct.");
+				writeToLog("Diagnostics in main template were correct.");
 
-                // Test diagnostics (without opening them directly - that should have happened automatically) for the linked templates
-                for (const linkedTemplate of options.linkedTemplates) {
-                    const childPath = resolveInTestFolder(tcString(linkedTemplate.linkedTemplateFile, testCase));
-                    const childUri = Uri.file(childPath);
-                    try {
-                        writeToLog(`Testing diagnostics in ${linkedTemplate.linkedTemplateFile}`);
-                        await testDiagnosticsFromUri(
-                            childUri,
-                            {
-                                waitForDiagnosticsFilter: (results): boolean => {
-                                    if (linkedTemplate.waitForDiagnosticSubstring) {
-                                        // tslint:disable-next-line: no-non-null-assertion
-                                        return results.diagnostics.some(d => d.message.includes(linkedTemplate.waitForDiagnosticSubstring!));
-                                    }
-                                    return true;
-                                },
-                                transformResults: simplifyBadTypeResourceMessage
-                            },
-                            tcDiagnostics(linkedTemplate.expected, testCase)
-                        );
-                    } catch (err) {
-                        throw new Error(`Diagnostics did not match expected for linked template ${childPath}: ${parseError(err).message}`);
-                    }
-                }
-            });
-    }
+				// Test diagnostics (without opening them directly - that should have happened automatically) for the linked templates
+				for (const linkedTemplate of options.linkedTemplates) {
+					const childPath = resolveInTestFolder(
+						tcString(linkedTemplate.linkedTemplateFile, testCase)
+					);
+					const childUri = Uri.file(childPath);
+					try {
+						writeToLog(
+							`Testing diagnostics in ${linkedTemplate.linkedTemplateFile}`
+						);
+						await testDiagnosticsFromUri(
+							childUri,
+							{
+								waitForDiagnosticsFilter: (
+									results
+								): boolean => {
+									if (
+										linkedTemplate.waitForDiagnosticSubstring
+									) {
+										// tslint:disable-next-line: no-non-null-assertion
+										return results.diagnostics.some((d) =>
+											d.message.includes(
+												linkedTemplate.waitForDiagnosticSubstring!
+											)
+										);
+									}
+									return true;
+								},
+								transformResults:
+									simplifyBadTypeResourceMessage,
+							},
+							tcDiagnostics(linkedTemplate.expected, testCase)
+						);
+					} catch (err) {
+						throw new Error(
+							`Diagnostics did not match expected for linked template ${childPath}: ${
+								parseError(err).message
+							}`
+						);
+					}
+				}
+			}
+		);
+	}
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: hangs
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: hangs
     createLinkedTemplateTest(
         "relative-simple",
         "one level, no validation errors, child in subfolder, relative path starts with subfolder name",
@@ -202,35 +278,36 @@ suite("Linked templates functional tests", () => {
         }
     );*/
 
-    if (!isWin32) {
-        // tslint:disable-next-line: no-suspicious-comment
-        /* TODO: Fix case sensitivity on win32:
+	if (!isWin32) {
+		// tslint:disable-next-line: no-suspicious-comment
+		/* TODO: Fix case sensitivity on win32:
             [
             +   'Error: Template validation failed: Linked template file not found: "d:\\a\\1\\s\\test\\templates\\linkedTemplates\\tc02\\subfolder\\child.json" (arm-template (validation)) [12,13]'
             -   'Error: Template validation failed: Linked template file not found: "D:\\a\\1\\s\\test\\templates\\linkedTemplates\\tc02\\subfolder\\child.json" (arm-template (validation)) [12,13]'
             ]
         */
 
-        createLinkedTemplateTest(
-            "relative-notfound",
-            "expecting error: child not found",
-            {
-                mainTemplateFile: "templates/linkedTemplates/<TC>/<TC>.json",
-                mainParametersFile: "<TC>.parameters.json",
-                waitForDiagnosticSubstring: 'not found',
-                mainTemplateExpected: [
-                    `Error: Template validation failed: Linked template file not found: `
-                    + `"${resolveInTestFolder('templates/linkedTemplates/<TC>/subfolder/child.json')}"`
-                    + ` (arm-template (validation)) [12,27]`
-                ],
-                linkedTemplates: [
-                ]
-            }
-        );
-    }
+		createLinkedTemplateTest(
+			"relative-notfound",
+			"expecting error: child not found",
+			{
+				mainTemplateFile: "templates/linkedTemplates/<TC>/<TC>.json",
+				mainParametersFile: "<TC>.parameters.json",
+				waitForDiagnosticSubstring: "not found",
+				mainTemplateExpected: [
+					`Error: Template validation failed: Linked template file not found: ` +
+						`"${resolveInTestFolder(
+							"templates/linkedTemplates/<TC>/subfolder/child.json"
+						)}"` +
+						` (arm-template (validation)) [12,27]`,
+				],
+				linkedTemplates: [],
+			}
+		);
+	}
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: hangs
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: hangs
     createLinkedTemplateTest(
         "relative-with-period",
         "one level, no validation errors, child in subfolder, relative path starts with ./",
@@ -252,8 +329,8 @@ suite("Linked templates functional tests", () => {
     );
     */
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: hangs
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: hangs
         createLinkedTemplateTest(
             "relative with spaces",
             "one level, no validation errors, child in subfolder, folder and filename contain spaces",
@@ -283,8 +360,8 @@ suite("Linked templates functional tests", () => {
         );
     }*/
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: Can't deploy to test yet
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: Can't deploy to test yet
     createLinkedTemplateTest(
         "relative-backslashes",
         "backslashes in path",
@@ -305,8 +382,8 @@ suite("Linked templates functional tests", () => {
         }
     );*/
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: Hangs
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: Hangs
     if (!isWin32) {
         createLinkedTemplateTest(
             "param-type-mismatch",
@@ -333,8 +410,8 @@ suite("Linked templates functional tests", () => {
         );
     }*/
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: Hangs
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: Hangs
     if (!isWin32) {
         createLinkedTemplateTest(
             "two-deep",
@@ -359,8 +436,8 @@ suite("Linked templates functional tests", () => {
         );
     }*/
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: Hangs on build machine
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: Hangs on build machine
     createLinkedTemplateTest(
         "two-deep-two-param-files",
         "2 levels deep, error in parameters to 2nd level, child1.json also has a parameter file - child2 gets traversed via the opened child1 (since child1 has a param file)",
@@ -413,9 +490,9 @@ suite("Linked templates functional tests", () => {
     );
     */
 
-    suite("Parameter validation", () => {
-        // tslint:disable-next-line: no-suspicious-comment
-        /* TODO: Hangs on build machine
+	suite("Parameter validation", () => {
+		// tslint:disable-next-line: no-suspicious-comment
+		/* TODO: Hangs on build machine
         if (!isWin32) {
             createLinkedTemplateTest(
                 "missing-extra-params",
@@ -443,9 +520,8 @@ suite("Linked templates functional tests", () => {
                 }
             );
         }*/
-
-        // tslint:disable-next-line: no-suspicious-comment
-        /* TODO: Hangs on build machine
+		// tslint:disable-next-line: no-suspicious-comment
+		/* TODO: Hangs on build machine
         if (!isWin32) {
             createLinkedTemplateTest(
                 "missing-params-no-params-obj",
@@ -472,9 +548,8 @@ suite("Linked templates functional tests", () => {
                 }
             );
         }*/
-
-        // tslint:disable-next-line: no-suspicious-comment
-        /* TODO: Hangs on build machine
+		// tslint:disable-next-line: no-suspicious-comment
+		/* TODO: Hangs on build machine
         if (!isWin32) {
             createLinkedTemplateTest(
                 "expr-scope",
@@ -501,10 +576,10 @@ suite("Linked templates functional tests", () => {
                 }
             );
         }*/
-    });
+	});
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: Hangs on build machine
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: Hangs on build machine
     if (!isWin32) {
         createLinkedTemplateTest(
             "bad-index-in-child",
@@ -530,8 +605,8 @@ suite("Linked templates functional tests", () => {
         );
     }*/
 
-    // tslint:disable-next-line: no-suspicious-comment
-    /* TODO: Hangs on build machine?
+	// tslint:disable-next-line: no-suspicious-comment
+	/* TODO: Hangs on build machine?
     if (!isWin32) {
         createLinkedTemplateTest(
             "contentVersion",
@@ -556,8 +631,8 @@ suite("Linked templates functional tests", () => {
         );
     }*/
 
-    suite("uri", () => {
-        /*suite("relative to deployment() function", () => {
+	suite("uri", () => {
+		/*suite("relative to deployment() function", () => {
             // tslint:disable-next-line: no-suspicious-comment
             // TODO: Hangs on build machine?
             if (!isWin32) {
@@ -586,10 +661,9 @@ suite("Linked templates functional tests", () => {
                 );
             }
         });*/
-
-        // tslint:disable-next-line: no-suspicious-comment
-        // TODO: Hangs
-        /*
+		// tslint:disable-next-line: no-suspicious-comment
+		// TODO: Hangs
+		/*
             createLinkedTemplateTest(
                 "uri-not-found",
                 "uri property to location not existing",
@@ -608,10 +682,9 @@ suite("Linked templates functional tests", () => {
                 }
             );
         */
-
-        // tslint:disable-next-line: no-suspicious-comment
-        // TODO: not consistently working
-        /*
+		// tslint:disable-next-line: no-suspicious-comment
+		// TODO: not consistently working
+		/*
         if (!isWin32) {
             createLinkedTemplateTest(
                 "uri-missing-params",
@@ -628,6 +701,5 @@ suite("Linked templates functional tests", () => {
                 }
             );
         }*/
-
-    });
+	});
 });

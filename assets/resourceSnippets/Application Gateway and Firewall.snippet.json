@@ -11,8 +11,7 @@
 			"apiVersion": "2023-04-01",
 			"name": "${1:applicationGatewayFirewallName}",
 			"location": "[resourceGroup().location]",
-			"dependsOn": [
-			],
+			"dependsOn": [],
 			"properties": {
 				"policySettings": {
 					"requestBodyCheck": /*${2|true,false|}*/ true,
@@ -78,8 +77,7 @@
 				"backendAddressPools": [
 					{
 						"name": "${18:appGatewayBackendPool}",
-						"properties": {
-						}
+						"properties": {}
 					}
 				],
 				"backendHttpSettingsCollection": [

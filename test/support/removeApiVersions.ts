@@ -4,6 +4,9 @@
 // ---------------------------------------------------------------------------------------------
 
 export function removeApiVersions(json: string): string {
-    // e.g. "apiVersion": "2016-10-01",
-    return json.replace(/"apiVersion":\s*"[^"]+"/g, '"apiVersion": "xxxx-xx-xx"');
+	// e.g. "apiVersion": "2016-10-01",
+	return json.replace(
+		/"apiVersion":\s*"[^"]+"/g,
+		'"apiVersion": "xxxx-xx-xx"'
+	);
 }

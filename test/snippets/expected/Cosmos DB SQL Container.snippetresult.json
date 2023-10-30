@@ -11,9 +11,7 @@
 				"resource": {
 					"id": "container-name",
 					"partitionKey": {
-						"paths": [
-							"/{2:partition-key}"
-						],
+						"paths": ["/{2:partition-key}"],
 						"kind": "hash"
 					},
 					"indexingPolicy": {

@@ -9,126 +9,178 @@
 //   formatting, etc. will not be updated until you F5 again)
 const DEBUG_BREAK_AFTER_INSERTING_SNIPPET = false;
 
-import * as assert from 'assert';
-import { Context } from 'mocha';
+import * as assert from "assert";
+import { Context } from "mocha";
 import { Position, Selection } from "vscode";
 import { ext } from "../../extension.bundle";
-import { assertEx } from '../support/assertEx';
-import { delay } from '../support/delay';
-import { diagnosticSources, getDiagnosticsForDocument, IGetDiagnosticsOptions } from '../support/diagnostics';
-import { formatDocumentAndWait } from '../support/formatDocumentAndWait';
-import { parseTemplateWithMarkers } from '../support/parseTemplate';
-import { removeApiVersions } from '../support/removeApiVersions';
-import { simulateCompletion } from '../support/simulateCompletion';
-import { TempDocument, TempEditor, TempFile } from '../support/TempFile';
-import { writeToLog } from '../support/testLog';
-import { testWithRealSnippets } from '../support/TestSnippets';
-import { DEFAULT_TESTCASE_TIMEOUT_MS } from '../testConstants';
+import { assertEx } from "../support/assertEx";
+import { delay } from "../support/delay";
+import {
+	diagnosticSources,
+	getDiagnosticsForDocument,
+	IGetDiagnosticsOptions,
+} from "../support/diagnostics";
+import { formatDocumentAndWait } from "../support/formatDocumentAndWait";
+import { parseTemplateWithMarkers } from "../support/parseTemplate";
+import { removeApiVersions } from "../support/removeApiVersions";
+import { simulateCompletion } from "../support/simulateCompletion";
+import { TempDocument, TempEditor, TempFile } from "../support/TempFile";
+import { writeToLog } from "../support/testLog";
+import { testWithRealSnippets } from "../support/TestSnippets";
+import { DEFAULT_TESTCASE_TIMEOUT_MS } from "../testConstants";
 
 // This tests snippets in different locations, and also different methods of bringing up the snippet context menu (e.g. CTRL+SPACE, double quote etc)
 suite("Contextualized snippets", () => {
-    function createContextualizedSnippetTest(
-        testName: string,
-        snippetPrefix: string,
-        triggerCharacters: (string | undefined)[],
-        templateWithCursorMarker: string,
-        expectedTemplate: string,
-        expectedDiagnostics: string[]
-    ): void {
-        const testSources = [diagnosticSources.expressions];
-        const timeout = DEFAULT_TESTCASE_TIMEOUT_MS;
+	function createContextualizedSnippetTest(
+		testName: string,
+		snippetPrefix: string,
+		triggerCharacters: (string | undefined)[],
+		templateWithCursorMarker: string,
+		expectedTemplate: string,
+		expectedDiagnostics: string[]
+	): void {
+		const testSources = [diagnosticSources.expressions];
+		const timeout = DEFAULT_TESTCASE_TIMEOUT_MS;
 
-        for (let triggerCharacter of triggerCharacters) {
-            // tslint:disable-next-line: prefer-template
-            const name = `${testName}, triggered by ${triggerCharacter ? ("'" + triggerCharacter + "'") : 'CTRL+SPACE'}`;
-            // tslint:disable:no-function-expression
-            testWithRealSnippets(name, async function (this: Context): Promise<void> {
-                const start = Date.now();
-                this.timeout(timeout);
+		for (let triggerCharacter of triggerCharacters) {
+			// tslint:disable-next-line: prefer-template
+			const name = `${testName}, triggered by ${
+				triggerCharacter ? "'" + triggerCharacter + "'" : "CTRL+SPACE"
+			}`;
+			// tslint:disable:no-function-expression
+			testWithRealSnippets(
+				name,
+				async function (this: Context): Promise<void> {
+					const start = Date.now();
+					this.timeout(timeout);
 
-                const { dt, markers: { cursor } } = parseTemplateWithMarkers(templateWithCursorMarker);
-                assert(cursor !== undefined, "<!cursor!> not found in template");
+					const {
+						dt,
+						markers: { cursor },
+					} = parseTemplateWithMarkers(templateWithCursorMarker);
+					assert(
+						cursor !== undefined,
+						"<!cursor!> not found in template"
+					);
 
-                let tempFile: TempFile | undefined;
-                let tempDoc: TempDocument | undefined;
-                let tempEditor: TempEditor | undefined;
+					let tempFile: TempFile | undefined;
+					let tempDoc: TempDocument | undefined;
+					let tempEditor: TempEditor | undefined;
 
-                try {
-                    tempFile = TempFile.fromContents(dt.documentText, `${testName}.${snippetPrefix}`, '.json');
-                    tempDoc = new TempDocument(tempFile);
-                    await tempDoc.open();
-                    tempEditor = new TempEditor(tempDoc);
-                    await tempEditor.open();
+					try {
+						tempFile = TempFile.fromContents(
+							dt.documentText,
+							`${testName}.${snippetPrefix}`,
+							".json"
+						);
+						tempDoc = new TempDocument(tempFile);
+						await tempDoc.open();
+						tempEditor = new TempEditor(tempDoc);
+						await tempEditor.open();
 
-                    // Wait for first set of diagnostics to finish.
-                    const diagnosticOptions: IGetDiagnosticsOptions = {
-                        includeSources: testSources
-                    };
-                    let diagnosticResults = await getDiagnosticsForDocument(tempDoc.realDocument, 1, diagnosticOptions);
+						// Wait for first set of diagnostics to finish.
+						const diagnosticOptions: IGetDiagnosticsOptions = {
+							includeSources: testSources,
+						};
+						let diagnosticResults = await getDiagnosticsForDocument(
+							tempDoc.realDocument,
+							1,
+							diagnosticOptions
+						);
 
-                    // Insert snippet (and wait for and verify diagnostics)
-                    const docPos = dt.getDocumentPosition(cursor.index);
-                    const pos = new Position(docPos.line, docPos.line);
+						// Insert snippet (and wait for and verify diagnostics)
+						const docPos = dt.getDocumentPosition(cursor.index);
+						const pos = new Position(docPos.line, docPos.line);
 
-                    writeToLog(`Document before inserting snippet:\n${tempEditor.document.realDocument.getText()}`);
+						writeToLog(
+							`Document before inserting snippet:\n${tempEditor.document.realDocument.getText()}`
+						);
 
-                    tempEditor.realEditor.selection = new Selection(pos, pos);
-                    await delay(1);
-                    await simulateCompletion(
-                        tempEditor.realEditor,
-                        snippetPrefix,
-                        triggerCharacter
-                    );
+						tempEditor.realEditor.selection = new Selection(
+							pos,
+							pos
+						);
+						await delay(1);
+						await simulateCompletion(
+							tempEditor.realEditor,
+							snippetPrefix,
+							triggerCharacter
+						);
 
-                    // Wait until the current document has template graph info assigned
-                    // tslint:disable-next-line: no-constant-condition
-                    while (true) {
-                        if (Date.now() > start + timeout) {
-                            throw new Error("Timeout");
-                        }
-                        const openDoc = ext.provideOpenedDocuments?.getOpenedDeploymentTemplate(tempEditor.realEditor.document.uri);
-                        if (openDoc && openDoc.templateGraph) {
-                            break;
-                        }
-                        await delay(1);
-                    }
+						// Wait until the current document has template graph info assigned
+						// tslint:disable-next-line: no-constant-condition
+						while (true) {
+							if (Date.now() > start + timeout) {
+								throw new Error("Timeout");
+							}
+							const openDoc =
+								ext.provideOpenedDocuments?.getOpenedDeploymentTemplate(
+									tempEditor.realEditor.document.uri
+								);
+							if (openDoc && openDoc.templateGraph) {
+								break;
+							}
+							await delay(1);
+						}
 
-                    // Wait for final diagnostics but don't compare until we've compared the expected text first
-                    diagnosticResults = await getDiagnosticsForDocument(tempEditor.realEditor.document, 2, diagnosticOptions, diagnosticResults);
-                    let messages = diagnosticResults.diagnostics.map(d => d.message).sort();
+						// Wait for final diagnostics but don't compare until we've compared the expected text first
+						diagnosticResults = await getDiagnosticsForDocument(
+							tempEditor.realEditor.document,
+							2,
+							diagnosticOptions,
+							diagnosticResults
+						);
+						let messages = diagnosticResults.diagnostics
+							.map((d) => d.message)
+							.sort();
 
-                    if (DEBUG_BREAK_AFTER_INSERTING_SNIPPET) {
-                        // tslint:disable-next-line: no-debugger
-                        debugger;
-                    }
+						if (DEBUG_BREAK_AFTER_INSERTING_SNIPPET) {
+							// tslint:disable-next-line: no-debugger
+							debugger;
+						}
 
-                    // Format (vscode seems to be inconsistent about this in these scenarios)
-                    let docTextAfterInsertion = await formatDocumentAndWait(tempDoc.realDocument);
-                    writeToLog(`Document after inserting snippet:\n${docTextAfterInsertion}`);
+						// Format (vscode seems to be inconsistent about this in these scenarios)
+						let docTextAfterInsertion = await formatDocumentAndWait(
+							tempDoc.realDocument
+						);
+						writeToLog(
+							`Document after inserting snippet:\n${docTextAfterInsertion}`
+						);
 
-                    expectedTemplate = removeApiVersions(expectedTemplate);
-                    docTextAfterInsertion = removeApiVersions(docTextAfterInsertion);
+						expectedTemplate = removeApiVersions(expectedTemplate);
+						docTextAfterInsertion = removeApiVersions(
+							docTextAfterInsertion
+						);
 
-                    assert.strictEqual(docTextAfterInsertion, expectedTemplate);
+						assert.strictEqual(
+							docTextAfterInsertion,
+							expectedTemplate
+						);
 
-                    // Compare diagnostics
+						// Compare diagnostics
 
-                    assertEx.arraysEqual(messages, expectedDiagnostics, {}, "Diagnostics comparison failed");
-                } finally {
-                    await tempEditor?.dispose();
-                    await tempDoc?.dispose();
-                    tempFile?.dispose();
-                }
-            });
-        }
-    }
+						assertEx.arraysEqual(
+							messages,
+							expectedDiagnostics,
+							{},
+							"Diagnostics comparison failed"
+						);
+					} finally {
+						await tempEditor?.dispose();
+						await tempDoc?.dispose();
+						tempFile?.dispose();
+					}
+				}
+			);
+		}
+	}
 
-    suite("top level", () => {
-        createContextualizedSnippetTest(
-            "top-level param",
-            "new-parameter",
-            [undefined, '"'],
-            `{
+	suite("top level", () => {
+		createContextualizedSnippetTest(
+			"top-level param",
+			"new-parameter",
+			[undefined, '"'],
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "parameters": {
         <!cursor!>
@@ -136,7 +188,7 @@ suite("Contextualized snippets", () => {
     "contentVersion": "1.0.0.0",
     "resources": []
 }`,
-            `{
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "parameters": {
         "parameter1": {
@@ -149,16 +201,14 @@ suite("Contextualized snippets", () => {
     "contentVersion": "1.0.0.0",
     "resources": []
 }`,
-            [
-                "The parameter 'parameter1' is never used."
-            ]
-        );
+			["The parameter 'parameter1' is never used."]
+		);
 
-        createContextualizedSnippetTest(
-            "top-level variable",
-            "new-variable",
-            [undefined, '"'],
-            `{
+		createContextualizedSnippetTest(
+			"top-level variable",
+			"new-variable",
+			[undefined, '"'],
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "variables": {
         <!cursor!>
@@ -166,7 +216,7 @@ suite("Contextualized snippets", () => {
     "contentVersion": "1.0.0.0",
     "resources": []
 }`,
-            `{
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "variables": {
         "variable1": "value"
@@ -174,16 +224,14 @@ suite("Contextualized snippets", () => {
     "contentVersion": "1.0.0.0",
     "resources": []
 }`,
-            [
-                "The variable 'variable1' is never used."
-            ]
-        );
+			["The variable 'variable1' is never used."]
+		);
 
-        createContextualizedSnippetTest(
-            "top-level output",
-            "new-output",
-            [undefined, '"'],
-            `{
+		createContextualizedSnippetTest(
+			"top-level output",
+			"new-output",
+			[undefined, '"'],
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -192,7 +240,7 @@ suite("Contextualized snippets", () => {
         <!cursor!>
     }
 }`,
-            `{
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -204,17 +252,15 @@ suite("Contextualized snippets", () => {
         }
     }
 }`,
-            [
-            ]
-        );
+			[]
+		);
 
-        suite("User functions", () => {
-
-            createContextualizedSnippetTest(
-                "top-level user function namespace",
-                "new-userfunc-namespace",
-                [undefined, '{'],
-                `{
+		suite("User functions", () => {
+			createContextualizedSnippetTest(
+				"top-level user function namespace",
+				"new-userfunc-namespace",
+				[undefined, "{"],
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -223,7 +269,7 @@ suite("Contextualized snippets", () => {
         <!cursor!>
     ]
 }`,
-                `{
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -248,17 +294,17 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                [
-                    "The user-defined function 'namespacename.functionname' is never used.",
-                    "User-function parameter 'parametername' is never used."
-                ]
-            );
+				[
+					"The user-defined function 'namespacename.functionname' is never used.",
+					"User-function parameter 'parametername' is never used.",
+				]
+			);
 
-            createContextualizedSnippetTest(
-                "top-level user function",
-                "new-user-function",
-                [undefined, '"'],
-                `{
+			createContextualizedSnippetTest(
+				"top-level user function",
+				"new-user-function",
+				[undefined, '"'],
+				`{
                 "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [
@@ -284,7 +330,7 @@ suite("Contextualized snippets", () => {
                     }
                 ]
             }`,
-                `{
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -321,19 +367,19 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                [
-                    "The user-defined function 'namespacename.existingfunction' is never used.",
-                    "The user-defined function 'namespacename.functionname' is never used.",
-                    "User-function parameter 'parametername' is never used.",
-                    "User-function parameter 'parametername' is never used."
-                ]
-            );
+				[
+					"The user-defined function 'namespacename.existingfunction' is never used.",
+					"The user-defined function 'namespacename.functionname' is never used.",
+					"User-function parameter 'parametername' is never used.",
+					"User-function parameter 'parametername' is never used.",
+				]
+			);
 
-            createContextualizedSnippetTest(
-                "User function parameters",
-                "new-userfunc-parameter",
-                [undefined, '{'],
-                `{
+			createContextualizedSnippetTest(
+				"User function parameters",
+				"new-userfunc-parameter",
+				[undefined, "{"],
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [],
@@ -358,7 +404,7 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                `{
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [],
@@ -386,28 +432,27 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                [
-                    "The user-defined function 'namespacename.functionname' is never used.",
-                    "User-function parameter 'parameter1' is never used.",
-                    "User-function parameter 'parametername' is never used."
-                ]
-            );
+				[
+					"The user-defined function 'namespacename.functionname' is never used.",
+					"User-function parameter 'parameter1' is never used.",
+					"User-function parameter 'parametername' is never used.",
+				]
+			);
+		});
 
-        });
-
-        suite("resources", () => {
-            createContextualizedSnippetTest(
-                "top-level resource",
-                "arm-web-app",
-                [undefined, '{'],
-                `{
+		suite("resources", () => {
+			createContextualizedSnippetTest(
+				"top-level resource",
+				"arm-web-app",
+				[undefined, "{"],
+				`{
                 "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [
                     <!cursor!>
                 ]
             }`,
-                `{
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -430,22 +475,21 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                [
-                ]
-            );
+				[]
+			);
 
-            createContextualizedSnippetTest(
-                "top-level - multiple resources in one snippet",
-                "arm-vm-ubuntu",
-                [undefined, '{'],
-                `{
+			createContextualizedSnippetTest(
+				"top-level - multiple resources in one snippet",
+				"arm-vm-ubuntu",
+				[undefined, "{"],
+				`{
                 "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [
                     <!cursor!>
                 ]
             }`,
-                `{
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -610,15 +654,14 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                [
-                ]
-            );
+				[]
+			);
 
-            createContextualizedSnippetTest(
-                "resource tags",
-                "arm-tags",
-                [undefined, '"'],
-                `{
+			createContextualizedSnippetTest(
+				"resource tags",
+				"arm-tags",
+				[undefined, '"'],
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -630,7 +673,7 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                `{
+				`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -644,21 +687,17 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-                [
-                ]
-            );
+				[]
+			);
+		});
+	});
 
-        });
-
-    });
-
-    suite('Nested templates', () => {
-
-        createContextualizedSnippetTest(
-            "nested template - new parameter definition",
-            "new-parameter",
-            ['"'],
-            `{
+	suite("Nested templates", () => {
+		createContextualizedSnippetTest(
+			"nested template - new parameter definition",
+			"new-parameter",
+			['"'],
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -685,7 +724,7 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-            `{
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -717,17 +756,17 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-            [
-                'The following parameters do not have values: "parameter1"',
-                "The parameter 'parameter1' is never used."
-            ]
-        );
+			[
+				'The following parameters do not have values: "parameter1"',
+				"The parameter 'parameter1' is never used.",
+			]
+		);
 
-        createContextualizedSnippetTest(
-            "nested template - new parameter value from existing parameter definition",
-            "my-existing-parameter-name",
-            ['"'],
-            `{
+		createContextualizedSnippetTest(
+			"nested template - new parameter value from existing parameter definition",
+			"my-existing-parameter-name",
+			['"'],
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -762,7 +801,7 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-            `{
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -799,16 +838,14 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-            [
-                "The parameter 'my-existing-parameter-name' is never used."
-            ]
-        );
+			["The parameter 'my-existing-parameter-name' is never used."]
+		);
 
-        createContextualizedSnippetTest(
-            "nested template - brand-new parameter value",
-            "new-parameter-value",
-            ['"'],
-            `{
+		createContextualizedSnippetTest(
+			"nested template - brand-new parameter value",
+			"new-parameter-value",
+			['"'],
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -843,7 +880,7 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-            `{
+			`{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "resources": [
@@ -880,14 +917,13 @@ suite("Contextualized snippets", () => {
         }
     ]
 }`,
-            [
-                'The following parameters do not have values: "my-existing-parameter-name"',
-                "The parameter 'my-existing-parameter-name' is never used."
-            ]
-        );
+			[
+				'The following parameters do not have values: "my-existing-parameter-name"',
+				"The parameter 'my-existing-parameter-name' is never used.",
+			]
+		);
+	});
 
-    });
-
-    test('TODO: Child resources');
-    test('TODO: subnets');
+	test("TODO: Child resources");
+	test("TODO: subnets");
 });

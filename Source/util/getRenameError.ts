@@ -11,9 +11,14 @@ import { DefinitionKind } from "../language/INamedDefinition";
  * If it can be renamed: undefined is returned.
  * If it cannot be renamed: An error message is returned.
  */
-export function getRenameError(referenceSiteInfo: IReferenceSite): string | undefined {
-    if (referenceSiteInfo.definition.definitionKind === DefinitionKind.BuiltinFunction) {
-        return "Built-in functions cannot be renamed.";
-    }
-    return undefined;
+export function getRenameError(
+	referenceSiteInfo: IReferenceSite
+): string | undefined {
+	if (
+		referenceSiteInfo.definition.definitionKind ===
+		DefinitionKind.BuiltinFunction
+	) {
+		return "Built-in functions cannot be renamed.";
+	}
+	return undefined;
 }

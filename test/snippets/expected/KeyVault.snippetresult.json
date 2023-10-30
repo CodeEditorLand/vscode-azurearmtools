@@ -18,14 +18,8 @@
 						"tenantId": "tenantId",
 						"objectId": "objectId",
 						"permissions": {
-							"keys": [
-								"Get"
-							],
-							"secrets": [
-								"List",
-								"Get",
-								"Set"
-							]
+							"keys": ["Get"],
+							"secrets": ["List", "Get", "Set"]
 						}
 					}
 				],

@@ -4,5 +4,5 @@
 // ---------------------------------------------------------------------------------------------
 
 export function removeComments(json: string): string {
-    return json.replace(/\s+\/\/.*/g, "");
+	return json.replace(/\s+\/\/.*/g, "");
 }

@@ -5,9 +5,9 @@
 import { CodeActionContext, CodeActionTriggerKind } from "vscode";
 
 export function getEmptyCodeActionContext(): CodeActionContext {
-    return {
-        diagnostics: [],
-        only: undefined,
-        triggerKind: CodeActionTriggerKind.Automatic
-    };
+	return {
+		diagnostics: [],
+		only: undefined,
+		triggerKind: CodeActionTriggerKind.Automatic,
+	};
 }

@@ -17,14 +17,11 @@
 				"resource": {
 					"id": "${4:table-name}",
 					"schema": {
-						"columns": [
-						],
-						"partitionKeys": [
-						]
+						"columns": [],
+						"partitionKeys": []
 					}
 				},
-				"options": {
-				}
+				"options": {}
 			}
 		}
 	]

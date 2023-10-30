@@ -4,7 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 export function isTleExpression(unquotedStringValue: string): boolean {
-    // An expression must start with '[' (no whitespace before),
-    //   not start with '[[', and end with ']' (no whitespace after)
-    return !!unquotedStringValue.match(/^\[(?!\[).*\]$/);
+	// An expression must start with '[' (no whitespace before),
+	//   not start with '[[', and end with ']' (no whitespace after)
+	return !!unquotedStringValue.match(/^\[(?!\[).*\]$/);
 }

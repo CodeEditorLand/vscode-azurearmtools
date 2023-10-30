@@ -2,8 +2,8 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as assert from 'assert';
-import { DeploymentDocument, ReferenceList } from '../../extension.bundle';
+import * as assert from "assert";
+import { DeploymentDocument, ReferenceList } from "../../extension.bundle";
 
 /**
  * Given a deployment template and a character index into it, verify that getReferences on the template
@@ -17,19 +17,23 @@ import { DeploymentDocument, ReferenceList } from '../../extension.bundle';
  *      await testFindReferences(dt, apiVersionReference.index, [apiVersionReference.index, apiVersionDef.index]);
  */
 export function testGetReferences(
-    dt: DeploymentDocument,
-    cursorIndexInTemplate: number,
-    expectedReferenceIndices: number[],
-    options?: {
-        associatedDoc?: DeploymentDocument;
-    }): void {
-    const pc = dt.getContextFromDocumentCharacterIndex(cursorIndexInTemplate, options?.associatedDoc);
-    // tslint:disable-next-line: no-non-null-assertion
-    const references: ReferenceList = pc.getReferences()!;
-    assert(references, "Expected non-empty list of references");
+	dt: DeploymentDocument,
+	cursorIndexInTemplate: number,
+	expectedReferenceIndices: number[],
+	options?: {
+		associatedDoc?: DeploymentDocument;
+	}
+): void {
+	const pc = dt.getContextFromDocumentCharacterIndex(
+		cursorIndexInTemplate,
+		options?.associatedDoc
+	);
+	// tslint:disable-next-line: no-non-null-assertion
+	const references: ReferenceList = pc.getReferences()!;
+	assert(references, "Expected non-empty list of references");
 
-    const indices = references.references.map(r => r.span.startIndex).sort();
-    expectedReferenceIndices = expectedReferenceIndices.sort();
+	const indices = references.references.map((r) => r.span.startIndex).sort();
+	expectedReferenceIndices = expectedReferenceIndices.sort();
 
-    assert.deepStrictEqual(indices, expectedReferenceIndices);
+	assert.deepStrictEqual(indices, expectedReferenceIndices);
 }

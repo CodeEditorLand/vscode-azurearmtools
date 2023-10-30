@@ -6,85 +6,90 @@
 
 import * as fse from "fs-extra";
 
-export const alwaysEchoTestLog: boolean = /^(true|1)$/i.test(process.env.ALWAYS_ECHO_TEST_LOG ?? '');
+export const alwaysEchoTestLog: boolean = /^(true|1)$/i.test(
+	process.env.ALWAYS_ECHO_TEST_LOG ?? ""
+);
 
 interface ITestLog {
-    writeLine(message: string | undefined): void;
-    toString(): string;
+	writeLine(message: string | undefined): void;
+	toString(): string;
 }
 
 class UninitializedLog implements ITestLog {
-    public writeLine(message: string | undefined): void {
-        createTestLog();
-        testLog.writeLine(message);
-    }
+	public writeLine(message: string | undefined): void {
+		createTestLog();
+		testLog.writeLine(message);
+	}
 
-    public toString(): string {
-        return "";
-    }
+	public toString(): string {
+		return "";
+	}
 }
 
 class StringTestLog implements ITestLog {
-    private _data: string[] = [];
+	private _data: string[] = [];
 
-    public writeLine(message: string | undefined): void {
-        message = message === undefined ? '(undefined)' : message;
-        this._data.push(message);
-    }
+	public writeLine(message: string | undefined): void {
+		message = message === undefined ? "(undefined)" : message;
+		this._data.push(message);
+	}
 
-    public toString(): string {
-        return this._data.join(' \n');
-    }
+	public toString(): string {
+		return this._data.join(" \n");
+	}
 }
 
 function writeToLogFile(message: string, ...args: object[]): string {
-    message = new Date().toLocaleDateString() + ": " + message + "\n";
+	message = new Date().toLocaleDateString() + ": " + message + "\n";
 
-    if (testLogOutputFile) {
-        fse.appendFileSync(testLogOutputFile, message);
-    }
+	if (testLogOutputFile) {
+		fse.appendFileSync(testLogOutputFile, message);
+	}
 
-    return message;
+	return message;
 }
 
 export function writeToWarning(message: string): void {
-    message = "** WARNING: " + message;
-    testLog.writeLine(message);
-    writeToLogFile(message);
-    console.warn(message);
+	message = "** WARNING: " + message;
+	testLog.writeLine(message);
+	writeToLogFile(message);
+	console.warn(message);
 }
 
 export function writeToError(message: string): void {
-    message = "** ERROR: " + message;
-    testLog.writeLine(message);
-    writeToLogFile(message);
-    console.error(message);
+	message = "** ERROR: " + message;
+	testLog.writeLine(message);
+	writeToLogFile(message);
+	console.error(message);
 }
 
-export function writeToLog(message: string = "", echoToConsole: boolean = false): void {
-    testLog.writeLine(message);
-    writeToLogFile(message);
-    if (echoToConsole || alwaysEchoTestLog) {
-        console.log(`testLog: ${message}`);
-    }
+export function writeToLog(
+	message: string = "",
+	echoToConsole: boolean = false
+): void {
+	testLog.writeLine(message);
+	writeToLogFile(message);
+	if (echoToConsole || alwaysEchoTestLog) {
+		console.log(`testLog: ${message}`);
+	}
 }
 
 let testLog: ITestLog = new UninitializedLog();
 
 let testLogOutputFile: string | undefined;
 export function setTestLogOutputFile(filePath: string): void {
-    testLogOutputFile = filePath;
-    writeToLog(`Writing logs to ${testLogOutputFile}`);
+	testLogOutputFile = filePath;
+	writeToLog(`Writing logs to ${testLogOutputFile}`);
 }
 
 export function createTestLog(): void {
-    testLog = new StringTestLog();
+	testLog = new StringTestLog();
 }
 
 export function deleteTestLog(): void {
-    testLog = new UninitializedLog();
+	testLog = new UninitializedLog();
 }
 
 export function getTestLogContents(): string {
-    return testLog.toString();
+	return testLog.toString();
 }

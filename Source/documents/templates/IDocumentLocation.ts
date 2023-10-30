@@ -9,5 +9,5 @@ import { Uri } from "vscode";
  */
 
 export interface IDocumentLocation {
-    documentUri: Uri;
+	documentUri: Uri;
 }
