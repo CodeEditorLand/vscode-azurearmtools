@@ -6,147 +6,138 @@
 // tslint:disable:no-non-null-assertion object-literal-key-quotes variable-name no-constant-condition
 // tslint:disable:prefer-template no-http-string
 
-import * as assert from "assert";
-import { commands } from "vscode";
-import {
-	IDeploymentParametersFile,
-	IDeploymentTemplate,
-} from "../support/diagnostics";
-import { mapParameterFile } from "../support/mapParameterFile";
+import * as assert from 'assert';
+import { commands } from 'vscode';
+import { IDeploymentParametersFile, IDeploymentTemplate } from "../support/diagnostics";
+import { mapParameterFile } from '../support/mapParameterFile';
 import { getDocumentMarkers, removeEOLMarker } from "../support/parseTemplate";
-import { stringify } from "../support/stringify";
-import { TempDocument, TempEditor, TempFile } from "../support/TempFile";
-import { testWithLanguageServer } from "../support/testWithLanguageServer";
+import { stringify } from '../support/stringify';
+import { TempDocument, TempEditor, TempFile } from '../support/TempFile';
+import { testWithLanguageServer } from '../support/testWithLanguageServer';
 
 const longTemplate = {
-	"$schema":
-		"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	"contentVersion": "1.0.0.0",
-	"parameters": {
-		"requiredString": {
-			"type": "string",
-		},
-		"requiredArray": {
-			"type": "int",
-		},
-		"optionalObject": {
-			"type": "int",
-			"defaultValue": {
-				"abc": "def",
-			},
-		},
-		"optionalInt": {
-			"type": "int",
-			"defaultValue": 1,
-		},
-	},
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "requiredString": {
+            "type": "string"
+        },
+        "requiredArray": {
+            "type": "int"
+        },
+        "optionalObject": {
+            "type": "int",
+            "defaultValue": {
+                "abc": "def"
+            }
+        },
+        "optionalInt": {
+            "type": "int",
+            "defaultValue": 1
+        }
+    }
 };
 
 const templateWithOneOptionalParam = {
-	"$schema":
-		"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	"contentVersion": "1.0.0.0",
-	"parameters": {
-		"optionalInt": {
-			"type": "int",
-			"defaultValue": 1,
-		},
-	},
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "optionalInt": {
+            "type": "int",
+            "defaultValue": 1
+        }
+    }
 };
 
 suite("Add missing parameters - functional", () => {
-	enum Params {
-		"all",
-		"onlyRequired",
-	}
 
-	function createAddMissingParamsTestAllAndRequired(
-		testName: string,
-		params: string | Partial<IDeploymentParametersFile>,
-		template: string | Partial<IDeploymentTemplate> | undefined,
-		expectedResultForAllParameters: string,
-		expectedResultForOnlyRequiredParameters: string
-	): void {
-		createAddMissingParamsTest(
-			`${testName} - all Parameters`,
-			params,
-			template,
-			Params.all,
-			expectedResultForAllParameters
-		);
+    enum Params {
+        "all",
+        "onlyRequired"
+    }
 
-		createAddMissingParamsTest(
-			`${testName} - only required parameters`,
-			params,
-			template,
-			Params.onlyRequired,
-			expectedResultForOnlyRequiredParameters
-		);
-	}
+    function createAddMissingParamsTestAllAndRequired(
+        testName: string,
+        params: string | Partial<IDeploymentParametersFile>,
+        template: string | Partial<IDeploymentTemplate> | undefined,
+        expectedResultForAllParameters: string,
+        expectedResultForOnlyRequiredParameters: string
+    ): void {
+        createAddMissingParamsTest(
+            `${testName} - all Parameters`,
+            params,
+            template,
+            Params.all,
+            expectedResultForAllParameters);
 
-	function createAddMissingParamsTest(
-		testName: string,
-		params: string | Partial<IDeploymentParametersFile>,
-		template: string | Partial<IDeploymentTemplate> | undefined,
-		whichParams: Params,
-		expectedResult: string
-	): void {
-		testWithLanguageServer(testName, async () => {
-			let editor: TempEditor | undefined;
-			let templateFile: TempFile | undefined;
+        createAddMissingParamsTest(
+            `${testName} - only required parameters`,
+            params,
+            template,
+            Params.onlyRequired,
+            expectedResultForOnlyRequiredParameters);
+    }
 
-			try {
-				const { unmarkedText } = getDocumentMarkers(params);
-				expectedResult = removeEOLMarker(expectedResult);
+    function createAddMissingParamsTest(
+        testName: string,
+        params: string | Partial<IDeploymentParametersFile>,
+        template: string | Partial<IDeploymentTemplate> | undefined,
+        whichParams: Params,
+        expectedResult: string
+    ): void {
+        testWithLanguageServer(testName, async () => {
+            let editor: TempEditor | undefined;
+            let templateFile: TempFile | undefined;
 
-				// Create template/params files
-				if (template) {
-					templateFile = TempFile.fromContents(
-						stringify(template, 4),
-						"template"
-					);
-				}
-				let paramsFile = TempFile.fromContents(unmarkedText, "params");
+            try {
+                const { unmarkedText } = getDocumentMarkers(params);
+                expectedResult = removeEOLMarker(expectedResult);
 
-				// Map template to params
-				if (templateFile) {
-					await mapParameterFile(templateFile.uri, paramsFile.uri);
-				}
+                // Create template/params files
+                if (template) {
+                    templateFile = TempFile.fromContents(stringify(template, 4), 'template');
+                }
+                let paramsFile = TempFile.fromContents(unmarkedText, 'params');
 
-				// Open params in editor
-				const paramsDoc = new TempDocument(paramsFile);
-				editor = new TempEditor(paramsDoc);
-				await editor.open();
+                // Map template to params
+                if (templateFile) {
+                    await mapParameterFile(templateFile.uri, paramsFile.uri);
+                }
 
-				await commands.executeCommand(
-					whichParams === Params.all
-						? "azurerm-vscode-tools.codeAction.addAllMissingParameters"
-						: "azurerm-vscode-tools.codeAction.addMissingRequiredParameters"
-				);
+                // Open params in editor
+                const paramsDoc = new TempDocument(paramsFile);
+                editor = new TempEditor(paramsDoc);
+                await editor.open();
 
-				const actualResult = paramsDoc.realDocument.getText();
-				assert.equal(actualResult, expectedResult);
-			} finally {
-				if (editor) {
-					await editor.dispose();
-				}
-				if (templateFile) {
-					await mapParameterFile(templateFile.uri, undefined, false);
-				}
-			}
-		});
-	}
+                await commands.executeCommand(
+                    whichParams === Params.all
+                        ? 'azurerm-vscode-tools.codeAction.addAllMissingParameters'
+                        : 'azurerm-vscode-tools.codeAction.addMissingRequiredParameters'
+                );
 
-	createAddMissingParamsTestAllAndRequired(
-		"Empty parameters section",
-		`{
+                const actualResult = paramsDoc.realDocument.getText();
+                assert.equal(actualResult, expectedResult);
+            } finally {
+                if (editor) {
+                    await editor.dispose();
+                }
+                if (templateFile) {
+                    await mapParameterFile(templateFile.uri, undefined, false);
+                }
+            }
+        });
+    }
+
+    createAddMissingParamsTestAllAndRequired(
+        "Empty parameters section",
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
     }
 }`,
-		longTemplate,
-		`{
+        longTemplate,
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -166,7 +157,7 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`,
-		`{
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -178,17 +169,17 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`
-	);
+    );
 
-	createAddMissingParamsTestAllAndRequired(
-		"Empty parameters section with no whitespace",
-		`{
+    createAddMissingParamsTestAllAndRequired(
+        "Empty parameters section with no whitespace",
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {}
 }`,
-		templateWithOneOptionalParam,
-		`{
+        templateWithOneOptionalParam,
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -197,16 +188,16 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`,
-		`{
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {}
 }`
-	);
+    );
 
-	createAddMissingParamsTestAllAndRequired(
-		"Comma after existing param",
-		`{
+    createAddMissingParamsTestAllAndRequired(
+        "Comma after existing param",
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -215,8 +206,8 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`,
-		templateWithOneOptionalParam,
-		`{
+        templateWithOneOptionalParam,
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -228,7 +219,7 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`,
-		`{
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -237,11 +228,11 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`
-	);
+    );
 
-	createAddMissingParamsTestAllAndRequired(
-		"Insert after existing param and comments",
-		`{
+    createAddMissingParamsTestAllAndRequired(
+        "Insert after existing param and comments",
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -251,8 +242,8 @@ suite("Add missing parameters - functional", () => {
         // Hello
     }
 }`,
-		templateWithOneOptionalParam,
-		`{
+        templateWithOneOptionalParam,
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -265,7 +256,7 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`,
-		`{
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -275,19 +266,19 @@ suite("Add missing parameters - functional", () => {
         // Hello
     }
 }`
-	);
+    );
 
-	createAddMissingParamsTestAllAndRequired(
-		"Insert after comments only",
-		`{
+    createAddMissingParamsTestAllAndRequired(
+        "Insert after comments only",
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         // Hello
     }
 }`,
-		templateWithOneOptionalParam,
-		`{
+        templateWithOneOptionalParam,
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -297,18 +288,18 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`,
-		`{
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         // Hello
     }
 }`
-	);
+    );
 
-	createAddMissingParamsTestAllAndRequired(
-		"Some params aren't missing",
-		`{
+    createAddMissingParamsTestAllAndRequired(
+        "Some params aren't missing",
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -322,28 +313,8 @@ suite("Add missing parameters - functional", () => {
         }
     }
 }`,
-		longTemplate,
-		`{
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "requiredArray": {
-            "value": 0 // TODO: Fill in parameter value
-        },
-        "optionalObject": {
-            "value": {
-                "abc": "def"
-            }
-        },
-        "requiredString": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "optionalInt": {
-            "value": 1
-        }
-    }
-}`,
-		`{
+        longTemplate,
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -357,39 +328,57 @@ suite("Add missing parameters - functional", () => {
         },
         "requiredString": {
             "value": "" // TODO: Fill in parameter value
+        },
+        "optionalInt": {
+            "value": 1
+        }
+    }
+}`,
+        `{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "requiredArray": {
+            "value": 0 // TODO: Fill in parameter value
+        },
+        "optionalObject": {
+            "value": {
+                "abc": "def"
+            }
+        },
+        "requiredString": {
+            "value": "" // TODO: Fill in parameter value
         }
     }
 }`
-	);
+    );
 
-	createAddMissingParamsTest(
-		"Don't put default value into params file if it's an expression",
-		stringify(
-			{
-				"$schema":
-					"https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-				"contentVersion": "1.0.0.0",
-				"parameters": {},
-			},
-			4
-		),
-		{
-			"$schema":
-				"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-			"contentVersion": "1.0.0.0",
-			"parameters": {
-				"defValueIsBoolLiteral": {
-					"type": "string",
-					defaultValue: true,
-				},
-				"defValueIsExpression": {
-					"type": "string",
-					defaultValue: "[variables('bool')]",
-				},
-			},
-		},
-		Params.all,
-		`{
+    createAddMissingParamsTest(
+        "Don't put default value into params file if it's an expression",
+        stringify(
+            {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                }
+            },
+            4),
+        {
+            "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+                "defValueIsBoolLiteral": {
+                    "type": "string",
+                    defaultValue: true
+                },
+                "defValueIsExpression": {
+                    "type": "string",
+                    defaultValue: "[variables('bool')]"
+                }
+            }
+        },
+        Params.all,
+        `{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -400,6 +389,6 @@ suite("Add missing parameters - functional", () => {
             "value": "" // TODO: Fill in parameter value
         }
     }
-}`
-	);
+}`);
+
 });

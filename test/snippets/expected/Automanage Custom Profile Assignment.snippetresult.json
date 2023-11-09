@@ -1,6 +1,6 @@
 {
 	"resources": [
-		{
+		 {
 			"scope": "Microsoft.Compute/virtualMachines/vmName",
 			"type": "Microsoft.Automanage/configurationProfileAssignments",
 			"apiVersion": "2022-05-04",
@@ -8,7 +8,7 @@
 			"properties": {
 				"configurationProfile": "[resourceId('Microsoft.Automanage/configurationProfiles', 'configurationProfileName')]"
 			}
-		}
+		 }
 	],
 	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",

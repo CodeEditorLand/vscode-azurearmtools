@@ -7,71 +7,63 @@ import { Context, Test } from "mocha";
 import { writeToLog } from "./testLog";
 
 export interface ITestPreparation {
-	// Perform pretest preparations, and return a Disposable which will revert those changes
-	pretest(this: Context): ITestPreparationResult;
+    // Perform pretest preparations, and return a Disposable which will revert those changes
+    pretest(this: Context): ITestPreparationResult;
 }
 
 export interface ITestPreparationResult {
-	postTestActions?(): void;
+    postTestActions?(): void;
 
-	// If non-empty, skips the test, displaying the string as a message
-	skipTest?: string;
+    // If non-empty, skips the test, displaying the string as a message
+    skipTest?: string;
 }
 
-export function testWithPrep(
-	expectation: string,
-	preparations?: ITestPreparation[],
-	callback?: (this: Context) => Promise<unknown>
-): Test {
-	try {
-		return test(
-			expectation,
-			async function (this: Context): Promise<unknown> {
-				const postTestActions: (() => void)[] = [];
+export function testWithPrep(expectation: string, preparations?: ITestPreparation[], callback?: (this: Context) => Promise<unknown>): Test {
+    try {
+        return test(
+            expectation,
+            async function (this: Context): Promise<unknown> {
+                const postTestActions: (() => void)[] = [];
 
-				try {
-					if (!callback) {
-						// This is a pending test
-						this.skip();
-					}
+                try {
+                    if (!callback) {
+                        // This is a pending test
+                        this.skip();
+                    }
 
-					// Perform pre-test preparations
-					for (let prep of preparations ?? []) {
-						const prepResult = prep.pretest.call(this);
-						if (prepResult.skipTest) {
-							writeToLog(
-								`Skipping test because: ${prepResult.skipTest}`
-							);
-							this.skip();
-						}
+                    // Perform pre-test preparations
+                    for (let prep of preparations ?? []) {
+                        const prepResult = prep.pretest.call(this);
+                        if (prepResult.skipTest) {
+                            writeToLog(`Skipping test because: ${prepResult.skipTest}`);
+                            this.skip();
+                        }
 
-						if (prepResult.postTestActions) {
-							postTestActions.push(prepResult.postTestActions);
-						}
-					}
+                        if (prepResult.postTestActions) {
+                            postTestActions.push(prepResult.postTestActions);
+                        }
+                    }
 
-					// Perform the test
-					try {
-						return await callback.call(this);
-					} catch (error) {
-						if (
-							(<{ message?: string }>error).message ===
-							"sync skip"
-						) {
-							// test skipped
-						} else {
-							throw error;
-						}
-					}
-				} finally {
-					// Perform post-test actions
-					for (let post of postTestActions) {
-						post();
-					}
-				}
-			}
-		);
-	} catch (err) {
-		assert.fail("testWithPrep shouldn't throw");
-	}
+                    // Perform the test
+                    try {
+                        return await callback.call(this);
+                    } catch (error) {
+                        if ((<{ message?: string }>error).message === 'sync skip') {
+                            // test skipped
+                        } else {
+                            throw error;
+                        }
+                    }
+                }
+                finally {
+                    // Perform post-test actions
+                    for (let post of postTestActions) {
+                        post();
+                    }
+                }
+            }
+        );
+    } catch (err) {
+        assert.fail("testWithPrep shouldn't throw");
+    }
 }

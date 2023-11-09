@@ -19,14 +19,18 @@
 								{
 									"name": "appRuleName1",
 									"description": "appRuleDescription",
-									"sourceAddresses": ["10.0.0.4"],
+									"sourceAddresses": [
+										"10.0.0.4"
+									],
 									"protocols": [
 										{
 											"protocolType": "Http",
 											"port": 80
 										}
 									],
-									"targetFqdns": ["www.microsoft.com"],
+									"targetFqdns": [
+										"www.microsoft.com"
+									],
 									"fqdnTags": []
 								}
 							]
@@ -45,12 +49,18 @@
 								{
 									"name": "natRuleName1",
 									"description": "natRuleDescription",
-									"sourceAddresses": ["10.0.0.4"],
+									"sourceAddresses": [
+										"10.0.0.4"
+									],
 									"destinationAddresses": [
 										"[reference(resourceId('Microsoft.Network/publicIPAddresses', 'publicIPAddress1')).ipAddress]"
 									],
-									"destinationPorts": ["3389"],
-									"protocols": ["TCP"],
+									"destinationPorts": [
+										"3389"
+									],
+									"protocols": [
+										"TCP"
+									],
 									"translatedAddress": "10.0.0.254",
 									"translatedPort": "2500"
 								}
@@ -70,10 +80,18 @@
 								{
 									"name": "networkRuleName",
 									"description": "networkRuleDescription",
-									"sourceAddresses": ["10.0.0.4"],
-									"destinationAddresses": ["10.0.1.4"],
-									"destinationPorts": ["1"],
-									"protocols": ["TCP"]
+									"sourceAddresses": [
+										"10.0.0.4"
+									],
+									"destinationAddresses": [
+										"10.0.1.4"
+									],
+									"destinationPorts": [
+										"1"
+									],
+									"protocols": [
+										"TCP"
+									]
 								}
 							]
 						}

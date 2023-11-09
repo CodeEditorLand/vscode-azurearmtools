@@ -9,26 +9,22 @@ import * as assert from "assert";
 import { NormalizedMap } from "../extension.bundle";
 
 suite("NormalizedMap", () => {
-	test("simple", () => {
-		const map = new NormalizedMap<number, string>((key) =>
-			Math.abs(key).toString()
-		);
-		map.set(1, "one");
-		const result = map.get(1);
-		assert.equal("one", result);
-	});
+    test("simple", () => {
+        const map = new NormalizedMap<number, string>(key => Math.abs(key).toString());
+        map.set(1, "one");
+        const result = map.get(1);
+        assert.equal("one", result);
+    });
 
-	test("transformed keys clash", () => {
-		const map = new NormalizedMap<number, string>((key) =>
-			Math.abs(key).toString()
-		);
-		map.set(1, "one");
-		map.set(-1, "negative one");
+    test("transformed keys clash", () => {
+        const map = new NormalizedMap<number, string>(key => Math.abs(key).toString());
+        map.set(1, "one");
+        map.set(-1, "negative one");
 
-		const result = map.get(1);
-		assert.equal("negative one", result);
+        const result = map.get(1);
+        assert.equal("negative one", result);
 
-		const result2 = map.get(1);
-		assert.equal("negative one", result2);
-	});
+        const result2 = map.get(1);
+        assert.equal("negative one", result2);
+    });
 });

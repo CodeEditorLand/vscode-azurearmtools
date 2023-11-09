@@ -10,7 +10,8 @@
 					"uri": "[concat('artifactsLocation', '/linkedTemplates/linkedTemplate.json', 'artifactsLocationSasToken')]",
 					"contentVersion": "1.0.0.0"
 				},
-				"parameters": {}
+				"parameters": {
+				}
 			}
 		}
 	],

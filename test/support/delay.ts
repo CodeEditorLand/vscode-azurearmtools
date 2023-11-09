@@ -3,13 +3,15 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-"use strict";
+'use strict';
 
 export async function delay(ms: number): Promise<void> {
-	// tslint:disable-next-line:typedef
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve();
-		}, ms);
-	});
+    // tslint:disable-next-line:typedef
+    return new Promise(resolve => {
+        setTimeout(
+            () => {
+                resolve();
+            },
+            ms);
+    });
 }

@@ -143,7 +143,9 @@
 				"[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/webApp1')]": "Resource",
 				"displayName": "appInsights1 ServerErrors rule for webApp1"
 			},
-			"dependsOn": ["[resourceId('Microsoft.Web/sites', 'webApp1')]"],
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', 'webApp1')]"
+			],
 			"properties": {
 				"name": "appInsights1-ServerErrors-webApp1",
 				"description": "webApp1 has some server errors, status code 5xx.",
@@ -174,7 +176,9 @@
 			"tags": {
 				"displayName": "appInsights1 ForbiddenRequests rule for webApp1"
 			},
-			"dependsOn": ["[resourceId('Microsoft.Web/sites', 'webApp1')]"],
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', 'webApp1')]"
+			],
 			"properties": {
 				"name": "appInsights1-ForbiddenRequests-webApp1",
 				"description": "webApp1 has some requests that are forbidden, status code 403.",
@@ -206,7 +210,9 @@
 			"tags": {
 				"displayName": "appInsights1 Component for webApp1"
 			},
-			"dependsOn": ["[resourceId('Microsoft.Web/sites', 'webApp1')]"],
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', 'webApp1')]"
+			],
 			"properties": {
 				"applicationId": "webApp1",
 				"application_Type": "web"

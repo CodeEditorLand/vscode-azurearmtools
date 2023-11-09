@@ -5,7 +5,9 @@
 			"type": "Microsoft.Web/sites/extensions",
 			"apiVersion": "2022-09-01",
 			"location": "[resourceGroup().location]",
-			"dependsOn": ["[resourceId('Microsoft.Web/sites', 'webApp1')]"],
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', 'webApp1')]"
+			],
 			"tags": {
 				"displayName": "Web Deploy for webApp1"
 			},

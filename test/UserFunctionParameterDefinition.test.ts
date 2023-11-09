@@ -6,96 +6,70 @@
 
 import * as assert from "assert";
 import { Uri } from "vscode";
-import {
-	DeploymentTemplateDoc,
-	IJsonDocument,
-	Json,
-	Span,
-	UserFunctionParameterDefinition,
-} from "../extension.bundle";
+import { DeploymentTemplateDoc, IJsonDocument, Json, Span, UserFunctionParameterDefinition } from "../extension.bundle";
 import { createStringProperty } from "./support/jsonCreation";
 
 const fakeSpan = new Span(10, 20);
 
 suite("UserFunctionParameterDefinition", () => {
-	suite("constructor(Json.Property)", () => {
-		const doc: IJsonDocument = new DeploymentTemplateDoc(
-			"",
-			Uri.parse("https://doc"),
-			0
-		);
+    suite("constructor(Json.Property)", () => {
+        const doc: IJsonDocument = new DeploymentTemplateDoc("", Uri.parse('https://doc'), 0);
 
-		test("with no fields (invalid without name)", () => {
-			const parameterDefinition = new Json.ObjectValue(
-				new Span(16, 2),
-				[]
-			);
+        test("with no fields (invalid without name)", () => {
+            const parameterDefinition = new Json.ObjectValue(new Span(16, 2), []);
 
-			const pd = UserFunctionParameterDefinition.createIfValid(
-				doc,
-				parameterDefinition
-			);
+            const pd = UserFunctionParameterDefinition.createIfValid(doc, parameterDefinition);
 
-			assert(!pd, "Without a name should be invalid");
-		});
+            assert(!pd, "Without a name should be invalid");
+        });
 
-		test("with just name", () => {
-			const nameProperty = createStringProperty("name", "parameterName");
-			const paramObject = new Json.ObjectValue(fakeSpan, [nameProperty]);
+        test("with just name", () => {
+            const nameProperty = createStringProperty("name", "parameterName");
+            const paramObject = new Json.ObjectValue(fakeSpan, [nameProperty]);
 
-			let pd = UserFunctionParameterDefinition.createIfValid(
-				doc,
-				paramObject
-			);
+            let pd = UserFunctionParameterDefinition.createIfValid(doc, paramObject);
 
-			assert(pd, "Should be valid with name");
-			pd = pd!;
+            assert(pd, "Should be valid with name");
+            pd = pd!;
 
-			assert(pd.nameValue);
-			assert(pd.nameValue.toString() === "parameterName");
-			assert.deepStrictEqual(pd.fullSpan, fakeSpan);
-			assert(!pd.defaultValue);
-			assert(!pd.description);
-		});
+            assert(pd.nameValue);
+            assert(pd.nameValue.toString() === 'parameterName');
+            assert.deepStrictEqual(pd.fullSpan, fakeSpan);
+            assert(!pd.defaultValue);
+            assert(!pd.description);
+        });
 
-		test("name case insensitive", () => {
-			const nameProperty = createStringProperty("NAme", "parameterName");
-			const paramObject = new Json.ObjectValue(fakeSpan, [nameProperty]);
+        test("name case insensitive", () => {
+            const nameProperty = createStringProperty("NAme", "parameterName");
+            const paramObject = new Json.ObjectValue(fakeSpan, [nameProperty]);
 
-			let pd = UserFunctionParameterDefinition.createIfValid(
-				doc,
-				paramObject
-			);
+            let pd = UserFunctionParameterDefinition.createIfValid(doc, paramObject);
 
-			assert(pd, "Should be valid with name");
-			pd = pd!;
+            assert(pd, "Should be valid with name");
+            pd = pd!;
 
-			assert(pd.nameValue.toString() === "parameterName");
-		});
+            assert(pd.nameValue.toString() === 'parameterName');
+        });
 
-		test("with other fields", () => {
-			const paramObject = new Json.ObjectValue(fakeSpan, [
-				createStringProperty("name", "parameterName"),
-				createStringProperty("type", "STRING"),
-				createStringProperty(
-					"unexpectedField",
-					"Look Ma, too many hands!"
-				),
-			]);
+        test("with other fields", () => {
+            const paramObject = new Json.ObjectValue(
+                fakeSpan,
+                [
+                    createStringProperty("name", "parameterName"),
+                    createStringProperty("type", "STRING"),
+                    createStringProperty("unexpectedField", "Look Ma, too many hands!")
+                ]);
 
-			let pd = UserFunctionParameterDefinition.createIfValid(
-				doc,
-				paramObject
-			);
+            let pd = UserFunctionParameterDefinition.createIfValid(doc, paramObject);
 
-			assert(pd, "Should be valid with name");
-			pd = pd!;
+            assert(pd, "Should be valid with name");
+            pd = pd!;
 
-			assert(pd.nameValue);
-			assert(pd.nameValue.toString() === "parameterName");
-			assert.deepStrictEqual(pd.fullSpan, fakeSpan);
-			assert(!pd.defaultValue);
-			assert(!pd.description);
-		});
-	});
+            assert(pd.nameValue);
+            assert(pd.nameValue.toString() === 'parameterName');
+            assert.deepStrictEqual(pd.fullSpan, fakeSpan);
+            assert(!pd.defaultValue);
+            assert(!pd.description);
+        });
+    });
 });

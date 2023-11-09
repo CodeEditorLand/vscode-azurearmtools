@@ -12,18 +12,15 @@ let internetConnected: Promise<boolean>;
  * Determine if the running application has internet connectivity.
  */
 function hasInternetConnection(): Promise<boolean> {
-	if (internetConnected === undefined) {
-		// tslint:disable-next-line:typedef
-		internetConnected = new Promise<boolean>((resolve, reject) => {
-			dns.lookup(
-				"www.microsoft.com",
-				(error: Error | null, address: string, family: number) => {
-					resolve(!error);
-				}
-			);
-		});
-	}
-	return internetConnected;
+    if (internetConnected === undefined) {
+        // tslint:disable-next-line:typedef
+        internetConnected = new Promise<boolean>((resolve, reject) => {
+            dns.lookup("www.microsoft.com", (error: Error | null, address: string, family: number) => {
+                resolve(!error);
+            });
+        });
+    }
+    return internetConnected;
 }
 
 /**
@@ -31,19 +28,17 @@ function hasInternetConnection(): Promise<boolean> {
  * to the internet, then the test will be skipped.
  */
 // tslint:disable-next-line:no-any
-export function networkTest(
-	testName: string,
-	testFunction: () => void | Promise<any>
-): void {
-	test(testName, function (this: Context): Promise<void> {
-		this.timeout(10000);
+export function networkTest(testName: string, testFunction: () => void | Promise<any>): void {
+    test(testName, function (this: Context): Promise<void> {
+        this.timeout(10000);
 
-		return hasInternetConnection().then((connected: boolean) => {
-			if (connected) {
-				return testFunction();
-			} else {
-				return this.skip();
-			}
-		});
-	});
+        return hasInternetConnection()
+            .then((connected: boolean) => {
+                if (connected) {
+                    return testFunction();
+                } else {
+                    return this.skip();
+                }
+            });
+    });
 }

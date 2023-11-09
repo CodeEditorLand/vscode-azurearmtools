@@ -3,16 +3,16 @@
 */
 // Another comment
 {
-	"parameters": {
-		"guid": {
-			"type": "string",
-			"defaultValue": "[newGuid()]"
-		}
-	},
-	"variables": {
-		"defaultValue": "[reference('a')]",
-		"number": 1.23,
-		"emptyString": "",
-		"emptyFakeExpression": "[]"
-	}
+    "parameters": {
+        "guid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        }
+    },
+    "variables": {
+        "defaultValue": "[reference('a')]",
+        "number": 1.23,
+        "emptyString": "",
+        "emptyFakeExpression": "[]"
+    }
 }

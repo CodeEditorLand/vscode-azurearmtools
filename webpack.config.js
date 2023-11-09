@@ -7,20 +7,20 @@
 
 // See https://github.com/Microsoft/vscode-azuretools/wiki/webpack for guidance
 
-"use strict";
+'use strict';
 
-const process = require("process");
+const process = require('process');
 const dev = require("vscode-azureextensiondev");
 
 let DEBUG_WEBPACK = !!process.env.DEBUG_WEBPACK;
 
 let config = dev.getDefaultWebpackConfig({
-	projectRoot: __dirname,
-	verbosity: DEBUG_WEBPACK ? "debug" : "normal",
+    projectRoot: __dirname,
+    verbosity: DEBUG_WEBPACK ? 'debug' : 'normal'
 });
 
 if (DEBUG_WEBPACK) {
-	console.log("Config:", config);
+    console.log('Config:', config);
 }
 
 module.exports = config;

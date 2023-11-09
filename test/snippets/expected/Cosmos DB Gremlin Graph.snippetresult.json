@@ -11,7 +11,9 @@
 				"resource": {
 					"id": "graph-name",
 					"partitionKey": {
-						"paths": ["/{4:partition-key}"],
+						"paths": [
+							"/{4:partition-key}"
+						],
 						"kind": "hash"
 					},
 					"indexingPolicy": {

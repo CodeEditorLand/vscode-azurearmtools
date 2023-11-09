@@ -8,48 +8,43 @@
 // WARNING: At the breakpoint, the extension will be in an inactivate state (i.e., if you make changes in the editor, diagnostics,
 //   formatting, etc. will not be updated until you F5 again)
 
-import * as assert from "assert";
-import * as fse from "fs-extra";
+import * as assert from 'assert';
+import * as fse from 'fs-extra';
 import { commands, window, workspace } from "vscode";
 import { getTempFilePath } from "../support/getTempFilePath";
-import { DISABLE_SLOW_TESTS } from "../testConstants";
+import { DISABLE_SLOW_TESTS } from '../testConstants';
 
 suite("SortTemplate", async (): Promise<void> => {
-	const topLevelCommand = "azurerm-vscode-tools.sortTopLevel";
-	const parameterCommand = "azurerm-vscode-tools.sortParameters";
-	const variablesCommand = "azurerm-vscode-tools.sortVariables";
-	const resourcesCommand = "azurerm-vscode-tools.sortResources";
-	const outputsCommand = "azurerm-vscode-tools.sortOutputs";
-	const functionsCommand = "azurerm-vscode-tools.sortFunctions";
+    const topLevelCommand = 'azurerm-vscode-tools.sortTopLevel';
+    const parameterCommand = 'azurerm-vscode-tools.sortParameters';
+    const variablesCommand = 'azurerm-vscode-tools.sortVariables';
+    const resourcesCommand = 'azurerm-vscode-tools.sortResources';
+    const outputsCommand = 'azurerm-vscode-tools.sortOutputs';
+    const functionsCommand = 'azurerm-vscode-tools.sortFunctions';
 
-	if (DISABLE_SLOW_TESTS) {
-		return;
-	}
+    if (DISABLE_SLOW_TESTS) {
+        return;
+    }
 
-	async function testSortTemplate(
-		command: string,
-		template: string,
-		expected: String
-	): Promise<void> {
-		const tempPath = getTempFilePath(`sortTemplate`, ".azrm");
+    async function testSortTemplate(command: string, template: string, expected: String): Promise<void> {
+        const tempPath = getTempFilePath(`sortTemplate`, '.azrm');
 
-		fse.writeFileSync(tempPath, template);
+        fse.writeFileSync(tempPath, template);
 
-		let doc = await workspace.openTextDocument(tempPath);
-		await window.showTextDocument(doc);
+        let doc = await workspace.openTextDocument(tempPath);
+        await window.showTextDocument(doc);
 
-		// SortTemplate
-		await commands.executeCommand(command, {});
+        // SortTemplate
+        await commands.executeCommand(command, {});
 
-		const docTextAfterInsertion =
-			window.activeTextEditor!.document.getText();
-		assert.deepStrictEqual(docTextAfterInsertion, expected);
-	}
+        const docTextAfterInsertion = window.activeTextEditor!.document.getText();
+        assert.deepStrictEqual(docTextAfterInsertion, expected);
+    }
 
-	test("Parameters", async () => {
-		await testSortTemplate(
-			parameterCommand,
-			`{
+    test("Parameters", async () => {
+        await testSortTemplate(
+            parameterCommand,
+            `{
             "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
             "contentVersion": "1.0.0.0",
             "parameters": { "parameter2": {
@@ -58,7 +53,7 @@ suite("SortTemplate", async (): Promise<void> => {
                "type": "string"
             }}
         }`,
-			`{
+            `{
             "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
             "contentVersion": "1.0.0.0",
             "parameters": { "parameter1": {
@@ -66,14 +61,13 @@ suite("SortTemplate", async (): Promise<void> => {
             }, "parameter2": {
                "type": "string"
             }}
-        }`
-		);
-	});
+        }`);
+    });
 
-	test("Parameters with comments", async () => {
-		await testSortTemplate(
-			parameterCommand,
-			`{
+    test("Parameters with comments", async () => {
+        await testSortTemplate(
+            parameterCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "parameters": {
@@ -87,7 +81,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     }
                 }
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "parameters": {
@@ -100,14 +94,13 @@ suite("SortTemplate", async (): Promise<void> => {
                        "type": "string"
                     }
                 }
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Parameters with multiple comments", async () => {
-		await testSortTemplate(
-			parameterCommand,
-			`{
+    test("Parameters with multiple comments", async () => {
+        await testSortTemplate(
+            parameterCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "parameters": {
@@ -126,7 +119,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     //Comment that should not be sorted
                 }
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "parameters": {
@@ -144,30 +137,28 @@ suite("SortTemplate", async (): Promise<void> => {
                     }
                     //Comment that should not be sorted
                 }
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Variables", async () => {
-		await testSortTemplate(
-			variablesCommand,
-			`{
+    test("Variables", async () => {
+        await testSortTemplate(
+            variablesCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "variables": {/*v2*/"variable2": "value", /*v1*/"variable1": "value"}
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "variables": {/*v1*/"variable1": "value", /*v2*/"variable2": "value"}
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Variables with multi line comments", async () => {
-		await testSortTemplate(
-			variablesCommand,
-			`{
+    test("Variables with multi line comments", async () => {
+        await testSortTemplate(
+            variablesCommand,
+            `{
                 "variables": {
                     /* Multi
                     line comment 2*/
@@ -177,7 +168,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     "variable1": "value1"
                 }
             }`,
-			`{
+            `{
                 "variables": {
                     /* Multi
                     line comment 1*/
@@ -186,14 +177,13 @@ suite("SortTemplate", async (): Promise<void> => {
                     line comment 2*/
                     "variable2": "value2"
                 }
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Resources", async () => {
-		await testSortTemplate(
-			resourcesCommand,
-			`{
+    test("Resources", async () => {
+        await testSortTemplate(
+            resourcesCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [/*s2*/{ "name": "storageaccount2",
@@ -204,7 +194,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     "apiVersion": "2015-06-15"
                 }]
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [/*s1*/{ "name": "storageaccount1",
@@ -214,14 +204,13 @@ suite("SortTemplate", async (): Promise<void> => {
                     "type": "Microsoft.Storage/storageAccounts",
                     "apiVersion": "2015-06-15"
                 }]
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Resources with child resources", async () => {
-		await testSortTemplate(
-			resourcesCommand,
-			`{
+    test("Resources with child resources", async () => {
+        await testSortTemplate(
+            resourcesCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [/*s2*/{"name": "storageaccount2",
@@ -240,7 +229,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     }
                 ]
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [/*s1*/{"name": "storageaccount1","type": "Microsoft.Storage/storageAccounts",
@@ -258,14 +247,13 @@ suite("SortTemplate", async (): Promise<void> => {
                         ]
                     }
                 ]
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Resources with multiple lines", async () => {
-		await testSortTemplate(
-			resourcesCommand,
-			`{
+    test("Resources with multiple lines", async () => {
+        await testSortTemplate(
+            resourcesCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [
@@ -285,7 +273,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     }
                 ]
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [
@@ -304,14 +292,13 @@ suite("SortTemplate", async (): Promise<void> => {
                             'String 1')]"
                     }
                 ]
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Outputs", async () => {
-		await testSortTemplate(
-			outputsCommand,
-			`{
+    test("Outputs", async () => {
+        await testSortTemplate(
+            outputsCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "outputs": {/*o2*/"output2": {
@@ -322,7 +309,7 @@ suite("SortTemplate", async (): Promise<void> => {
                    "value": "value"
                 }}
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "outputs": {/*o1*/"output1": {
@@ -332,14 +319,13 @@ suite("SortTemplate", async (): Promise<void> => {
                    "type": "string",
                    "value": "value"
                 }}
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Function namespaces", async () => {
-		await testSortTemplate(
-			functionsCommand,
-			`{
+    test("Function namespaces", async () => {
+        await testSortTemplate(
+            functionsCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "functions": [/*ns2*/{
@@ -359,7 +345,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     }
                 }]
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "functions": [/*ns1*/{
@@ -378,14 +364,13 @@ suite("SortTemplate", async (): Promise<void> => {
                         }
                     }
                 }]
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Functions inside namespace", async () => {
-		await testSortTemplate(
-			functionsCommand,
-			`{
+    test("Functions inside namespace", async () => {
+        await testSortTemplate(
+            functionsCommand,
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "functions": [{
@@ -399,7 +384,7 @@ suite("SortTemplate", async (): Promise<void> => {
                     }
                 }]
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "functions": [{
@@ -412,14 +397,13 @@ suite("SortTemplate", async (): Promise<void> => {
                         }
                     }
                 }]
-            }`
-		);
-	});
+            }`);
+    });
 
-	test("Top level properties", async () => {
-		await testSortTemplate(
-			topLevelCommand,
-			`{
+    test("Top level properties", async () => {
+        await testSortTemplate(
+            topLevelCommand,
+            `{
                 // Outputs
                 "outputs": {},
                 "apiProfile": "...",
@@ -433,7 +417,7 @@ suite("SortTemplate", async (): Promise<void> => {
                 "resources": [],
                 "parameters": {}
             }`,
-			`{
+            `{
                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "apiProfile": "...",
@@ -446,40 +430,39 @@ suite("SortTemplate", async (): Promise<void> => {
                 "resources": [],
                 // Outputs
                 "outputs": {}
-            }`
-		);
-	});
+            }`);
+    });
 
-	const emptyTemplate: string = `{
+    const emptyTemplate: string = `{
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0"
     }`;
 
-	test("Sort empty template (top level)", async () => {
-		await testSortTemplate(topLevelCommand, emptyTemplate, emptyTemplate);
-	});
+    test("Sort empty template (top level)", async () => {
+        await testSortTemplate(topLevelCommand, emptyTemplate, emptyTemplate);
+    });
 
-	test("Sort empty template (parameters)", async () => {
-		await testSortTemplate(parameterCommand, emptyTemplate, emptyTemplate);
-	});
+    test("Sort empty template (parameters)", async () => {
+        await testSortTemplate(parameterCommand, emptyTemplate, emptyTemplate);
+    });
 
-	test("Sort empty template (variables)", async () => {
-		await testSortTemplate(variablesCommand, emptyTemplate, emptyTemplate);
-	});
+    test("Sort empty template (variables)", async () => {
+        await testSortTemplate(variablesCommand, emptyTemplate, emptyTemplate);
+    });
 
-	test("Sort empty template (resources)", async () => {
-		await testSortTemplate(resourcesCommand, emptyTemplate, emptyTemplate);
-	});
+    test("Sort empty template (resources)", async () => {
+        await testSortTemplate(resourcesCommand, emptyTemplate, emptyTemplate);
+    });
 
-	test("Sort empty template (parameters)", async () => {
-		await testSortTemplate(parameterCommand, emptyTemplate, emptyTemplate);
-	});
+    test("Sort empty template (parameters)", async () => {
+        await testSortTemplate(parameterCommand, emptyTemplate, emptyTemplate);
+    });
 
-	test("Sort empty template (outputs)", async () => {
-		await testSortTemplate(outputsCommand, emptyTemplate, emptyTemplate);
-	});
+    test("Sort empty template (outputs)", async () => {
+        await testSortTemplate(outputsCommand, emptyTemplate, emptyTemplate);
+    });
 
-	test("Sort empty template (functions)", async () => {
-		await testSortTemplate(functionsCommand, emptyTemplate, emptyTemplate);
-	});
+    test("Sort empty template (functions)", async () => {
+        await testSortTemplate(functionsCommand, emptyTemplate, emptyTemplate);
+    });
 });
