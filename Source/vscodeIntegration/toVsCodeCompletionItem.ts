@@ -3,147 +3,125 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
-import { IActionContext } from "vscode-azureextensionui";
-import { IJsonDocument } from "../documents/templates/IJsonDocument";
-import { assert } from "../fixed_assert";
-import { assertNever } from "../util/assertNever";
-import * as Completion from "./Completion";
-import { getVSCodeRangeFromSpan } from "./vscodePosition";
+import * as vscode from 'vscode';
+import { IActionContext } from 'vscode-azureextensionui';
+import { IJsonDocument } from '../documents/templates/IJsonDocument';
+import { assert } from '../fixed_assert';
+import { assertNever } from '../util/assertNever';
+import * as Completion from './Completion';
+import { getVSCodeRangeFromSpan } from './vscodePosition';
 
-export function toVsCodeCompletionItem(
-	jsonDocument: IJsonDocument,
-	item: Completion.Item,
-	cursorPosition: vscode.Position
-): vscode.CompletionItem {
-	const range: vscode.Range = getVSCodeRangeFromSpan(jsonDocument, item.span);
+export function toVsCodeCompletionItem(jsonDocument: IJsonDocument, item: Completion.Item, cursorPosition: vscode.Position): vscode.CompletionItem {
+    const range: vscode.Range = getVSCodeRangeFromSpan(jsonDocument, item.span);
 
-	const vscodeItem = new vscode.CompletionItem(item.label);
-	vscodeItem.range = range;
-	const insertText = item.insertText;
-	vscodeItem.insertText = new vscode.SnippetString(insertText);
-	vscodeItem.detail = item.detail;
-	vscodeItem.documentation = item.documention;
-	vscodeItem.commitCharacters = item.commitCharacters;
-	vscodeItem.preselect = item.preselect;
-	vscodeItem.filterText = item.filterText;
-	vscodeItem.kind = toVsCodeCompletionItemKind(item.kind);
+    const vscodeItem = new vscode.CompletionItem(item.label);
+    vscodeItem.range = range;
+    const insertText = item.insertText;
+    vscodeItem.insertText = new vscode.SnippetString(insertText);
+    vscodeItem.detail = item.detail;
+    vscodeItem.documentation = item.documention;
+    vscodeItem.commitCharacters = item.commitCharacters;
+    vscodeItem.preselect = item.preselect;
+    vscodeItem.filterText = item.filterText;
+    vscodeItem.kind = toVsCodeCompletionItemKind(item.kind);
 
-	let sortPriorityPrefix: string;
-	switch (item.priority) {
-		case Completion.CompletionPriority.low:
-			sortPriorityPrefix = `${String.fromCharCode(255)}-`;
-			break;
-		case Completion.CompletionPriority.high:
-			sortPriorityPrefix = `${String.fromCharCode(1)}-`;
-			break;
-		case Completion.CompletionPriority.normal:
-			sortPriorityPrefix = "";
-			break;
-		default:
-			assertNever(item.priority);
-	}
+    let sortPriorityPrefix: string;
+    switch (item.priority) {
+        case Completion.CompletionPriority.low:
+            sortPriorityPrefix = `${String.fromCharCode(255)}-`;
+            break;
+        case Completion.CompletionPriority.high:
+            sortPriorityPrefix = `${String.fromCharCode(1)}-`;
+            break;
+        case Completion.CompletionPriority.normal:
+            sortPriorityPrefix = '';
+            break;
+        default:
+            assertNever(item.priority);
+    }
 
-	// Add priority string to start of sortText, use label if no sortText
-	vscodeItem.sortText = `${sortPriorityPrefix}${item.sortText ?? item.label}`;
+    // Add priority string to start of sortText, use label if no sortText
+    vscodeItem.sortText = `${sortPriorityPrefix}${item.sortText ?? item.label}`;
 
-	if (item.additionalEdits) {
-		vscodeItem.additionalTextEdits = item.additionalEdits.map(
-			(e) =>
-				new vscode.TextEdit(
-					getVSCodeRangeFromSpan(jsonDocument, e.span),
-					e.insertText
-				)
-		);
-	}
+    if (item.additionalEdits) {
+        vscodeItem.additionalTextEdits = item.additionalEdits.map(
+            e => new vscode.TextEdit(
+                getVSCodeRangeFromSpan(jsonDocument, e.span),
+                e.insertText
+            )
+        );
+    }
 
-	// Add a command to let us know when activated so we can send telemetry
-	const telemetryArgs: { [key: string]: string | undefined } = {
-		snippet: item.snippetName,
-		kind: item.kind,
-		function:
-			item.kind === Completion.CompletionKind.tleFunction
-				? item.label
-				: undefined,
-	};
-	for (let key of Object.getOwnPropertyNames(
-		item.telemetryProperties ?? {}
-	)) {
-		telemetryArgs[key] = item.telemetryProperties?.[key];
-	}
-	vscodeItem.command = {
-		command: "azurerm-vscode-tools.completion-activated",
-		title: "completion activated", // won't ever be shown to the user
-		arguments: [telemetryArgs],
-	};
+    // Add a command to let us know when activated so we can send telemetry
+    const telemetryArgs: { [key: string]: string | undefined } = {
+        snippet: item.snippetName,
+        kind: item.kind,
+        function: item.kind === Completion.CompletionKind.tleFunction ? item.label : undefined
+    };
+    for (let key of Object.getOwnPropertyNames(item.telemetryProperties ?? {})) {
+        telemetryArgs[key] = item.telemetryProperties?.[key];
+    }
+    vscodeItem.command = {
+        command: "azurerm-vscode-tools.completion-activated",
+        title: "completion activated", // won't ever be shown to the user
+        arguments: [
+            telemetryArgs
+        ]
+    };
 
-	// vscode requires all spans to include the original position and be on the same line, otherwise
-	//   it ignores it.  Verify that here.
-	assert(vscodeItem.range, "Completion item doesn't have a range");
-	// tslint:disable-next-line: no-non-null-assertion
-	assert(
-		vscodeItem.range!.contains(cursorPosition),
-		"Completion item range doesn't include cursor"
-	);
-	// tslint:disable-next-line: no-non-null-assertion
-	assert(
-		vscodeItem.range!.isSingleLine,
-		"Completion item range must be a single line"
-	);
+    // vscode requires all spans to include the original position and be on the same line, otherwise
+    //   it ignores it.  Verify that here.
+    assert(vscodeItem.range, "Completion item doesn't have a range");
+    // tslint:disable-next-line: no-non-null-assertion
+    assert(vscodeItem.range!.contains(cursorPosition), "Completion item range doesn't include cursor");
+    // tslint:disable-next-line: no-non-null-assertion
+    assert(vscodeItem.range!.isSingleLine, "Completion item range must be a single line");
 
-	return vscodeItem;
+    return vscodeItem;
 }
 
-export function toVsCodeCompletionItemKind(
-	kind: Completion.CompletionKind
-): vscode.CompletionItemKind {
-	switch (kind) {
-		case Completion.CompletionKind.tleFunction:
-		case Completion.CompletionKind.tleUserFunction:
-			return vscode.CompletionItemKind.Function;
+export function toVsCodeCompletionItemKind(kind: Completion.CompletionKind): vscode.CompletionItemKind {
+    switch (kind) {
+        case Completion.CompletionKind.tleFunction:
+        case Completion.CompletionKind.tleUserFunction:
+            return vscode.CompletionItemKind.Function;
 
-		case Completion.CompletionKind.tleParameter:
-		case Completion.CompletionKind.tleVariable:
-			return vscode.CompletionItemKind.Variable;
+        case Completion.CompletionKind.tleParameter:
+        case Completion.CompletionKind.tleVariable:
+            return vscode.CompletionItemKind.Variable;
 
-		case Completion.CompletionKind.tleProperty:
-			return vscode.CompletionItemKind.Field;
+        case Completion.CompletionKind.tleProperty:
+            return vscode.CompletionItemKind.Field;
 
-		case Completion.CompletionKind.tleNamespace:
-			return vscode.CompletionItemKind.Unit;
+        case Completion.CompletionKind.tleNamespace:
+            return vscode.CompletionItemKind.Unit;
 
-		case Completion.CompletionKind.PropertyValueForExistingProperty:
-			return vscode.CompletionItemKind.Property;
+        case Completion.CompletionKind.PropertyValueForExistingProperty:
+            return vscode.CompletionItemKind.Property;
 
-		case Completion.CompletionKind.PropertyValueForNewProperty:
-			return vscode.CompletionItemKind.Snippet;
+        case Completion.CompletionKind.PropertyValueForNewProperty:
+            return vscode.CompletionItemKind.Snippet;
 
-		case Completion.CompletionKind.tleResourceIdResTypeParameter:
-		case Completion.CompletionKind.tleResourceIdResNameParameter:
-		case Completion.CompletionKind.dependsOnResourceId:
-			return vscode.CompletionItemKind.Reference;
+        case Completion.CompletionKind.tleResourceIdResTypeParameter:
+        case Completion.CompletionKind.tleResourceIdResNameParameter:
+        case Completion.CompletionKind.dependsOnResourceId:
+            return vscode.CompletionItemKind.Reference;
 
-		case Completion.CompletionKind.dependsOnResourceCopyLoop:
-			return vscode.CompletionItemKind.Enum;
+        case Completion.CompletionKind.dependsOnResourceCopyLoop:
+            return vscode.CompletionItemKind.Enum;
 
-		case Completion.CompletionKind.Snippet:
-			return vscode.CompletionItemKind.Snippet;
+        case Completion.CompletionKind.Snippet:
+            return vscode.CompletionItemKind.Snippet;
 
-		default:
-			assertNever(kind);
-	}
+        default:
+            assertNever(kind);
+    }
 }
 
 /**
  * This is called after a snippet or other completion item is executed by vscode.  Gives us a chance to report it in
  * telemetry and do any clean-up
  */
-export function onCompletionActivated(
-	actionContext: IActionContext,
-	telemetryProperties: { [key: string]: string }
-): void {
-	Object.assign(
-		actionContext.telemetry.properties,
-		telemetryProperties ?? {}
-	);
+export function onCompletionActivated(actionContext: IActionContext, telemetryProperties: { [key: string]: string }): void {
+    Object.assign(actionContext.telemetry.properties, telemetryProperties ?? {});
 }

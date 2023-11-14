@@ -4,10 +4,10 @@
 // ---------------------------------------------------------------------------------------------
 
 export enum LinkedFileLoadState {
-	NotLoaded = 0,
-	Loading = 1,
-	SuccessfullyLoaded = 2,
-	LoadFailed = 3,
-	TooDeep = 4,
-	NotSupported = 5,
+    NotLoaded = 0,
+    Loading = 1,
+    SuccessfullyLoaded = 2,
+    LoadFailed = 3,
+    TooDeep = 4,
+    NotSupported = 5,
 }

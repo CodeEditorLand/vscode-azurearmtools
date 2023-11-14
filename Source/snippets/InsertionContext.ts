@@ -11,28 +11,28 @@ import { Context } from "./KnownContexts";
  * the span of insertion, the existing JSON structure, etc.)
  */
 export interface InsertionContext {
-	/**
-	 * The type of snippet that can be supported here
-	 */
-	context: Context | undefined;
+    /**
+     * The type of snippet that can be supported here
+     */
+    context: Context | undefined;
 
-	/**
-	 * If immediately inside curly braces (representing an object), gives the span between the curly braces, inclusive
-	 */
-	curlyBraces?: Span;
+    /**
+     * If immediately inside curly braces (representing an object), gives the span between the curly braces, inclusive
+     */
+    curlyBraces?: Span;
 
-	/**
-	 * Is it inside a double-quoted string?
-	 */
-	insideJsonString?: boolean;
+    /**
+     * Is it inside a double-quoted string?
+     */
+    insideJsonString?: boolean;
 
-	/**
-	 * True if the caller should trigger a completion dropdown
-	 */
-	triggerSuggest?: boolean;
+    /**
+     * True if the caller should trigger a completion dropdown
+     */
+    triggerSuggest?: boolean;
 
-	/**
-	 * A list of all the JSON parents of the insertion point, going up the tree
-	 */
-	parents?: (Json.ObjectValue | Json.ArrayValue | Json.Property)[]; // CONSIDER: does this belong here?  It's only information about adding the snippet, not determining if it's supported
+    /**
+     * A list of all the JSON parents of the insertion point, going up the tree
+     */
+    parents?: (Json.ObjectValue | Json.ArrayValue | Json.Property)[]; // CONSIDER: does this belong here?  It's only information about adding the snippet, not determining if it's supported
 }

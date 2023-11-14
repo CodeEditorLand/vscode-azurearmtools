@@ -8,11 +8,6 @@ import { DeploymentDocument } from "./documents/DeploymentDocument";
 import { DeploymentTemplateDoc } from "./documents/templates/DeploymentTemplateDoc";
 
 export interface IProvideOpenedDocuments {
-	getOpenedDeploymentTemplate(
-		documentOrUri: Uri
-	): DeploymentTemplateDoc | undefined;
-	setOpenedDeploymentDocument(
-		documentOrUri: Uri,
-		document: DeploymentDocument
-	): void;
+    getOpenedDeploymentTemplate(documentOrUri: Uri): DeploymentTemplateDoc | undefined;
+    setOpenedDeploymentDocument(documentOrUri: Uri, document: DeploymentDocument): void;
 }
