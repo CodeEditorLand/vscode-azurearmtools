@@ -10,8 +10,7 @@
 			"name": "${1:trafficManagerProfile1}",
 			"type": "Microsoft.Network/trafficManagerProfiles",
 			"apiVersion": "2022-04-01",
-			"tags": {
-			},
+			"tags": {},
 			"location": "global",
 			"properties": {
 				"profileStatus": "Enabled",

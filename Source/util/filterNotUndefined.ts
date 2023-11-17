@@ -4,5 +4,5 @@
 // ---------------------------------------------------------------------------------------------
 
 export function filterNotUndefined<T>(array: (T | undefined)[]): T[] {
-    return <T[]>array.filter(item => !!item);
+	return <T[]>array.filter((item) => !!item);
 }

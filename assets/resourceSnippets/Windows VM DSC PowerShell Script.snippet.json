@@ -27,8 +27,7 @@
 					"sasToken": "${6:artifactsLocationSasToken}",
 					"configurationFunction": "${7:Configure}"
 				},
-				"protectedSettings": {
-				}
+				"protectedSettings": {}
 			}
 		}
 	]

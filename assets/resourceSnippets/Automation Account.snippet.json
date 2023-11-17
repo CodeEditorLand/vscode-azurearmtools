@@ -11,8 +11,7 @@
 			"type": "Microsoft.Automation/automationAccounts",
 			"apiVersion": "2022-08-08",
 			"location": "[resourceGroup().location]",
-			"tags": {
-			},
+			"tags": {},
 			"properties": {
 				"sku": {
 					"name": /*${2|Free,Basic|}*/ "Free"

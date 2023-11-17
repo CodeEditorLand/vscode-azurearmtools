@@ -7,7 +7,7 @@ import { allSchemas } from "./schemas";
 import { DeploymentScopeKind } from "./scopes/DeploymentScopeKind";
 
 export interface ISchemaInfo {
-    normalizedSchema: allSchemas;
-    deploymentScopeKind: DeploymentScopeKind;
-    isDeprecated: boolean;
+	normalizedSchema: allSchemas;
+	deploymentScopeKind: DeploymentScopeKind;
+	isDeprecated: boolean;
 }
