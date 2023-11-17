@@ -1,3 +1,0 @@
-TEST STRING: "[]"
-"[                  {{scope-expression-start}}
-]"                  {{scope-expression-end}}
