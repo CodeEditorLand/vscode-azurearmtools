@@ -2,8 +2,8 @@
   "name": "azurerm-vscode-tools",
   "displayName": "Azure Resource Manager (ARM) Tools",
   "description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
-  "version": "0.15.12",
-  "publisher": "msazurermtools",
+  "version": "0.0.1",
+  "publisher": "playform",
   "config": {
     "ARM_LANGUAGE_SERVER_NUGET_VERSION": ""
   },
@@ -13,17 +13,18 @@
     }
   },
   "repository": {
-    "url": "https://github.com/Microsoft/vscode-azurearmtools.git"
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git",
+    "type": "git"
   },
   "bugs": {
-    "url": "https://github.com/Microsoft/vscode-azurearmtools/issues"
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
   },
   "galleryBanner": {
     "color": "E7F1FA",
     "theme": "light"
   },
-  "homepage": "https://github.com/Microsoft/vscode-azurearmtools/blob/main/README.md",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "license": "MIT",
   "icon": "AzureRMTools128x128.png",
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
   "preview": true,
@@ -610,7 +611,8 @@
     "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
     "build-grammars": "gulp build-grammars",
     "watch-grammars": "gulp watch-grammars",
-    "verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle"
+    "verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle",
+    "prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
   },
   "devDependencies": {
     "@types/decompress": "4.2.3",
@@ -641,7 +643,8 @@
     "vscode-azureextensiondev": "0.5.0",
     "vscode-test": "1.5.2",
     "webpack": "4.46.0",
-    "webpack-cli": "3.3.12"
+    "webpack-cli": "3.3.12",
+    "typescript-esbuild": "0.3.1"
   },
   "dependencies": {
     "fs-extra": "10.1.0",
@@ -654,5 +657,15 @@
   },
   "extensionDependencies": [
     "ms-dotnettools.vscode-dotnet-runtime"
-  ]
+  ],
+  "type": "module",
+  "private": "false",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  }
 }
