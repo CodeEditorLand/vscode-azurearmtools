@@ -13,9 +13,7 @@
 			"location": "[resourceGroup().location]",
 			"properties": {
 				"localNetworkAddressSpace": {
-					"addressPrefixes": [
-						"${2:networkprefix}"
-					]
+					"addressPrefixes": ["${2:networkprefix}"]
 				},
 				"gatewayIpAddress": "${3:gatewayIP}"
 			}

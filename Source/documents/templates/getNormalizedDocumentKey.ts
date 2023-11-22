@@ -8,7 +8,7 @@ import { removeLinkedTemplateScheme } from "../../util/linkedTemplateScheme";
 import { normalizeUri } from "../../util/normalizedPaths";
 
 export function getNormalizedDocumentKey(documentUri: vscode.Uri): string {
-    // We want a normalized file path to use as key, but also need to differentiate documents with different URI schemes
-    const uri = removeLinkedTemplateScheme(documentUri);
-    return normalizeUri(uri);
+	// We want a normalized file path to use as key, but also need to differentiate documents with different URI schemes
+	const uri = removeLinkedTemplateScheme(documentUri);
+	return normalizeUri(uri);
 }

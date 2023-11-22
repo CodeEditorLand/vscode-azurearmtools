@@ -8,19 +8,19 @@
  */
 
 export interface Iterator<T> {
-    /**
-     * Get whether or not this iterator has started iterating.
-     */
-    hasStarted(): boolean;
+	/**
+	 * Get whether or not this iterator has started iterating.
+	 */
+	hasStarted(): boolean;
 
-    /**
-     * Get the iterator's current value, or undefined if the iterator doesn't have a current value.
-     */
-    current(): T | undefined;
+	/**
+	 * Get the iterator's current value, or undefined if the iterator doesn't have a current value.
+	 */
+	current(): T | undefined;
 
-    /**
-     * Move this iterator to the next value in its sequnce. Return whether or not the iterator has a
-     * current value after the move.
-     */
-    moveNext(): boolean;
+	/**
+	 * Move this iterator to the next value in its sequnce. Return whether or not the iterator has a
+	 * current value after the move.
+	 */
+	moveNext(): boolean;
 }

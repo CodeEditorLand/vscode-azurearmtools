@@ -25,24 +25,31 @@ import { ParameterValueDefinition } from "./ParameterValueDefinition";
  *        }
  *    }
  */
-export class ParameterValuesSourceFromJsonObject implements IParameterValuesSource {
-    public constructor(
-        public readonly document: IJsonDocument,
-        public readonly parameterValuesProperty: Json.Property | undefined,
-        public readonly deploymentRootObject: Json.ObjectValue | undefined
-    ) {
-    }
-    public getParameterValue(parameterName: string): ParameterValueDefinition | undefined {
-        const parameterProperty = this.parameterValuesProperty?.value?.asObjectValue?.getProperty(parameterName);
-        return parameterProperty
-            ? new ParameterValueDefinition(parameterProperty)
-            : undefined;
-    }
+export class ParameterValuesSourceFromJsonObject
+	implements IParameterValuesSource
+{
+	public constructor(
+		public readonly document: IJsonDocument,
+		public readonly parameterValuesProperty: Json.Property | undefined,
+		public readonly deploymentRootObject: Json.ObjectValue | undefined
+	) {}
+	public getParameterValue(
+		parameterName: string
+	): ParameterValueDefinition | undefined {
+		const parameterProperty =
+			this.parameterValuesProperty?.value?.asObjectValue?.getProperty(
+				parameterName
+			);
+		return parameterProperty
+			? new ParameterValueDefinition(parameterProperty)
+			: undefined;
+	}
 
-    public get parameterValueDefinitions(): ParameterValueDefinition[] {
-        const parameterProperties = this.parameterValuesProperty?.value?.asObjectValue?.properties;
-        return parameterProperties
-            ? parameterProperties.map(p => new ParameterValueDefinition(p))
-            : [];
-    }
+	public get parameterValueDefinitions(): ParameterValueDefinition[] {
+		const parameterProperties =
+			this.parameterValuesProperty?.value?.asObjectValue?.properties;
+		return parameterProperties
+			? parameterProperties.map((p) => new ParameterValueDefinition(p))
+			: [];
+	}
 }

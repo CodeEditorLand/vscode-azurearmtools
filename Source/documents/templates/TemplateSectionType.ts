@@ -6,10 +6,10 @@
  * The different sections of an ARM template
  */
 export enum TemplateSectionType {
-    Resources,
-    Outputs,
-    Parameters,
-    Variables,
-    Functions,
-    TopLevel
+	Resources,
+	Outputs,
+	Parameters,
+	Variables,
+	Functions,
+	TopLevel,
 }

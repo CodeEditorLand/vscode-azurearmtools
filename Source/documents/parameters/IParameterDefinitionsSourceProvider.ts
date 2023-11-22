@@ -9,5 +9,5 @@ import { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
  */
 
 export interface IParameterDefinitionsSourceProvider {
-    parameterDefinitionsSource: IParameterDefinitionsSource | undefined;
+	parameterDefinitionsSource: IParameterDefinitionsSource | undefined;
 }

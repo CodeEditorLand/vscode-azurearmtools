@@ -16,16 +16,19 @@ import { Context } from "./KnownContexts";
  * 2) We can receive telemetry about snippet usage
  */
 export interface ISnippetManager {
-    /**
-     * Retrieve all snippets that support the given context
-     */
-    getSnippets(context: Context): Promise<ISnippet[]>;
-    /**
-     * Retrieve all snippets regardless of context
-     */
-    getAllSnippets(): Promise<ISnippet[]>;
-    /**
-     * Retrieve completion items for all snippets
-     */
-    getSnippetsAsCompletionItems(insertionContext: InsertionContext, span: Span): Promise<Completion.Item[]>;
+	/**
+	 * Retrieve all snippets that support the given context
+	 */
+	getSnippets(context: Context): Promise<ISnippet[]>;
+	/**
+	 * Retrieve all snippets regardless of context
+	 */
+	getAllSnippets(): Promise<ISnippet[]>;
+	/**
+	 * Retrieve completion items for all snippets
+	 */
+	getSnippetsAsCompletionItems(
+		insertionContext: InsertionContext,
+		span: Span
+	): Promise<Completion.Item[]>;
 }
