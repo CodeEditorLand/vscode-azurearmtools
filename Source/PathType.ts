@@ -4,7 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 export enum PathType {
-    templateLink = 0,
-    templateRelativeLink = 1,
-    parametersLink = 2
+	templateLink = 0,
+	templateRelativeLink = 1,
+	parametersLink = 2,
 }
