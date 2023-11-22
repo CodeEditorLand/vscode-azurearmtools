@@ -11,7 +11,8 @@
 			"type": "Microsoft.Network/publicIPPrefixes",
 			"apiVersion": "2023-04-01",
 			"location": "[resourceGroup().location]",
-			"tags": {},
+			"tags": {
+			},
 			"sku": {
 				"name": "Standard"
 			},
