@@ -4,11 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 export namespace envUtils {
-	export function isEnvironmentVariableSet(
-		val: string | boolean | number | undefined | null
-	): boolean {
-		return !/^(false|0)?$/i.test(
-			val === undefined || val === null ? "" : String(val)
-		);
-	}
+    export function isEnvironmentVariableSet(val: string | boolean | number | undefined | null): boolean {
+        return !/^(false|0)?$/i.test(val === undefined || val === null ? '' : String(val));
+    }
 }

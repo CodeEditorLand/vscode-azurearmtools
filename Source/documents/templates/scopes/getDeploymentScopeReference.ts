@@ -7,14 +7,12 @@ import * as Json from "../../../language/json/JSON";
 import { findSchemaInfo } from "../schemas";
 import { IDeploymentSchemaReference } from "./IDeploymentSchemaReference";
 
-export function getDeploymentScopeReference(
-	schemaStringValue: Json.StringValue | undefined
-): IDeploymentSchemaReference {
-	const schemaUri = schemaStringValue?.unquotedValue;
-	const matchingInfo = schemaUri ? findSchemaInfo(schemaUri) : undefined;
-	return {
-		//schemaUri: schemaUri ?? '',
-		schemaStringValue,
-		matchingInfo,
-	};
+export function getDeploymentScopeReference(schemaStringValue: Json.StringValue | undefined): IDeploymentSchemaReference {
+    const schemaUri = schemaStringValue?.unquotedValue;
+    const matchingInfo = schemaUri ? findSchemaInfo(schemaUri) : undefined;
+    return {
+        //schemaUri: schemaUri ?? '',
+        schemaStringValue,
+        matchingInfo
+    };
 }

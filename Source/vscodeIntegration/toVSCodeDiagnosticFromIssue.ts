@@ -9,39 +9,27 @@ import { DeploymentDocument } from "../documents/DeploymentDocument";
 import { Issue } from "../language/Issue";
 import { getVSCodeRangeFromSpan } from "./vscodePosition";
 
-export function toVSCodeDiagnosticFromIssue(
-	deploymentDocument: DeploymentDocument,
-	issue: Issue,
-	severity: vscode.DiagnosticSeverity
-): vscode.Diagnostic {
-	const range: vscode.Range = getVSCodeRangeFromSpan(
-		deploymentDocument,
-		issue.span
-	);
-	const message: string = issue.message;
-	let diagnostic = new vscode.Diagnostic(range, message, severity);
-	diagnostic.source = expressionsDiagnosticsSource;
-	diagnostic.code = "";
+export function toVSCodeDiagnosticFromIssue(deploymentDocument: DeploymentDocument, issue: Issue, severity: vscode.DiagnosticSeverity): vscode.Diagnostic {
+    const range: vscode.Range = getVSCodeRangeFromSpan(deploymentDocument, issue.span);
+    const message: string = issue.message;
+    let diagnostic = new vscode.Diagnostic(range, message, severity);
+    diagnostic.source = expressionsDiagnosticsSource;
+    diagnostic.code = "";
 
-	if (issue.isUnnecessaryCode) {
-		diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
-	}
+    if (issue.isUnnecessaryCode) {
+        diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
+    }
 
-	if (issue.relatedInformation.length > 0) {
-		diagnostic.relatedInformation = issue.relatedInformation.map(
-			(ri) =>
-				new vscode.DiagnosticRelatedInformation(
-					new vscode.Location(
-						ri.location.uri,
-						getVSCodeRangeFromSpan(
-							deploymentDocument,
-							ri.location.span
-						)
-					),
-					ri.message
-				)
-		);
-	}
+    if (issue.relatedInformation.length > 0) {
+        diagnostic.relatedInformation = issue.relatedInformation.map(ri =>
+            new vscode.DiagnosticRelatedInformation(
+                new vscode.Location(
+                    ri.location.uri,
+                    getVSCodeRangeFromSpan(deploymentDocument, ri.location.span)
+                ),
+                ri.message
+            ));
+    }
 
-	return diagnostic;
+    return diagnostic;
 }

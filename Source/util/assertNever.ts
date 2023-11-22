@@ -20,5 +20,5 @@
  *     Here, assertNever checks that s is of type never — the type that’s left after all other cases have been removed. If you forget a case, then s will have a real type and you will get a type error. This method requires you to define an extra function, but it’s much more obvious when you forget it.
  */
 export function assertNever(x: never): never {
-	throw new Error(`Unexpected object: ${x}`);
+    throw new Error(`Unexpected object: ${x}`);
 }
