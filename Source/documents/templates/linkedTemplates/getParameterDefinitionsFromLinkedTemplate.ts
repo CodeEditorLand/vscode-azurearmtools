@@ -10,17 +10,19 @@ import { DeploymentTemplateDoc } from "../DeploymentTemplateDoc";
 import { ILinkedTemplateReference } from "./ILinkedTemplateReference";
 
 export function getParameterDefinitionsFromLinkedTemplate(
-    linkedTemplate: ILinkedTemplateReference,
-    provideOpenDocuments: IProvideOpenedDocuments
+	linkedTemplate: ILinkedTemplateReference,
+	provideOpenDocuments: IProvideOpenedDocuments
 ): IParameterDefinition[] {
-    let dt: DeploymentTemplateDoc | undefined;
-    try {
-        const uri = parseUri(linkedTemplate.fullUri);
-        dt = provideOpenDocuments.getOpenedDeploymentTemplate(uri);
-    } catch (error) {
-        // Ignore poorly-formed URIs
-    }
+	let dt: DeploymentTemplateDoc | undefined;
+	try {
+		const uri = parseUri(linkedTemplate.fullUri);
+		dt = provideOpenDocuments.getOpenedDeploymentTemplate(uri);
+	} catch (error) {
+		// Ignore poorly-formed URIs
+	}
 
-    return dt?.topLevelScope.parameterDefinitionsSource.parameterDefinitions.slice() // clone
-        ?? [];
+	return (
+		dt?.topLevelScope.parameterDefinitionsSource.parameterDefinitions.slice() ?? // clone
+		[]
+	);
 }

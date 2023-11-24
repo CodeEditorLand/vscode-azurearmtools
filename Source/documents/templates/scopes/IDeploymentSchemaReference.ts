@@ -7,6 +7,6 @@ import * as Json from "../../../language/json/JSON";
 import { ISchemaInfo } from "../ISchemaInfo";
 
 export interface IDeploymentSchemaReference {
-    schemaStringValue: Json.StringValue | undefined;
-    matchingInfo: ISchemaInfo | undefined;
+	schemaStringValue: Json.StringValue | undefined;
+	matchingInfo: ISchemaInfo | undefined;
 }
