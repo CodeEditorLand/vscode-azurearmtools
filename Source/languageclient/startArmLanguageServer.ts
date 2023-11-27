@@ -715,9 +715,9 @@ function onSchemaValidationNotication(
 		ext.languageServerState === LanguageServerState.Running
 			? LanguageServerState.LoadingSchemas
 			: !isLoadingSchemas &&
-			  ext.languageServerState === LanguageServerState.LoadingSchemas
-			? LanguageServerState.Running
-			: ext.languageServerState;
+			    ext.languageServerState === LanguageServerState.LoadingSchemas
+			  ? LanguageServerState.Running
+			  : ext.languageServerState;
 	ext.languageServerState = newState;
 
 	if (newState === LanguageServerState.LoadingSchemas) {
