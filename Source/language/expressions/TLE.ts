@@ -766,11 +766,12 @@ export class FunctionCallValue extends ParentValue {
 						prevCoalescedExpression.match(/[\]})]\.[a-zA-Z0-9]/);
 					if (!previousContainsPropertyIndex) {
 						// Merge previous and current expressions into a single-quoted string
-						coalescedExpressions[
-							coalescedExpressions.length - 1
-						] = `'${Utilities.removeSingleQuotes(
-							prevCoalescedExpression
-						)}${Utilities.removeSingleQuotes(currentExpression)}'`;
+						coalescedExpressions[coalescedExpressions.length - 1] =
+							`'${Utilities.removeSingleQuotes(
+								prevCoalescedExpression
+							)}${Utilities.removeSingleQuotes(
+								currentExpression
+							)}'`;
 						continue;
 					}
 				}

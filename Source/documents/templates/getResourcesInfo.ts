@@ -291,11 +291,10 @@ function concatExpressionsWithSeparator(
 				lastCoalescedExpression &&
 				isSingleQuoted(lastCoalescedExpression)
 			) {
-				coalescedExpressions[
-					coalescedExpressions.length - 1
-				] = `'${removeSingleQuotes(
-					lastCoalescedExpression
-				)}${removeSingleQuotes(expression)}'`;
+				coalescedExpressions[coalescedExpressions.length - 1] =
+					`'${removeSingleQuotes(
+						lastCoalescedExpression
+					)}${removeSingleQuotes(expression)}'`;
 			} else {
 				coalescedExpressions.push(expression);
 			}

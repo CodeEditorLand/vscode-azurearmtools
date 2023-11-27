@@ -77,8 +77,8 @@ export class SelectParameterFileCodeLens extends ResolvableCodeLens {
 				?.allParametersHaveDefaults
 				? "Select or create a parameter file..."
 				: this._options?.isForLinkedOrNestedTemplate
-				? `$(warning) Full template validation off. Add parameter file or top-level parameter defaults to enable.`
-				: "Select or create a parameter file to enable full validation...";
+				  ? `$(warning) Full template validation off. Add parameter file or top-level parameter defaults to enable.`
+				  : "Select or create a parameter file to enable full validation...";
 		}
 
 		this.command = {

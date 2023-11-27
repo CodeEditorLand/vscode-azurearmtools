@@ -372,8 +372,8 @@ function createQuickPickItem(
 	let description = isCurrent
 		? currentMessage
 		: paramFile.isCloseNameMatch
-		? similarFilenameMessage
-		: undefined;
+		  ? similarFilenameMessage
+		  : undefined;
 	if (paramFile.fileNotFound) {
 		description += ` $(error) ${fileNotFoundMessage}`;
 	}
