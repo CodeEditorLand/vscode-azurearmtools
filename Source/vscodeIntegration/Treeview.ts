@@ -355,7 +355,7 @@ export class JsonOutlineProvider
 							? this.tree.getValueAtCharacterIndex(
 									elementInfo.current.value.start,
 									ContainsBehavior.strict
-							  )
+								)
 							: undefined;
 
 					// Value is an object and is collapsible

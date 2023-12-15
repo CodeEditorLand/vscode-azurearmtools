@@ -2007,7 +2007,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						this._paramsStatusBarItem.color = isWarning
 							? new vscode.ThemeColor(
 									"problemsWarningIcon.foreground"
-							  )
+								)
 							: undefined;
 					}
 				} finally {
