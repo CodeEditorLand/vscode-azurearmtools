@@ -14,6 +14,6 @@ export function showInsertionContext(pc: PositionContext): void {
 	ext.outputChannel.appendLine(
 		`Insertion context at ${pc.documentPosition.line + 1},${
 			pc.documentPosition.column + 1
-		}: ${context}`
+		}: ${context}`,
 	);
 }

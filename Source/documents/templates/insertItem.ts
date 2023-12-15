@@ -53,8 +53,8 @@ export function getItemType(): QuickPickItem<ItemType>[] {
 		new QuickPickItem<ItemType>(
 			"Secure string",
 			"securestring",
-			"A secure string"
-		)
+			"A secure string",
+		),
 	);
 	items.push(new QuickPickItem<ItemType>("Int", "int", "An integer"));
 	items.push(new QuickPickItem<ItemType>("Bool", "bool", "A boolean"));
@@ -63,8 +63,8 @@ export function getItemType(): QuickPickItem<ItemType>[] {
 		new QuickPickItem<ItemType>(
 			"Secure object",
 			"secureobject",
-			"A secure object"
-		)
+			"A secure object",
+		),
 	);
 	items.push(new QuickPickItem<ItemType>("Array", "array", "An array"));
 	return items;
@@ -73,7 +73,7 @@ export function getItemType(): QuickPickItem<ItemType>[] {
 async function getResourceSnippets(): Promise<IAzureQuickPickItem<ISnippet>[]> {
 	let items: IAzureQuickPickItem<ISnippet>[] = [];
 	const snippets = await ext.snippetManager.value.getSnippets(
-		KnownContexts.resources
+		KnownContexts.resources,
 	);
 	for (const snippet of snippets) {
 		items.push({
@@ -86,7 +86,7 @@ async function getResourceSnippets(): Promise<IAzureQuickPickItem<ISnippet>[]> {
 
 export function getQuickPickItem(
 	label: string,
-	snippet: ISnippet
+	snippet: ISnippet,
 ): IAzureQuickPickItem<ISnippet> {
 	return { label: label, data: snippet };
 }
@@ -97,36 +97,36 @@ export function getItemTypeQuickPicks(): QuickPickItem<TemplateSectionType>[] {
 		new QuickPickItem<TemplateSectionType>(
 			"Function",
 			TemplateSectionType.Functions,
-			"Insert a function"
-		)
+			"Insert a function",
+		),
 	);
 	items.push(
 		new QuickPickItem<TemplateSectionType>(
 			"Output",
 			TemplateSectionType.Outputs,
-			"Insert an output"
-		)
+			"Insert an output",
+		),
 	);
 	items.push(
 		new QuickPickItem<TemplateSectionType>(
 			"Parameter",
 			TemplateSectionType.Parameters,
-			"Insert a parameter"
-		)
+			"Insert a parameter",
+		),
 	);
 	items.push(
 		new QuickPickItem<TemplateSectionType>(
 			"Resource",
 			TemplateSectionType.Resources,
-			"Insert a resource"
-		)
+			"Insert a resource",
+		),
 	);
 	items.push(
 		new QuickPickItem<TemplateSectionType>(
 			"Variable",
 			TemplateSectionType.Variables,
-			"Insert a variable"
-		)
+			"Insert a variable",
+		),
 	);
 	return items;
 }
@@ -142,7 +142,7 @@ export class InsertItem {
 		template: DeploymentTemplateDoc | undefined,
 		sectionType: TemplateSectionType,
 		textEditor: vscode.TextEditor,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
 		if (!template) {
 			return;
@@ -152,50 +152,50 @@ export class InsertItem {
 				await this.insertFunction(
 					template.topLevelValue,
 					textEditor,
-					context
+					context,
 				);
 				vscode.window.showInformationMessage(
-					"Please type the output of the function."
+					"Please type the output of the function.",
 				);
 				break;
 			case TemplateSectionType.Outputs:
 				await this.insertOutput(
 					template.topLevelValue,
 					textEditor,
-					context
+					context,
 				);
 				vscode.window.showInformationMessage(
-					"Please type the value of the output."
+					"Please type the value of the output.",
 				);
 				break;
 			case TemplateSectionType.Parameters:
 				await this.insertParameter(
 					template.topLevelValue,
 					textEditor,
-					context
+					context,
 				);
 				vscode.window.showInformationMessage(
-					"Done inserting parameter."
+					"Done inserting parameter.",
 				);
 				break;
 			case TemplateSectionType.Resources:
 				await this.insertResource(
 					template.topLevelValue,
 					textEditor,
-					context
+					context,
 				);
 				vscode.window.showInformationMessage(
-					"Press TAB to move between the tab stops."
+					"Press TAB to move between the tab stops.",
 				);
 				break;
 			case TemplateSectionType.Variables:
 				await this.insertVariable(
 					template.topLevelValue,
 					textEditor,
-					context
+					context,
 				);
 				vscode.window.showInformationMessage(
-					"Please type the value of the variable."
+					"Please type the value of the variable.",
 				);
 				break;
 			case TemplateSectionType.TopLevel:
@@ -207,7 +207,7 @@ export class InsertItem {
 
 	private getTemplateObjectPart(
 		templateTopLevel: ObjectValue | undefined,
-		templatePart: string
+		templatePart: string,
 	): Json.ObjectValue | undefined {
 		return this.getTemplatePart(templateTopLevel, templatePart)
 			?.asObjectValue;
@@ -215,7 +215,7 @@ export class InsertItem {
 
 	private getTemplateArrayPart(
 		templateTopLevel: ObjectValue | undefined,
-		templatePart: string
+		templatePart: string,
 	): Json.ArrayValue | undefined {
 		return this.getTemplatePart(templateTopLevel, templatePart)
 			?.asArrayValue;
@@ -223,7 +223,7 @@ export class InsertItem {
 
 	private getTemplatePart(
 		templateTopLevel: ObjectValue | undefined,
-		templatePart: string
+		templatePart: string,
 	): Json.Value | undefined {
 		return templateTopLevel?.getPropertyValue(templatePart);
 	}
@@ -235,7 +235,7 @@ export class InsertItem {
 		name: string,
 		value: string,
 		description: string,
-		options?: { undoStopBefore: boolean; undoStopAfter: boolean }
+		options?: { undoStopBefore: boolean; undoStopAfter: boolean },
 	): Promise<string> {
 		let parameter: Parameter = {
 			type: "string",
@@ -263,7 +263,7 @@ export class InsertItem {
 	private async insertParameter(
 		templateTopLevel: ObjectValue | undefined,
 		textEditor: vscode.TextEditor,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
 		let name = await this.ui.showInputBox({ prompt: "Name of parameter?" });
 		const parameterType = await this.ui.showQuickPick(getItemType(), {
@@ -279,7 +279,7 @@ export class InsertItem {
 			parameter.defaultValue = this.getDefaultValue(
 				defaultValue,
 				parameterType.value,
-				context
+				context,
 			);
 		}
 		let description = await this.ui.showInputBox({
@@ -304,7 +304,7 @@ export class InsertItem {
 	private throwExpectedError(
 		message: string,
 		context: IActionContext,
-		suppressReportIssue: boolean = true
+		suppressReportIssue: boolean = true,
 	): void {
 		context.errorHandling.suppressReportIssue = suppressReportIssue;
 		throw new Error(message);
@@ -313,7 +313,7 @@ export class InsertItem {
 	private getDefaultValue(
 		defaultValue: string,
 		parameterType: ItemType,
-		context: IActionContext
+		context: IActionContext,
 	): string | number | boolean | unknown | {} | [] {
 		switch (parameterType) {
 			case "int":
@@ -321,7 +321,7 @@ export class InsertItem {
 				if (isNaN(intValue)) {
 					this.throwExpectedError(
 						"Please enter a valid integer value",
-						context
+						context,
 					);
 				}
 				return intValue;
@@ -331,7 +331,7 @@ export class InsertItem {
 				} catch (error) {
 					this.throwExpectedError(
 						"Please enter a valid array value",
-						context
+						context,
 					);
 				}
 				break;
@@ -342,7 +342,7 @@ export class InsertItem {
 				} catch (error) {
 					this.throwExpectedError(
 						"Please enter a valid object value",
-						context
+						context,
 					);
 				}
 				break;
@@ -355,7 +355,7 @@ export class InsertItem {
 					default:
 						this.throwExpectedError(
 							"Please enter 'true' or 'false'",
-							context
+							context,
 						);
 				}
 				break;
@@ -446,10 +446,10 @@ export class InsertItem {
 
 		// Figure out the indenting level based on existing text
 		let templatePartStartPos = textEditor.document.positionAt(
-			templatePart.span.startIndex
+			templatePart.span.startIndex,
 		);
 		let templatePartStartLine = textEditor.document.lineAt(
-			templatePartStartPos.line
+			templatePartStartPos.line,
 		);
 		// tslint:disable-next-line: no-non-null-assertion // Will always match at least empty string
 		let templatePartInitialWhitespace: string =
@@ -457,12 +457,12 @@ export class InsertItem {
 		let spacesPerTab = Math.max(1, Number(textEditor.options.tabSize) ?? 1);
 		let templatePartIndentColumn = templatePartInitialWhitespace.replace(
 			/\t/g,
-			" ".repeat(spacesPerTab)
+			" ".repeat(spacesPerTab),
 		).length;
 		spacesPerTab = Number.isSafeInteger(spacesPerTab) ? spacesPerTab : 1;
 		let templatePartIndentLevel = Math.max(
 			0,
-			Math.floor(templatePartIndentColumn / spacesPerTab)
+			Math.floor(templatePartIndentColumn / spacesPerTab),
 		);
 		let textIndentLevel = templatePartIndentLevel + 1;
 
@@ -480,7 +480,7 @@ export class InsertItem {
 				: `"${data}"`;
 		let indentedText = this.indent(
 			`\r\n"${name}": ${text}`,
-			textIndentLevel
+			textIndentLevel,
 		);
 		return await this.insertText(
 			textEditor,
@@ -488,14 +488,14 @@ export class InsertItem {
 			`${startText}${indentedText}${endText}`,
 			setCursor,
 			reveal,
-			options
+			options,
 		);
 	}
 
 	private async insertVariable(
 		templateTopLevel: ObjectValue | undefined,
 		textEditor: vscode.TextEditor,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
 		let name = await this.ui.showInputBox({ prompt: "Name of variable?" });
 		await this.insertInObject({
@@ -514,7 +514,7 @@ export class InsertItem {
 		context: IActionContext,
 		name: string,
 		value: string,
-		options?: { undoStopBefore: boolean; undoStopAfter: boolean }
+		options?: { undoStopBefore: boolean; undoStopAfter: boolean },
 	): Promise<void> {
 		await this.insertInObject({
 			templateTopLevel,
@@ -532,7 +532,7 @@ export class InsertItem {
 	private async insertOutput(
 		templateTopLevel: ObjectValue | undefined,
 		textEditor: vscode.TextEditor,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
 		let name = await this.ui.showInputBox({ prompt: "Name of output?" });
 		const outputType = await this.ui.showQuickPick(getItemType(), {
@@ -554,7 +554,7 @@ export class InsertItem {
 	private async insertFunctionAsTopLevel(
 		topLevel: Json.ObjectValue | undefined,
 		textEditor: vscode.TextEditor,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
 		if (!topLevel) {
 			context.errorHandling.suppressReportIssue = true;
@@ -571,7 +571,7 @@ export class InsertItem {
 
 	private async insertFunctionAsNamespace(
 		functions: Json.ArrayValue,
-		textEditor: vscode.TextEditor
+		textEditor: vscode.TextEditor,
 	): Promise<void> {
 		let namespace = await this.getFunctionNamespace();
 		await this.insertInArray(functions, textEditor, namespace);
@@ -579,7 +579,7 @@ export class InsertItem {
 
 	private async insertFunctionAsMembers(
 		namespace: Json.ObjectValue,
-		textEditor: vscode.TextEditor
+		textEditor: vscode.TextEditor,
 	): Promise<void> {
 		let functionName = await this.ui.showInputBox({
 			prompt: "Name of function?",
@@ -599,7 +599,7 @@ export class InsertItem {
 
 	private async insertFunctionAsFunction(
 		members: Json.ObjectValue,
-		textEditor: vscode.TextEditor
+		textEditor: vscode.TextEditor,
 	): Promise<void> {
 		let functionName = await this.ui.showInputBox({
 			prompt: "Name of function?",
@@ -616,18 +616,18 @@ export class InsertItem {
 	private async insertFunction(
 		templateTopLevel: ObjectValue | undefined,
 		textEditor: vscode.TextEditor,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
 		let functions = this.getTemplateArrayPart(
 			templateTopLevel,
-			templateKeys.functions
+			templateKeys.functions,
 		);
 		if (!functions) {
 			// tslint:disable-next-line:no-unsafe-any
 			await this.insertFunctionAsTopLevel(
 				templateTopLevel,
 				textEditor,
-				context
+				context,
 			);
 			return;
 		}
@@ -639,11 +639,11 @@ export class InsertItem {
 		if (!namespace) {
 			context.errorHandling.suppressReportIssue = true;
 			throw new Error(
-				`The first namespace in "functions" is not an object`
+				`The first namespace in "functions" is not an object`,
 			);
 		}
 		let members = namespace.getPropertyValue(
-			templateKeys.userFunctionMembers
+			templateKeys.userFunctionMembers,
 		);
 		if (!members) {
 			await this.insertFunctionAsMembers(namespace, textEditor);
@@ -653,7 +653,7 @@ export class InsertItem {
 		if (!membersObject) {
 			context.errorHandling.suppressReportIssue = true;
 			throw new Error(
-				`The first namespace in "functions" does not have members as an object!`
+				`The first namespace in "functions" does not have members as an object!`,
 			);
 		}
 		await this.insertFunctionAsFunction(membersObject, textEditor);
@@ -663,11 +663,11 @@ export class InsertItem {
 	private async insertResource(
 		templateTopLevel: ObjectValue | undefined,
 		textEditor: vscode.TextEditor,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
 		let resources = this.getTemplateArrayPart(
 			templateTopLevel,
-			templateKeys.resources
+			templateKeys.resources,
 		);
 		let index: number;
 		let prepend = "\r\n\t\t\r\n\t";
@@ -694,43 +694,43 @@ export class InsertItem {
 		}
 		const resource = await this.ui.showQuickPick(
 			await getResourceSnippets(),
-			{ placeHolder: "What resource do you want to insert?" }
+			{ placeHolder: "What resource do you want to insert?" },
 		);
 		await this.insertText(textEditor, index, prepend);
 		let newCursorPosition = this.getCursorPositionForInsertResource(
 			textEditor,
 			index,
-			prepend
+			prepend,
 		);
 		textEditor.selection = new vscode.Selection(
 			newCursorPosition,
-			newCursorPosition
+			newCursorPosition,
 		);
 		await commands.executeCommand("editor.action.insertSnippet", {
 			snippet: resource.data.insertText,
 		});
 		textEditor.revealRange(
 			new vscode.Range(newCursorPosition, newCursorPosition),
-			vscode.TextEditorRevealType.AtTop
+			vscode.TextEditorRevealType.AtTop,
 		);
 	}
 
 	private getCursorPositionForInsertResource(
 		textEditor: vscode.TextEditor,
 		index: number,
-		prepend: string
+		prepend: string,
 	): vscode.Position {
 		let prependRange = new vscode.Range(
 			textEditor.document.positionAt(index),
 			textEditor.document.positionAt(
-				index + this.formatText(prepend, textEditor).length
-			)
+				index + this.formatText(prepend, textEditor).length,
+			),
 		);
 		let prependFromDocument = textEditor.document.getText(prependRange);
 		let lookFor = this.formatText("\t\t", textEditor);
 		let cursorPos = prependFromDocument.indexOf(lookFor);
 		return textEditor.document.positionAt(
-			index + cursorPos + lookFor.length
+			index + cursorPos + lookFor.length,
 		);
 	}
 
@@ -765,7 +765,7 @@ export class InsertItem {
 			if (parameterName !== "") {
 				const parameterType = await this.ui.showQuickPick(
 					getItemType(),
-					{ placeHolder: `Type of parameter ${parameterName}?` }
+					{ placeHolder: `Type of parameter ${parameterName}?` },
 				);
 				parameters.push({
 					name: parameterName,
@@ -780,7 +780,7 @@ export class InsertItem {
 	private async insertInArray(
 		templatePart: Json.ArrayValue,
 		textEditor: vscode.TextEditor,
-		data: any
+		data: any,
 	): Promise<void> {
 		let index = templatePart.span.endIndex;
 		let text = JSON.stringify(data, null, "\t");
@@ -827,7 +827,7 @@ export class InsertItem {
 		text: string,
 		setCursor: boolean = true,
 		reveal: boolean = true,
-		options?: { undoStopBefore: boolean; undoStopAfter: boolean }
+		options?: { undoStopBefore: boolean; undoStopAfter: boolean },
 	): Promise<number> {
 		text = this.formatText(text, textEditor);
 		let pos = textEditor.document.positionAt(index);
@@ -836,15 +836,15 @@ export class InsertItem {
 			let endPos = textEditor.document.positionAt(index + text.length);
 			textEditor.revealRange(
 				new vscode.Range(pos, endPos),
-				vscode.TextEditorRevealType.Default
+				vscode.TextEditorRevealType.Default,
 			);
 		}
 		if (setCursor && text.lastIndexOf(insertCursorText) >= 0) {
 			let insertedText = textEditor.document.getText(
 				new vscode.Range(
 					pos,
-					textEditor.document.positionAt(index + text.length)
-				)
+					textEditor.document.positionAt(index + text.length),
+				),
 			);
 			let cursorPos = insertedText.lastIndexOf(insertCursorText);
 			let newIndex = index + cursorPos + insertCursorText.length / 2;
@@ -859,7 +859,7 @@ export class InsertItem {
 		if (textEditor.options.insertSpaces === true) {
 			text = text.replace(
 				/\t/g,
-				" ".repeat(Number(textEditor.options.tabSize))
+				" ".repeat(Number(textEditor.options.tabSize)),
 			);
 		} else {
 			text = text.replace(/ {4}/g, "\t");

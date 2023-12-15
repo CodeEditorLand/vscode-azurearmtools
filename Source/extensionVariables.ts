@@ -103,7 +103,7 @@ class ExtensionVariables {
 	// the language server reads the vscode configuration directly in order to
 	// receive the parameter file mappings.
 	public readonly configuration: IConfiguration = new VsCodeConfiguration(
-		configPrefix
+		configPrefix,
 	);
 
 	public readonly completionItemsSpy: CompletionsSpy = new CompletionsSpy();

@@ -33,7 +33,7 @@ export class ReferenceInVariableDefinitionsVisitor extends Json.Visitor {
 
 		const tleParseResult: IScopedParseResult =
 			this._deploymentTemplate.getTLEParseResultFromJsonStringValue(
-				value
+				value,
 			);
 		if (tleParseResult.parseResult.expression) {
 			const tleVisitor = new ReferenceInVariableDefinitionTLEVisitor();
@@ -42,7 +42,7 @@ export class ReferenceInVariableDefinitionsVisitor extends Json.Visitor {
 			const jsonValueStartIndex: number = value.startIndex;
 			for (const tleReferenceSpan of tleVisitor.referenceSpans) {
 				this._referenceSpans.push(
-					tleReferenceSpan.translate(jsonValueStartIndex)
+					tleReferenceSpan.translate(jsonValueStartIndex),
 				);
 			}
 		}
@@ -57,7 +57,7 @@ class ReferenceInVariableDefinitionTLEVisitor extends TLE.TleVisitor {
 	}
 
 	public visitFunctionCall(
-		functionValue: TLE.FunctionCallValue | undefined
+		functionValue: TLE.FunctionCallValue | undefined,
 	): void {
 		if (
 			functionValue &&

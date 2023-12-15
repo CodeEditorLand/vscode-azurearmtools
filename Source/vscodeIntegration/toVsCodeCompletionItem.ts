@@ -14,7 +14,7 @@ import { getVSCodeRangeFromSpan } from "./vscodePosition";
 export function toVsCodeCompletionItem(
 	jsonDocument: IJsonDocument,
 	item: Completion.Item,
-	cursorPosition: vscode.Position
+	cursorPosition: vscode.Position,
 ): vscode.CompletionItem {
 	const range: vscode.Range = getVSCodeRangeFromSpan(jsonDocument, item.span);
 
@@ -52,8 +52,8 @@ export function toVsCodeCompletionItem(
 			(e) =>
 				new vscode.TextEdit(
 					getVSCodeRangeFromSpan(jsonDocument, e.span),
-					e.insertText
-				)
+					e.insertText,
+				),
 		);
 	}
 
@@ -67,7 +67,7 @@ export function toVsCodeCompletionItem(
 				: undefined,
 	};
 	for (let key of Object.getOwnPropertyNames(
-		item.telemetryProperties ?? {}
+		item.telemetryProperties ?? {},
 	)) {
 		telemetryArgs[key] = item.telemetryProperties?.[key];
 	}
@@ -83,19 +83,19 @@ export function toVsCodeCompletionItem(
 	// tslint:disable-next-line: no-non-null-assertion
 	assert(
 		vscodeItem.range!.contains(cursorPosition),
-		"Completion item range doesn't include cursor"
+		"Completion item range doesn't include cursor",
 	);
 	// tslint:disable-next-line: no-non-null-assertion
 	assert(
 		vscodeItem.range!.isSingleLine,
-		"Completion item range must be a single line"
+		"Completion item range must be a single line",
 	);
 
 	return vscodeItem;
 }
 
 export function toVsCodeCompletionItemKind(
-	kind: Completion.CompletionKind
+	kind: Completion.CompletionKind,
 ): vscode.CompletionItemKind {
 	switch (kind) {
 		case Completion.CompletionKind.tleFunction:
@@ -140,10 +140,10 @@ export function toVsCodeCompletionItemKind(
  */
 export function onCompletionActivated(
 	actionContext: IActionContext,
-	telemetryProperties: { [key: string]: string }
+	telemetryProperties: { [key: string]: string },
 ): void {
 	Object.assign(
 		actionContext.telemetry.properties,
-		telemetryProperties ?? {}
+		telemetryProperties ?? {},
 	);
 }

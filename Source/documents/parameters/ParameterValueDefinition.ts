@@ -12,7 +12,7 @@ import { Span } from "../../language/Span";
 import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
 
 export function isParameterValueDefinition(
-	definition: INamedDefinition
+	definition: INamedDefinition,
 ): definition is ParameterValueDefinition {
 	return definition.definitionKind === DefinitionKind.ParameterValue;
 }
@@ -37,7 +37,7 @@ export class ParameterValueDefinition implements INamedDefinition {
 
 	public get value(): Json.Value | undefined {
 		const parameterValue: Json.ObjectValue | undefined = Json.asObjectValue(
-			this._property.value
+			this._property.value,
 		);
 		if (parameterValue) {
 			return parameterValue.getPropertyValue("value");
@@ -48,7 +48,7 @@ export class ParameterValueDefinition implements INamedDefinition {
 
 	public get reference(): Json.Value | undefined {
 		const parameterValue: Json.ObjectValue | undefined = Json.asObjectValue(
-			this._property.value
+			this._property.value,
 		);
 		if (parameterValue) {
 			return parameterValue.getPropertyValue("reference");

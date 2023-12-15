@@ -25,7 +25,7 @@ export const defaultTabSize: number = 4;
 export async function queryCreateParameterFile(
 	actionContext: IActionContext,
 	scope: TemplateScope,
-	tabSize: number = defaultTabSize
+	tabSize: number = defaultTabSize,
 ): Promise<Uri> {
 	const all = <QuickPickItem>{ label: "All parameters" };
 	const required = <QuickPickItem>{
@@ -37,7 +37,7 @@ export async function queryCreateParameterFile(
 
 	const whichParams = await ext.ui.showQuickPick([all, required], {
 		placeHolder: `Include which parameters from ${path.basename(
-			templateUri.fsPath
+			templateUri.fsPath,
 		)}?`,
 	});
 	const onlyRequiredParams = whichParams === required;
@@ -49,7 +49,7 @@ export async function queryCreateParameterFile(
 		.replace(/\.[Jj][Ss][Oo][Nn][Cc]?$/, "");
 	const defaultParamPath: string = path.join(
 		path.dirname(templateUri.fsPath),
-		`${fileNameWithoutJsonC}.parameters.json`
+		`${fileNameWithoutJsonC}.parameters.json`,
 	);
 
 	let newUri: Uri | undefined = await window.showSaveDialog({
@@ -65,7 +65,7 @@ export async function queryCreateParameterFile(
 	let paramsObj: string = createParameterFileContents(
 		scope,
 		tabSize,
-		onlyRequiredParams
+		onlyRequiredParams,
 	);
 	await fse.writeFile(newUri.fsPath, paramsObj, {
 		encoding: "utf8",
@@ -77,7 +77,7 @@ export async function queryCreateParameterFile(
 export function createParameterFileContents(
 	scope: TemplateScope,
 	tabSize: number,
-	onlyRequiredParameters: boolean
+	onlyRequiredParameters: boolean,
 ): string {
 	/* e.g.
 
@@ -98,7 +98,7 @@ export function createParameterFileContents(
 	const params: CaseInsensitiveMap<string, string> = createParameters(
 		scope,
 		tabSize,
-		onlyRequiredParameters
+		onlyRequiredParameters,
 	);
 	const paramsContent = params.map((key, value) => value).join(`,${ext.EOL}`);
 
@@ -131,7 +131,7 @@ export function createParameterFromTemplateParameter(
 	parameterDefinitionsSource: IParameterDefinitionsSource,
 	parameter: IParameterDefinition,
 	parentParameterDefinitions: IParameterDefinitionsSource | undefined,
-	tabSize: number
+	tabSize: number,
 ): string {
 	/* e.g.
 
@@ -148,7 +148,7 @@ export function createParameterFromTemplateParameter(
 	const matchingParentParameter =
 		parentParameterDefinitions?.parameterDefinitions.find(
 			(def) =>
-				def.nameValue.unquotedValue.toLowerCase() === parameterNameLC
+				def.nameValue.unquotedValue.toLowerCase() === parameterNameLC,
 		);
 	if (matchingParentParameter) {
 		value = `"[parameters('${matchingParentParameter.nameValue.unquotedValue}')]"`;
@@ -162,7 +162,7 @@ export function createParameterFromTemplateParameter(
 			const defValueSpan = parameter.defaultValue.span;
 			const defValue: string = parameter.document.documentText.slice(
 				defValueSpan.startIndex,
-				defValueSpan.afterEndIndex
+				defValueSpan.afterEndIndex,
 			);
 			value = unindentMultilineString(defValue, true);
 		}
@@ -173,7 +173,7 @@ export function createParameterFromTemplateParameter(
 
 	const valueIndentedAfterFirstLine: string = indentMultilineString(
 		value.trimLeft(),
-		tabSize
+		tabSize,
 	).trimLeft();
 
 	// tslint:disable-next-line:prefer-template
@@ -188,7 +188,7 @@ export function createParameterFromTemplateParameter(
 
 function getDefaultValueFromType(
 	propType: ExpressionType | undefined,
-	indent: number
+	indent: number,
 ): string {
 	const comment = "// TODO: Fill in parameter value";
 	const tab = " ".repeat(indent);
@@ -220,7 +220,7 @@ function getDefaultValueFromType(
 function createParameters(
 	scope: TemplateScope,
 	tabSize: number,
-	onlyRequiredParameters: boolean
+	onlyRequiredParameters: boolean,
 ): CaseInsensitiveMap<string, string> {
 	let params: CaseInsensitiveMap<string, string> = new CaseInsensitiveMap<
 		string,
@@ -236,8 +236,8 @@ function createParameters(
 					scope.parameterDefinitionsSource,
 					paramDef,
 					undefined,
-					tabSize
-				)
+					tabSize,
+				),
 			);
 		}
 	}

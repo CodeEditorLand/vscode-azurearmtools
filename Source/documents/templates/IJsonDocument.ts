@@ -22,11 +22,11 @@ export interface IJsonDocument extends IDocument {
 	topLevelValue: Json.ObjectValue | undefined;
 
 	getJSONTokenAtDocumentCharacterIndex(
-		documentCharacterIndex: number
+		documentCharacterIndex: number,
 	): Json.Token | undefined;
 
 	// tslint:disable-next-line:function-name
 	_debugShowTextAt(
-		positionOrRange: number | Span | vscode.Range | vscode.Position
+		positionOrRange: number | Span | vscode.Range | vscode.Position,
 	): string;
 }

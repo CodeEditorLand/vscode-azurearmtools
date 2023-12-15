@@ -29,7 +29,7 @@ export function deepClone<T extends {}>(value: T): T {
 			// tslint:disable-next-line: no-unsafe-any no-any
 			if (value.hasOwnProperty(propertyName)) {
 				(<{ [key: string]: unknown }>result)[propertyName] = deepClone(
-					value[propertyName]
+					value[propertyName],
 				);
 			}
 		}

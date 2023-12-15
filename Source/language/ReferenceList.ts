@@ -13,7 +13,7 @@ import { IReference } from "./IReference";
 export class ReferenceList {
 	constructor(
 		private _type: DefinitionKind,
-		private _refs: IReference[] = []
+		private _refs: IReference[] = [],
 	) {
 		nonNullValue(_type, "_type");
 		nonNullValue(_refs, "_refs");
@@ -39,7 +39,7 @@ export class ReferenceList {
 		assert.deepStrictEqual(
 			this._type,
 			list.kind,
-			"Cannot add references from a list of a different reference type."
+			"Cannot add references from a list of a different reference type.",
 		);
 
 		for (const ref of list.references) {

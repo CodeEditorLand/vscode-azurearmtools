@@ -50,7 +50,7 @@ export function findSchemaInfo(schemaUri: string): ISchemaInfo | undefined {
 		for (const si of schemaInfos) {
 			normalizedSchemaLCToSchemaInfoMap.set(
 				si.normalizedSchema.toLowerCase(),
-				si
+				si,
 			);
 		}
 	}
@@ -94,11 +94,11 @@ const isArmSchemaRegex = new RegExp(`^${containsArmSchemaRegexString}$`, "i");
 const containsParametersSchemaRegexString = `https?:\/\/schema\.management\.azure\.com\/schemas\/[^"\/]+\/[a-zA-Z]*[dD]eploymentParameters\.json#?`;
 const containsParametersSchemaRegex = new RegExp(
 	containsParametersSchemaRegexString,
-	"i"
+	"i",
 );
 const isParametersSchemaRegex = new RegExp(
 	`^${containsParametersSchemaRegexString}$`,
-	"i"
+	"i",
 );
 
 export function containsArmSchema(json: string): boolean {
@@ -139,7 +139,7 @@ export function getPreferredSchema(schema: string): string | undefined {
 
 	if (
 		schema.match(
-			/https?:\/\/schema\.management\.azure\.com\/schemas\/(2014-04-01-preview|2015-01-01)\/deploymentTemplate.json#?/i
+			/https?:\/\/schema\.management\.azure\.com\/schemas\/(2014-04-01-preview|2015-01-01)\/deploymentTemplate.json#?/i,
 		)
 	) {
 		return "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#";

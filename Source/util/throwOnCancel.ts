@@ -9,12 +9,12 @@ import { CancellationTokenSource } from "vscode-jsonrpc";
 
 export class Cancellation {
 	public static cantCancel: Cancellation = new Cancellation(
-		new CancellationTokenSource().token
+		new CancellationTokenSource().token,
 	);
 
 	public constructor(
 		public token: CancellationToken,
-		public actionContext?: IActionContext
+		public actionContext?: IActionContext,
 	) {
 		this.throwIfCancelled();
 	}
@@ -26,7 +26,7 @@ export class Cancellation {
 
 export function throwOnCancel(
 	token: CancellationToken,
-	actionContext?: IActionContext
+	actionContext?: IActionContext,
 ): void {
 	if (token.isCancellationRequested) {
 		if (actionContext) {

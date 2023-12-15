@@ -53,7 +53,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 	constructor(
 		documentText: string,
 		documentUri: Uri,
-		public readonly documentVersion: number
+		public readonly documentVersion: number,
 	) {
 		super(documentText, documentUri, documentVersion);
 	}
@@ -67,14 +67,14 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 			return new ParameterValuesSourceFromJsonObject(
 				this,
 				this.parametersProperty,
-				this.topLevelValue
+				this.topLevelValue,
 			);
 		});
 	}
 
 	// case-insensitive
 	public getParameterValue(
-		parameterName: string
+		parameterName: string,
 	): ParameterValueDefinition | undefined {
 		// Number of parameters generally small, not worth creating a case-insensitive dictionary
 		const parameterNameLC = parameterName.toLowerCase();
@@ -97,7 +97,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 			for (const parameter of this.parametersObjectValue?.properties ||
 				[]) {
 				parameterDefinitions.push(
-					new ParameterValueDefinition(parameter)
+					new ParameterValueDefinition(parameter),
 				);
 			}
 
@@ -118,38 +118,38 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 	public getContextFromDocumentLineAndColumnIndexes(
 		documentLineIndex: number,
 		documentColumnIndex: number,
-		associatedTemplate: DeploymentDocument | undefined
+		associatedTemplate: DeploymentDocument | undefined,
 	): ParametersPositionContext {
 		return ParametersPositionContext.fromDocumentLineAndColumnIndices(
 			this,
 			documentLineIndex,
 			documentColumnIndex,
-			expectTemplateDocumentOrUndefined(associatedTemplate)
+			expectTemplateDocumentOrUndefined(associatedTemplate),
 		);
 	}
 
 	public getContextFromDocumentCharacterIndex(
 		documentCharacterIndex: number,
-		associatedDocument: DeploymentDocument | undefined
+		associatedDocument: DeploymentDocument | undefined,
 	): ParametersPositionContext {
 		return ParametersPositionContext.fromDocumentCharacterIndex(
 			this,
 			documentCharacterIndex,
-			expectTemplateDocumentOrUndefined(associatedDocument)
+			expectTemplateDocumentOrUndefined(associatedDocument),
 		);
 	}
 
 	public findReferencesToDefinition(
-		definition: INamedDefinition
+		definition: INamedDefinition,
 	): ReferenceList {
 		const results: ReferenceList = new ReferenceList(
-			definition.definitionKind
+			definition.definitionKind,
 		);
 
 		// The only reference possible in the parameter file is the parameter's value definition
 		if (definition.nameValue) {
 			const paramValue = this.getParameterValue(
-				definition.nameValue.unquotedValue
+				definition.nameValue.unquotedValue,
 			);
 			if (paramValue) {
 				results.add({
@@ -164,7 +164,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 	public getCodeLenses(
 		_parameterValuesSourceProvider:
 			| IParameterValuesSourceProvider
-			| undefined
+			| undefined,
 	): ResolvableCodeLens[] {
 		return [];
 	}
@@ -172,7 +172,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 	public getCodeActions(
 		associatedDocument: DeploymentDocument | undefined,
 		range: Range | Selection,
-		context: CodeActionContext
+		context: CodeActionContext,
 	): (Command | CodeAction)[] {
 		const template = expectTemplateDocumentOrUndefined(associatedDocument);
 		if (template) {
@@ -181,7 +181,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 				template.topLevelScope.parameterDefinitionsSource,
 				undefined,
 				range,
-				context
+				context,
 			);
 		}
 
@@ -189,7 +189,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 	}
 
 	public getErrorsCore(
-		associatedDocument: DeploymentDocument | undefined
+		associatedDocument: DeploymentDocument | undefined,
 	): Issue[] {
 		if (!associatedDocument) {
 			return [];
@@ -198,7 +198,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 		const template = expectTemplateDocument(associatedDocument);
 		return getMissingParameterErrors(
 			this.topLevelParameterValuesSource,
-			template.topLevelScope.parameterDefinitionsSource
+			template.topLevelScope.parameterDefinitionsSource,
 		);
 	}
 

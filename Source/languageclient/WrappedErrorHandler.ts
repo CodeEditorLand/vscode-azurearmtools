@@ -52,9 +52,9 @@ export class WrappedErrorHandler implements ErrorHandler {
 				throw new Error(
 					`An error occurred in the ${languageServerName}.${os.EOL}${
 						os.EOL
-					}${parseError(error).message}`
+					}${parseError(error).message}`,
 				);
-			}
+			},
 		);
 
 		return this._handler.error(error, message, count);
@@ -73,9 +73,9 @@ export class WrappedErrorHandler implements ErrorHandler {
 					(Date.now() - this._serverStartTime) / 1000;
 
 				throw new Error(
-					`The connection to the ${languageServerName} got closed.`
+					`The connection to the ${languageServerName} got closed.`,
 				);
-			}
+			},
 		);
 
 		return this._handler.closed();

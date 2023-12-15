@@ -11,7 +11,7 @@ import * as https from "https";
 export function httpGet(url: string): Promise<string> {
 	assert(
 		url,
-		"Cannot make a HTTP request for a null, undefined, or empty url."
+		"Cannot make a HTTP request for a null, undefined, or empty url.",
 	);
 
 	if (!url.startsWith("http")) {

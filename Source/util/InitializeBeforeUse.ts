@@ -15,7 +15,7 @@ export class InitializeBeforeUse<T> {
 
 	public constructor(
 		private propertyName: string,
-		private allowChangingValue: boolean = false
+		private allowChangingValue: boolean = false,
 	) {}
 
 	public get hasValue(): boolean {
@@ -27,7 +27,7 @@ export class InitializeBeforeUse<T> {
 			this._value = { value: value, initialized: true };
 		} else {
 			assert.fail(
-				`InitializeBeforeUse: Value has already been set: ${this.propertyName}`
+				`InitializeBeforeUse: Value has already been set: ${this.propertyName}`,
 			);
 		}
 	}
@@ -37,7 +37,7 @@ export class InitializeBeforeUse<T> {
 			return this._value.value;
 		} else {
 			assert.fail(
-				`InitializeBeforeUse: Trying to retrieve value from ExtensionVariables before it has been initialized: ${this.propertyName}`
+				`InitializeBeforeUse: Trying to retrieve value from ExtensionVariables before it has been initialized: ${this.propertyName}`,
 			);
 		}
 	}

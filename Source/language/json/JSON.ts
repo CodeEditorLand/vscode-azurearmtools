@@ -25,13 +25,13 @@ import { ContainsBehavior, Span } from "../Span";
 import * as basic from "./Tokenizer";
 
 export enum ValueKind {
-	"ObjectValue",
-	"StringValue",
-	"PropertyValue",
-	"ArrayValue",
-	"NumberValue",
-	"NullValue",
-	"BooleanValue",
+	ObjectValue,
+	StringValue,
+	PropertyValue,
+	ArrayValue,
+	NumberValue,
+	NullValue,
+	BooleanValue,
 }
 
 /**
@@ -97,7 +97,7 @@ export class Token extends Segment {
 	constructor(
 		private _type: TokenType,
 		_startIndex: number,
-		private _basicTokens: basic.Token[]
+		private _basicTokens: basic.Token[],
 	) {
 		super(_startIndex);
 	}
@@ -160,14 +160,14 @@ export function Colon(startIndex: number): Token {
 
 export function Whitespace(
 	startIndex: number,
-	basicTokens: basic.Token[]
+	basicTokens: basic.Token[],
 ): Token {
 	return new Token(TokenType.Whitespace, startIndex, basicTokens);
 }
 
 export function QuotedString(
 	startIndex: number,
-	basicTokens: basic.Token[]
+	basicTokens: basic.Token[],
 ): Token {
 	return new Token(TokenType.QuotedString, startIndex, basicTokens);
 }
@@ -194,13 +194,13 @@ export function Comment(startIndex: number, basicTokens: basic.Token[]): Token {
 
 export function Unrecognized(
 	startIndex: number,
-	basicToken: basic.Token
+	basicToken: basic.Token,
 ): Token {
 	return new Token(TokenType.Unrecognized, startIndex, [basicToken]);
 }
 
 export function asObjectValue(
-	value: Value | undefined
+	value: Value | undefined,
 ): ObjectValue | undefined {
 	return value instanceof ObjectValue ? value : undefined;
 }
@@ -210,19 +210,19 @@ export function asArrayValue(value: Value | undefined): ArrayValue | undefined {
 }
 
 export function asStringValue(
-	value: Value | undefined
+	value: Value | undefined,
 ): StringValue | undefined {
 	return value instanceof StringValue ? value : undefined;
 }
 
 export function asNumberValue(
-	value: Value | undefined
+	value: Value | undefined,
 ): NumberValue | undefined {
 	return value instanceof NumberValue ? value : undefined;
 }
 
 export function asBooleanValue(
-	value: Value | undefined
+	value: Value | undefined,
 ): BooleanValue | undefined {
 	return value instanceof BooleanValue ? value : undefined;
 }
@@ -234,13 +234,13 @@ export function asBooleanValue(
  * Note that the returned quoted string may not end with a quote (if EOD is reached)
  */
 export function readQuotedString(
-	iterator: Iterator<basic.Token>
+	iterator: Iterator<basic.Token>,
 ): basic.Token[] {
 	const startingToken: basic.Token | undefined = iterator.current();
 	assert(
 		startingToken &&
 			(startingToken.getType() === basic.TokenType.SingleQuote ||
-				startingToken.getType() === basic.TokenType.DoubleQuote)
+				startingToken.getType() === basic.TokenType.DoubleQuote),
 	);
 
 	// tslint:disable-next-line: no-non-null-assertion // Asserted
@@ -472,31 +472,31 @@ export class Tokenizer {
 				case basic.TokenType.LeftCurlyBracket:
 					assert.deepStrictEqual(
 						this.currentBasicTokenType(),
-						basic.TokenType.LeftCurlyBracket
+						basic.TokenType.LeftCurlyBracket,
 					);
 					this._current = LeftCurlyBracket(
-						this._currentTokenStartIndex
+						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
 					break;
 
 				case basic.TokenType.RightCurlyBracket:
 					this._current = RightCurlyBracket(
-						this._currentTokenStartIndex
+						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
 					break;
 
 				case basic.TokenType.LeftSquareBracket:
 					this._current = LeftSquareBracket(
-						this._currentTokenStartIndex
+						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
 					break;
 
 				case basic.TokenType.RightSquareBracket:
 					this._current = RightSquareBracket(
-						this._currentTokenStartIndex
+						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
 					break;
@@ -515,7 +515,7 @@ export class Tokenizer {
 				case basic.TokenType.Digits:
 					this._current = Number(
 						this._currentTokenStartIndex,
-						readNumber(this.asBasicTokenIterator())
+						readNumber(this.asBasicTokenIterator()),
 					);
 					break;
 
@@ -541,12 +541,12 @@ export class Tokenizer {
 								) {
 									// tslint:disable-next-line: no-non-null-assertion // guaranteed by this.moveNextBasicToken() return value in while
 									lineCommentBasicTokens.push(
-										this.currentBasicToken()!
+										this.currentBasicToken()!,
 									);
 								}
 								this._current = Comment(
 									this._currentTokenStartIndex,
-									lineCommentBasicTokens
+									lineCommentBasicTokens,
 								);
 								this._commentsCount++;
 								break;
@@ -561,7 +561,7 @@ export class Tokenizer {
 								while (this.currentBasicToken()) {
 									// tslint:disable-next-line: no-non-null-assertion // Validated by while
 									blockCommentBasicTokens.push(
-										this.currentBasicToken()!
+										this.currentBasicToken()!,
 									);
 
 									if (
@@ -576,7 +576,7 @@ export class Tokenizer {
 										) {
 											// tslint:disable-next-line: no-non-null-assertion // Guaranteed by if
 											blockCommentBasicTokens.push(
-												this.currentBasicToken()!
+												this.currentBasicToken()!,
 											);
 											this.moveNextBasicToken();
 											break;
@@ -588,7 +588,7 @@ export class Tokenizer {
 
 								this._current = Comment(
 									this._currentTokenStartIndex,
-									blockCommentBasicTokens
+									blockCommentBasicTokens,
 								);
 								this._commentsCount++;
 								break;
@@ -596,7 +596,7 @@ export class Tokenizer {
 							default:
 								this._current = Literal(
 									this._currentTokenStartIndex,
-									[basic.ForwardSlash]
+									[basic.ForwardSlash],
 								);
 								break;
 						}
@@ -610,7 +610,7 @@ export class Tokenizer {
 				case basic.TokenType.CarriageReturnNewLine:
 					this._current = Whitespace(
 						this._currentTokenStartIndex,
-						readWhitespace(this.asBasicTokenIterator())
+						readWhitespace(this.asBasicTokenIterator()),
 					);
 					break;
 
@@ -618,7 +618,7 @@ export class Tokenizer {
 				case basic.TokenType.DoubleQuote:
 					this._current = QuotedString(
 						this._currentTokenStartIndex,
-						readQuotedString(this.asBasicTokenIterator())
+						readQuotedString(this.asBasicTokenIterator()),
 					);
 					break;
 
@@ -630,7 +630,7 @@ export class Tokenizer {
 							// tslint:disable-next-line: no-non-null-assertion // Validated by if
 							this._current = Boolean(
 								this._currentTokenStartIndex,
-								this.currentBasicToken()!
+								this.currentBasicToken()!,
 							);
 							this.moveNextBasicToken();
 							break;
@@ -661,7 +661,7 @@ export class Tokenizer {
 
 							this._current = Literal(
 								this._currentTokenStartIndex,
-								literalTokens
+								literalTokens,
 							);
 							break;
 					}
@@ -671,7 +671,7 @@ export class Tokenizer {
 					// tslint:disable-next-line: no-non-null-assertion // Validated by if
 					this._current = Unrecognized(
 						this._currentTokenStartIndex,
-						this.currentBasicToken()!
+						this.currentBasicToken()!,
 					);
 					this.moveNextBasicToken();
 					break;
@@ -769,7 +769,7 @@ export abstract class Value {
 	 * Retrieves the enlosing objects, arrays and properties of the given descendent, in order of top-most to deepest
 	 */
 	public findLineage(
-		descendent: Value
+		descendent: Value,
 	): (Json.ArrayValue | Json.ObjectValue | Json.Property)[] | undefined {
 		return FindLineageVisitor.visit(this, descendent);
 	}
@@ -784,10 +784,7 @@ export class ObjectValue extends Value {
 		CaseInsensitiveMap<string, Property | undefined>
 	> = new CachedValue<CaseInsensitiveMap<string, Property | undefined>>();
 
-	constructor(
-		span: Span,
-		private _properties: Property[]
-	) {
+	constructor(span: Span, private _properties: Property[]) {
 		super(span);
 		assert(this._properties);
 	}
@@ -814,7 +811,7 @@ export class ObjectValue extends Value {
 				for (const property of this._properties) {
 					caseInsensitivePropertyMap.set(
 						property.nameValue.toString(),
-						property
+						property,
 					);
 				}
 			}
@@ -859,7 +856,7 @@ export class ObjectValue extends Value {
 	 * stack. If the provided property name stack is empty, then return this value.
 	 */
 	public getPropertyValueFromStack(
-		propertyNameStack: string[]
+		propertyNameStack: string[],
 	): Value | undefined {
 		// tslint:disable-next-line:no-this-assignment
 		let result: Value | undefined = <Value | undefined>this;
@@ -904,8 +901,8 @@ export class ObjectValue extends Value {
 				.map(
 					(pv) =>
 						`"${pv.nameValue.toString()}": ${Value.toFullFriendlyString(
-							pv.value
-						)}`
+							pv.value,
+						)}`,
 				)
 				.join(", ") +
 			"}"
@@ -920,7 +917,7 @@ export class Property extends Value {
 	constructor(
 		span: Span,
 		private _name: StringValue,
-		private _value: Value | undefined
+		private _value: Value | undefined,
 	) {
 		super(span);
 	}
@@ -972,10 +969,7 @@ export interface Properties {
  * A JSON array that contains elements.
  */
 export class ArrayValue extends Value {
-	constructor(
-		span: Span,
-		private _elements: Value[]
-	) {
+	constructor(span: Span, private _elements: Value[]) {
 		super(span);
 		assert(_elements);
 	}
@@ -1020,10 +1014,7 @@ export class ArrayValue extends Value {
  * A JSON boolean that can be either true or false.
  */
 export class BooleanValue extends Value {
-	constructor(
-		span: Span,
-		private _value: boolean
-	) {
+	constructor(span: Span, private _value: boolean) {
 		super(span);
 	}
 
@@ -1061,10 +1052,7 @@ export class BooleanValue extends Value {
 export class StringValue extends Value {
 	private _unquotedValue: string;
 
-	constructor(
-		quotedSpan: Span,
-		private _quotedValue: string
-	) {
+	constructor(quotedSpan: Span, private _quotedValue: string) {
 		super(quotedSpan);
 		this._unquotedValue = utilities.unquote(_quotedValue);
 	}
@@ -1107,10 +1095,7 @@ export class StringValue extends Value {
  * A JSON number.
  */
 export class NumberValue extends Value {
-	constructor(
-		span: Span,
-		private _text: string
-	) {
+	constructor(span: Span, private _text: string) {
 		super(span);
 	}
 
@@ -1176,7 +1161,7 @@ export class ParseResult {
 		private _lineLengths: number[],
 		private _value: Value | undefined,
 		text: string,
-		public readonly commentCount: number
+		public readonly commentCount: number,
 	) {
 		nonNullValue(_tokens, "_tokens");
 		nonNullValue(_lineLengths, "_lineLengths");
@@ -1249,7 +1234,7 @@ export class ParseResult {
 
 	public getLastTokenOnLine(
 		line: number,
-		commentBehavior: Comments = Comments.ignoreCommentTokens
+		commentBehavior: Comments = Comments.ignoreCommentTokens,
 	): Token | undefined {
 		const startOfLineIndex = this.getCharacterIndex(line, 0);
 		const lastLine = this.lineLengths.length - 1;
@@ -1303,11 +1288,11 @@ export class ParseResult {
 	public getCharacterIndex(
 		lineIndex: number,
 		columnIndex: number,
-		options?: { allowOutOfBounds?: boolean }
+		options?: { allowOutOfBounds?: boolean },
 	): number {
 		assert(
 			0 <= lineIndex,
-			`Cannot get a character index for a negative line index (${lineIndex}).`
+			`Cannot get a character index for a negative line index (${lineIndex}).`,
 		);
 		if (lineIndex >= this.lineLengths.length) {
 			if (options?.allowOutOfBounds) {
@@ -1316,14 +1301,14 @@ export class ParseResult {
 			} else {
 				assert.fail(
 					options?.allowOutOfBounds,
-					`Cannot get a character index for a line index greater than the number of parsed lines (lineIndex: ${lineIndex}, lines parsed: ${this.lineLengths.length}).`
+					`Cannot get a character index for a line index greater than the number of parsed lines (lineIndex: ${lineIndex}, lines parsed: ${this.lineLengths.length}).`,
 				);
 			}
 		}
 
 		assert(
 			0 <= columnIndex,
-			`Cannot get a character index for a negative columnIndex (${columnIndex}).`
+			`Cannot get a character index for a negative columnIndex (${columnIndex}).`,
 		);
 		const maxColumnIndex = this.getMaxColumnIndex(lineIndex);
 		if (columnIndex > maxColumnIndex) {
@@ -1333,8 +1318,8 @@ export class ParseResult {
 			} else {
 				assert.fail(
 					`Cannot get a character index for a columnIndex (${columnIndex}) that is greater than the lineIndex's (${lineIndex}) line max column index (${this.getMaxColumnIndex(
-						lineIndex
-					)}).`
+						lineIndex,
+					)}).`,
 				);
 			}
 		}
@@ -1395,7 +1380,7 @@ export class ParseResult {
 			0 <= tokenIndex && tokenIndex < tokens.length,
 			`The tokenIndex (${tokenIndex}) must always be between 0 and the token count - 1 (${
 				tokens.length - 1
-			}).`
+			}).`,
 		);
 
 		return tokens[tokenIndex];
@@ -1410,12 +1395,12 @@ export class ParseResult {
 	// case of being at the end of a line comment ("// comment")
 	public getCommentTokenAtDocumentIndex(
 		characterIndex: number,
-		containsBehavior: ContainsBehavior
+		containsBehavior: ContainsBehavior,
 	): Token | undefined {
 		// Check if we're inside a comment token
 		const token = this.getTokenAtCharacterIndex(
 			characterIndex,
-			Comments.includeCommentTokens
+			Comments.includeCommentTokens,
 		);
 		if (token?.type === TokenType.Comment) {
 			switch (containsBehavior) {
@@ -1424,7 +1409,7 @@ export class ParseResult {
 
 				case ContainsBehavior.extended:
 					assert.fail(
-						"ContainsBehavior.extended not implemented here (somewhat unambiguous and not clear it's useful)"
+						"ContainsBehavior.extended not implemented here (somewhat unambiguous and not clear it's useful)",
 					);
 
 				case ContainsBehavior.enclosed:
@@ -1443,7 +1428,7 @@ export class ParseResult {
 		const line = this.getPositionFromCharacterIndex(characterIndex).line;
 		const lastTokenOnLineIncludingComments = this.getLastTokenOnLine(
 			line,
-			Comments.includeCommentTokens
+			Comments.includeCommentTokens,
 		);
 		if (
 			lastTokenOnLineIncludingComments &&
@@ -1463,11 +1448,11 @@ export class ParseResult {
 	 */
 	public getTokenAtCharacterIndex(
 		characterIndex: number,
-		commentBehavior: Comments = Comments.includeCommentTokens
+		commentBehavior: Comments = Comments.includeCommentTokens,
 	): Token | undefined {
 		assert(
 			0 <= characterIndex,
-			`characterIndex (${characterIndex}) cannot be negative.`
+			`characterIndex (${characterIndex}) cannot be negative.`,
 		);
 
 		const tokens = this.getTokens(commentBehavior);
@@ -1476,11 +1461,11 @@ export class ParseResult {
 
 	private static getTokenAtCharacterIndex(
 		tokens: Token[],
-		characterIndex: number
+		characterIndex: number,
 	): Token | undefined {
 		assert(
 			0 <= characterIndex,
-			`characterIndex (${characterIndex}) cannot be negative.`
+			`characterIndex (${characterIndex}) cannot be negative.`,
 		);
 
 		const tokenCount: number = tokens.length;
@@ -1496,7 +1481,7 @@ export class ParseResult {
 			let maxTokenIndex = tokenCount - 1;
 			while (!token && minTokenIndex <= maxTokenIndex) {
 				let midTokenIndex = Math.floor(
-					(maxTokenIndex + minTokenIndex) / 2
+					(maxTokenIndex + minTokenIndex) / 2,
 				);
 				let currentToken = ParseResult.getToken(tokens, midTokenIndex);
 				let currentTokenSpan = currentToken.span;
@@ -1516,11 +1501,11 @@ export class ParseResult {
 
 	public getValueAtCharacterIndex(
 		characterIndex: number,
-		containsBehavior: ContainsBehavior
+		containsBehavior: ContainsBehavior,
 	): Value | undefined {
 		assert(
 			0 <= characterIndex,
-			`characterIndex (${characterIndex}) cannot be negative.`
+			`characterIndex (${characterIndex}) cannot be negative.`,
 		);
 
 		let result: Value | undefined;
@@ -1542,7 +1527,7 @@ export class ParseResult {
 					if (
 						currentValue.nameValue.span.contains(
 							characterIndex,
-							containsBehavior
+							containsBehavior,
 						)
 					) {
 						current = currentValue.nameValue;
@@ -1550,7 +1535,7 @@ export class ParseResult {
 						currentValue.value &&
 						currentValue.value.span.contains(
 							characterIndex,
-							containsBehavior
+							containsBehavior,
 						)
 					) {
 						current = currentValue.value;
@@ -1562,7 +1547,7 @@ export class ParseResult {
 						if (
 							property.span.contains(
 								characterIndex,
-								containsBehavior
+								containsBehavior,
 							)
 						) {
 							current = property;
@@ -1575,7 +1560,7 @@ export class ParseResult {
 						if (
 							element.span.contains(
 								characterIndex,
-								containsBehavior
+								containsBehavior,
 							)
 						) {
 							current = element;
@@ -1615,7 +1600,7 @@ export function parse(stringValue: string): ParseResult {
 		jt.lineLengths,
 		value,
 		stringValue,
-		jt.commentsCount
+		jt.commentsCount,
 	);
 }
 
@@ -1627,7 +1612,7 @@ export function parse(stringValue: string): ParseResult {
 function parseValue(
 	tokenizer: Tokenizer,
 	tokens: Token[],
-	commentTokens: Token[]
+	commentTokens: Token[],
 ): Value | undefined {
 	let value: Value | undefined;
 
@@ -1640,7 +1625,7 @@ function parseValue(
 			case TokenType.QuotedString:
 				value = new StringValue(
 					tokenizer.current.span,
-					tokenizer.current.toString()
+					tokenizer.current.toString(),
 				);
 				next(tokenizer, tokens, commentTokens);
 				break;
@@ -1648,7 +1633,7 @@ function parseValue(
 			case TokenType.Number:
 				value = new NumberValue(
 					tokenizer.current.span,
-					tokenizer.current.toString()
+					tokenizer.current.toString(),
 				);
 				next(tokenizer, tokens, commentTokens);
 				break;
@@ -1656,7 +1641,7 @@ function parseValue(
 			case TokenType.Boolean:
 				value = new BooleanValue(
 					tokenizer.current.span,
-					tokenizer.current.toString() === "true"
+					tokenizer.current.toString() === "true",
 				);
 				next(tokenizer, tokens, commentTokens);
 				break;
@@ -1682,7 +1667,7 @@ function parseValue(
 function parseObject(
 	tokenizer: Tokenizer,
 	tokens: Token[],
-	commentTokens: Token[]
+	commentTokens: Token[],
 ): ObjectValue {
 	if (!tokenizer.current) {
 		throw new Error("Precondition failed");
@@ -1708,7 +1693,7 @@ function parseObject(
 				propertySpan = tokenizer.current.span;
 				propertyName = new StringValue(
 					propertySpan,
-					tokenizer.current.toString()
+					tokenizer.current.toString(),
 				);
 				next(tokenizer, tokens, commentTokens);
 			} else {
@@ -1732,7 +1717,7 @@ function parseObject(
 			const propertyValue: Value | undefined = parseValue(
 				tokenizer,
 				tokens,
-				commentTokens
+				commentTokens,
 			);
 			if (propertyValue) {
 				propertySpan = propertySpan
@@ -1746,8 +1731,8 @@ function parseObject(
 				new Property(
 					propertySpan || objectSpan,
 					propertyName!,
-					propertyValue
-				)
+					propertyValue,
+				),
 			);
 
 			propertySpan = undefined;
@@ -1762,7 +1747,7 @@ function parseObject(
 function parseArray(
 	tokenizer: Tokenizer,
 	tokens: Token[],
-	commentTokens: Token[]
+	commentTokens: Token[],
 ): ArrayValue {
 	if (!tokenizer.current) {
 		throw new Error("Precondition failed");
@@ -1785,7 +1770,7 @@ function parseArray(
 			const element: Value | undefined = parseValue(
 				tokenizer,
 				tokens,
-				commentTokens
+				commentTokens,
 			);
 			if (element) {
 				span = span.union(element.span);
@@ -1809,7 +1794,7 @@ function parseArray(
 function next(
 	tokenizer: Tokenizer,
 	tokens: Token[],
-	commentTokens: Token[]
+	commentTokens: Token[],
 ): void {
 	while (tokenizer.moveNext()) {
 		// tslint:disable-next-line: no-non-null-assertion // Guaranteed by tokenizer.moveNext() returning true
@@ -1954,7 +1939,7 @@ export class FindLineageVisitor extends Visitor {
 
 	public static visit(
 		root: Json.Value,
-		find: Json.Value
+		find: Json.Value,
 	): (Json.ArrayValue | Json.ObjectValue | Json.Property)[] | undefined {
 		const visitor = new FindLineageVisitor(find);
 		root.accept(visitor);

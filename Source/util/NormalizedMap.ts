@@ -19,7 +19,7 @@ export class NormalizedMap<TKey, TValue> implements Map<TKey, TValue> {
 
 	public forEach(
 		callbackfn: (value: TValue, key: TKey, map: Map<TKey, TValue>) => void,
-		thisArg?: NormalizedMap<TKey, TValue>
+		thisArg?: NormalizedMap<TKey, TValue>,
 	): void {
 		throw new Error("NYI");
 	}

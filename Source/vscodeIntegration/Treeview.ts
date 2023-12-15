@@ -240,7 +240,10 @@ const resourceIcons: [string, string][] = [
 		"Microsoft.Sql/servers/databases/schemas/tables/columns/sensitivityLabels",
 		"sqlservers.svg",
 	],
-	["Microsoft.Sql/servers/databases/securityAlertPolicies	", "sqlservers.svg"],
+	[
+		"Microsoft.Sql/servers/databases/securityAlertPolicies	",
+		"sqlservers.svg",
+	],
 	["Microsoft.Sql/servers/databases/syncGroups", "sqlservers.svg"],
 	[
 		"Microsoft.Sql/servers/databases/syncGroups/syncMembers",
@@ -298,16 +301,18 @@ export class JsonOutlineProvider
 	constructor(context: vscode.ExtensionContext) {
 		context.subscriptions.push(
 			vscode.window.onDidChangeActiveTextEditor(() =>
-				this.updateTreeState()
-			)
+				this.updateTreeState(),
+			),
 		);
 		context.subscriptions.push(
 			vscode.workspace.onDidChangeTextDocument(() =>
-				this.updateTreeState()
-			)
+				this.updateTreeState(),
+			),
 		);
 		context.subscriptions.push(
-			vscode.workspace.onDidOpenTextDocument(() => this.updateTreeState())
+			vscode.workspace.onDidOpenTextDocument(() =>
+				this.updateTreeState(),
+			),
 		);
 
 		setTimeout(() => {
@@ -326,7 +331,7 @@ export class JsonOutlineProvider
 			if (
 				vscode.window.activeTextEditor &&
 				this.shouldShowTreeForDocument(
-					vscode.window.activeTextEditor.document
+					vscode.window.activeTextEditor.document,
 				)
 			) {
 				if (!this.tree) {
@@ -344,7 +349,7 @@ export class JsonOutlineProvider
 							i++
 						) {
 							let item = this.getElementInfo(
-								this.tree.value.properties[i]
+								this.tree.value.properties[i],
 							);
 							result.push(item);
 						}
@@ -354,8 +359,8 @@ export class JsonOutlineProvider
 						elementInfo.current.value.start !== undefined
 							? this.tree.getValueAtCharacterIndex(
 									elementInfo.current.value.start,
-									ContainsBehavior.strict
-								)
+									ContainsBehavior.strict,
+							  )
 							: undefined;
 
 					// Value is an object and is collapsible
@@ -371,7 +376,7 @@ export class JsonOutlineProvider
 						) {
 							let item = this.getElementInfo(
 								valueNode.properties[i],
-								elementInfo
+								elementInfo,
 							);
 							result.push(item);
 						}
@@ -386,7 +391,7 @@ export class JsonOutlineProvider
 							if (valueElement instanceof Json.ObjectValue) {
 								let item = this.getElementInfo(
 									valueElement,
-									elementInfo
+									elementInfo,
 								);
 								result.push(item);
 							}
@@ -447,7 +452,7 @@ export class JsonOutlineProvider
 			vscode.window.showTextDocument(
 				editor.document,
 				editor.viewColumn,
-				false
+				false,
 			);
 		}
 	}
@@ -473,7 +478,7 @@ export class JsonOutlineProvider
 			this.tree &&
 			this.tree.getValueAtCharacterIndex(
 				element.key.start,
-				ContainsBehavior.strict
+				ContainsBehavior.strict,
 			);
 		if (keyNode instanceof Json.StringValue) {
 			return `${keyNode.unquotedValue}@${elementInfo.current.level}`;
@@ -486,7 +491,7 @@ export class JsonOutlineProvider
 			this.tree &&
 			this.tree.getValueAtCharacterIndex(
 				elementInfo.current.key.start,
-				ContainsBehavior.strict
+				ContainsBehavior.strict,
 			);
 
 		// Key is an object (e.g. a resource object)
@@ -530,7 +535,7 @@ export class JsonOutlineProvider
 				this.tree &&
 				this.tree.getValueAtCharacterIndex(
 					elementInfo.current.value.start,
-					ContainsBehavior.strict
+					ContainsBehavior.strict,
 				);
 
 			return `${
@@ -545,7 +550,7 @@ export class JsonOutlineProvider
 
 	private getLabelFromPropery(
 		propertyName: string,
-		keyNode: Json.ObjectValue
+		keyNode: Json.ObjectValue,
 	): string | undefined {
 		// tslint:disable-next-line:one-variable-per-declaration
 		for (var i = 0, l = keyNode.properties.length; i < l; i++) {
@@ -568,7 +573,7 @@ export class JsonOutlineProvider
 	 */
 	private getElementInfo(
 		childElement: Json.Property | Json.ObjectValue,
-		elementInfo?: IElementInfo
+		elementInfo?: IElementInfo,
 	): IElementInfo {
 		let collapsible = false;
 
@@ -673,7 +678,7 @@ export class JsonOutlineProvider
 	private getIcon(
 		icons: [string, string][],
 		itemName: string,
-		defaultIcon: string
+		defaultIcon: string,
 	): string {
 		// tslint:disable-next-line: strict-boolean-expressions
 		itemName = (itemName || "").toLowerCase();
@@ -686,7 +691,7 @@ export class JsonOutlineProvider
 		let icon: string | undefined;
 		const keyOrResourceNode = this.tree?.getValueAtCharacterIndex(
 			elementInfo.current.key.start,
-			ContainsBehavior.strict
+			ContainsBehavior.strict,
 		);
 
 		// Is current element a root element?
@@ -695,7 +700,7 @@ export class JsonOutlineProvider
 				icon = this.getIcon(
 					topLevelIcons,
 					keyOrResourceNode.toString(),
-					""
+					"",
 				);
 			}
 		} else if (elementInfo.current.level === 2) {
@@ -704,13 +709,13 @@ export class JsonOutlineProvider
 			// Get root value
 			const rootNode = this.tree?.getValueAtCharacterIndex(
 				elementInfo.root.key.start,
-				ContainsBehavior.strict
+				ContainsBehavior.strict,
 			);
 			if (rootNode) {
 				icon = this.getIcon(
 					topLevelChildIconsByRootNode,
 					rootNode.toString(),
-					""
+					"",
 				);
 			}
 		}
@@ -720,7 +725,7 @@ export class JsonOutlineProvider
 		if (elementInfo.current.level && elementInfo.current.level > 1) {
 			const rootNode = this.tree?.getValueAtCharacterIndex(
 				elementInfo.root.key.start,
-				ContainsBehavior.strict
+				ContainsBehavior.strict,
 			);
 
 			if (
@@ -746,7 +751,7 @@ export class JsonOutlineProvider
 							icon = this.getIcon(
 								resourceIcons,
 								resourceType,
-								"resources.svg"
+								"resources.svg",
 							);
 						}
 					}
@@ -770,7 +775,7 @@ export class JsonOutlineProvider
 
 	private getFunctionsIcon(
 		elementInfo: IElementInfo,
-		node: Json.Value | undefined
+		node: Json.Value | undefined,
 	): string | undefined {
 		const level: number | undefined = elementInfo.current.level;
 		if (!node || level === undefined) {
@@ -780,7 +785,7 @@ export class JsonOutlineProvider
 			return this.getIcon(
 				functionIcons,
 				node.toShortFriendlyString(),
-				""
+				"",
 			);
 		}
 		if (!elementInfo.current.collapsible) {
@@ -821,7 +826,7 @@ export class JsonOutlineProvider
 		vscode.commands.executeCommand(
 			"setContext",
 			"showAzureTemplateView",
-			visible
+			visible,
 		);
 	}
 }

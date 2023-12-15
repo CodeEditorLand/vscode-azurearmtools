@@ -42,7 +42,7 @@ export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
 		span: Span,
 		topLevelParameterValuesProvider:
 			| IParameterValuesSourceProvider
-			| undefined
+			| undefined,
 	): ResolvableCodeLens[] {
 		const lenses: ResolvableCodeLens[] = [];
 		let title: string;
@@ -84,7 +84,7 @@ export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
 			fullValidationStatus,
 			topLevelParameterValuesProvider,
 			scope,
-			span
+			span,
 		);
 		return lenses;
 	}
@@ -101,7 +101,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 		span: Span,
 		title: string,
 		linkedFileUri?: Uri,
-		tooltip?: string
+		tooltip?: string,
 	) {
 		super(scope, span);
 		this.command = {
@@ -121,7 +121,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 		linkedTemplateReferences: ILinkedTemplateReference[] | undefined,
 		topLevelParameterValuesProvider:
 			| IParameterValuesSourceProvider
-			| undefined
+			| undefined,
 	): ResolvableCodeLens[] {
 		const lenses: ResolvableCodeLens[] = [];
 		let title: string;
@@ -205,7 +205,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 			}
 
 			langServerLoadState = getLinkedFileLoadStateLabelSuffix(
-				firstLinkedTemplateRef
+				firstLinkedTemplateRef,
 			);
 		}
 
@@ -214,7 +214,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 		}
 
 		lenses.push(
-			new LinkedTemplateCodeLens(scope, span, title, linkedUri, fullPath)
+			new LinkedTemplateCodeLens(scope, span, title, linkedUri, fullPath),
 		);
 
 		addSelectParamFileLensIfNeeded(
@@ -222,7 +222,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 			fullValidationStatus,
 			topLevelParameterValuesProvider,
 			scope,
-			span
+			span,
 		);
 
 		// tslint:disable-next-line: no-suspicious-comment
@@ -281,7 +281,7 @@ function getLoadStateFromLanguageServerStatus(): string | undefined {
 }
 
 function getLinkedFileLoadStateLabelSuffix(
-	ref: ILinkedTemplateReference
+	ref: ILinkedTemplateReference,
 ): string {
 	switch (ref.loadState) {
 		case LinkedFileLoadState.LoadFailed:
@@ -307,7 +307,7 @@ function addSelectParamFileLensIfNeeded(
 	fullValidationStatus: IFullValidationStatus,
 	topLevelParameterValuesProvider: IParameterValuesSourceProvider | undefined,
 	scope: TemplateScope,
-	span: Span
+	span: Span,
 ): void {
 	if (ext.languageServerState === LanguageServerState.Running) {
 		if (!fullValidationStatus.fullValidationEnabled) {
@@ -319,8 +319,8 @@ function addSelectParamFileLensIfNeeded(
 					{
 						isForLinkedOrNestedTemplate: true,
 						fullValidationStatus,
-					}
-				)
+					},
+				),
 			);
 		}
 	}

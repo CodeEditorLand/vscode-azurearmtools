@@ -33,7 +33,7 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 				// Get the definition for the variable that's being referenced via a variables('v') call
 				const variableProperty: IVariableDefinition | undefined =
 					this._scope.getVariableDefinitionFromFunctionCall(
-						functionSource
+						functionSource,
 					);
 				if (variableProperty) {
 					const variableDefinition: Json.ObjectValue | undefined =
@@ -45,13 +45,13 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 							| Json.ObjectValue
 							| undefined = Json.asObjectValue(
 							variableDefinition.getPropertyValueFromStack(
-								sourcesNameStack
-							)
+								sourcesNameStack,
+							),
 						);
 						if (
 							sourcePropertyDefinition &&
 							!sourcePropertyDefinition.hasProperty(
-								tlePropertyAccess.nameToken.stringValue
+								tlePropertyAccess.nameToken.stringValue,
 							)
 						) {
 							this.addIssue(tlePropertyAccess);
@@ -75,13 +75,13 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 			new Issue(
 				span,
 				`Property "${propertyName}" is not a defined property of "${sourceString}".`,
-				IssueKind.undefinedVarProp
-			)
+				IssueKind.undefinedVarProp,
+			),
 		);
 	}
 	public static visit(
 		tleValue: Value | undefined,
-		scope: TemplateScope
+		scope: TemplateScope,
 	): UndefinedVariablePropertyVisitor {
 		const visitor = new UndefinedVariablePropertyVisitor(scope);
 		if (tleValue) {

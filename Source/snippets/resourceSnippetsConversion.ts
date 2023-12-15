@@ -21,7 +21,7 @@ const stringSnippetPlaceholderCommentPatternRegex = new RegExp(
 		// /**/ `|-\\d+` + // or integer value
 		///**/ `|.*?` + // or any other string of characters
 		`)`,
-	"g"
+	"g",
 );
 
 const nonStringSnippetPlaceholderCommentPatternRegex = new RegExp(
@@ -36,7 +36,7 @@ const nonStringSnippetPlaceholderCommentPatternRegex = new RegExp(
 		// /**/ `|-\\d+` + // or integer value
 		///**/ `|.*?` + // or any other string of characters
 		`)`,
-	"g"
+	"g",
 );
 
 ////////////////////////////////////
@@ -59,11 +59,11 @@ const nonStringSnippetPlaceholderCommentPatternRegex = new RegExp(
 
 export function createResourceSnippetFromFile(
 	snippetName: string,
-	snippetFileContent: string
+	snippetFileContent: string,
 ): ISnippetDefinitionFromFile {
 	const json = getJsonFromResourceSnippetFile(
 		snippetName,
-		snippetFileContent
+		snippetFileContent,
 	);
 	const body = getBodyFromResourceSnippetJson(json);
 	const metadata = <{ [key: string]: string | undefined }>json.metadata;
@@ -72,11 +72,11 @@ export function createResourceSnippetFromFile(
 
 	assert(
 		description !== undefined,
-		`Resource snippet "${snippetName}" is missing metadata.description`
+		`Resource snippet "${snippetName}" is missing metadata.description`,
 	);
 	assert(
 		prefix,
-		`Resource snippet "${snippetName}" is missing metadata.prefix`
+		`Resource snippet "${snippetName}" is missing metadata.prefix`,
 	);
 
 	return {
@@ -90,31 +90,31 @@ export function createResourceSnippetFromFile(
 // for testing only
 export function getBodyFromResourceSnippetFile(
 	snippetName: string,
-	snippetFileContent: string
+	snippetFileContent: string,
 ): string[] {
 	const parsed = getJsonFromResourceSnippetFile(
 		snippetName,
-		snippetFileContent
+		snippetFileContent,
 	);
 	return getBodyFromResourceSnippetJson(parsed);
 }
 
 function getJsonFromResourceSnippetFile(
 	snippetName: string,
-	snippetFileContent: string
+	snippetFileContent: string,
 ): { [key: string]: unknown } {
 	// e.g.  /*"{$5|Enabled,Disabled|}"*/"Enabled"  ->   "EMBEDDEDSTRING!"{$5|Enabled,Disabled|}"!EMBEDDEDSTRING"
 	// e.g. /*${6|true,false|}*/false -> /*${6|true,false|}*/false
 	let snippetNoPlaceholders = snippetFileContent.replace(
 		stringSnippetPlaceholderCommentPatternRegex,
-		'"EMBEDDEDSTRING!$1!EMBEDDEDSTRING"'
+		'"EMBEDDEDSTRING!$1!EMBEDDEDSTRING"',
 	);
 
 	// e.g.  /*"{$5|Enabled,Disabled|}"*/"Enabled"  ->   "EMBEDDEDSTRING!"{$5|Enabled,Disabled|}"!EMBEDDEDSTRING"
 	// e.g. /*${6|true,false|}*/false -> /*${6|true,false|}*/false
 	snippetNoPlaceholders = snippetNoPlaceholders.replace(
 		nonStringSnippetPlaceholderCommentPatternRegex,
-		'"NOTASTRING!$1!NOTASTRING"'
+		'"NOTASTRING!$1!NOTASTRING"',
 	);
 
 	try {
@@ -123,7 +123,7 @@ function getJsonFromResourceSnippetFile(
 		throw new Error(
 			`Error processing resource snippet '${snippetName}': ${
 				parseError(ex).message
-			}`
+			}`,
 		);
 	}
 }

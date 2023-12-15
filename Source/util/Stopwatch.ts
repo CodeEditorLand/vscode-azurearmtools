@@ -46,7 +46,7 @@ export class Stopwatch {
 				: Date.now();
 		// tslint:disable-next-line: no-non-null-assertion // Asserted
 		return Duration.milliseconds(
-			endTimeMilliseconds - this._startTimeMilliseconds!
+			endTimeMilliseconds - this._startTimeMilliseconds!,
 		);
 	}
 }

@@ -24,7 +24,7 @@ export function getResourcesInfo({
 	recognizeDecoupledChildren: boolean;
 }): IJsonResourceInfo[] {
 	const resourcesArray = scope.rootObject?.getPropertyValue(
-		templateKeys.resources
+		templateKeys.resources,
 	)?.asArrayValue;
 	if (resourcesArray) {
 		const infos = getInfoFromResourcesArray(resourcesArray, undefined);
@@ -42,7 +42,7 @@ export function getResourcesInfo({
  * Get useful info about a single resource in a template, ignoring children and parents
  */
 export function getResourceInfo(
-	resourceObject: Json.ObjectValue
+	resourceObject: Json.ObjectValue,
 ): IJsonResourceInfo | undefined {
 	const results: IJsonResourceInfo[] = [];
 	getInfoFromResourceObject(resourceObject, undefined, results, false);
@@ -144,7 +144,7 @@ export class ResourceInfo implements IResourceInfo {
 	public constructor(
 		public readonly nameSegmentExpressions: string[],
 		public readonly typeSegmentExpressions: string[],
-		public readonly parent?: IResourceInfo
+		public readonly parent?: IResourceInfo,
 	) {
 		if (parent) {
 			parent.children.push(this);
@@ -235,7 +235,7 @@ export class JsonResourceInfo
 		nameSegmentExpressions: string[],
 		typeSegmentExpressions: string[],
 		public readonly resourceObject: Json.ObjectValue,
-		parent: IJsonResourceInfo | undefined
+		parent: IJsonResourceInfo | undefined,
 	) {
 		super(nameSegmentExpressions, typeSegmentExpressions, parent);
 	}
@@ -263,7 +263,7 @@ export class JsonResourceInfo
  */
 function concatExpressionsWithSeparator(
 	expressions: string[],
-	unquotedLiteralSeparator?: string
+	unquotedLiteralSeparator?: string,
 ): string | undefined {
 	if (expressions.length < 2) {
 		return expressions[0];
@@ -280,7 +280,7 @@ function concatExpressionsWithSeparator(
 			if (unquotedLiteralSeparator && !isLastSegment) {
 				// Add separator
 				expression = `'${removeSingleQuotes(
-					expression
+					expression,
 				)}${unquotedLiteralSeparator}'`;
 			}
 
@@ -291,10 +291,11 @@ function concatExpressionsWithSeparator(
 				lastCoalescedExpression &&
 				isSingleQuoted(lastCoalescedExpression)
 			) {
-				coalescedExpressions[coalescedExpressions.length - 1] =
-					`'${removeSingleQuotes(
-						lastCoalescedExpression
-					)}${removeSingleQuotes(expression)}'`;
+				coalescedExpressions[
+					coalescedExpressions.length - 1
+				] = `'${removeSingleQuotes(
+					lastCoalescedExpression,
+				)}${removeSingleQuotes(expression)}'`;
 			} else {
 				coalescedExpressions.push(expression);
 			}
@@ -316,7 +317,7 @@ function concatExpressionsWithSeparator(
 
 function getInfoFromResourcesArray(
 	resourcesArray: Json.ArrayValue,
-	parent: IJsonResourceInfo | undefined
+	parent: IJsonResourceInfo | undefined,
 ): IJsonResourceInfo[] {
 	const results: IJsonResourceInfo[] = [];
 	for (let resourceValue of resourcesArray.elements ?? []) {
@@ -333,13 +334,13 @@ function getInfoFromResourceObject(
 	resourceObject: Json.ObjectValue,
 	parent: IJsonResourceInfo | undefined,
 	results: IJsonResourceInfo[],
-	processChildren: boolean
+	processChildren: boolean,
 ): void {
 	const resName = Json.asStringValue(
-		resourceObject.getPropertyValue(templateKeys.resourceName)
+		resourceObject.getPropertyValue(templateKeys.resourceName),
 	);
 	const resType = Json.asStringValue(
-		resourceObject.getPropertyValue(templateKeys.resourceType)
+		resourceObject.getPropertyValue(templateKeys.resourceType),
 	);
 
 	if (resName && resType) {
@@ -350,7 +351,7 @@ function getInfoFromResourceObject(
 		// is just the last segment, but it is allowed to put the full
 		// type there instead
 		const typeSegments = splitResourceTypeIntoSegments(
-			resType.unquotedValue
+			resType.unquotedValue,
 		);
 		if (parent && typeSegments.length <= 1) {
 			// Add to end of parent type segments
@@ -363,7 +364,7 @@ function getInfoFromResourceObject(
 		}
 
 		const nameSegments = splitResourceNameIntoSegments(
-			resName.unquotedValue
+			resName.unquotedValue,
 		);
 		if (parent && nameSegments.length <= 1) {
 			// Add to end of parent name segments
@@ -379,19 +380,19 @@ function getInfoFromResourceObject(
 			nameExpressions,
 			typeExpressions,
 			resourceObject,
-			parent
+			parent,
 		);
 		results.push(info);
 
 		if (processChildren) {
 			// Check child resources
 			const childResources = resourceObject.getPropertyValue(
-				templateKeys.resources
+				templateKeys.resources,
 			)?.asArrayValue;
 			if (childResources) {
 				const childrenInfo = getInfoFromResourcesArray(
 					childResources,
-					info
+					info,
 				);
 				results.push(...childrenInfo);
 			}
@@ -425,7 +426,7 @@ function getInfoFromResourceObject(
 				for (let subnet of subnets?.elements ?? []) {
 					const subnetObject = subnet.asObjectValue;
 					const subnetName = subnetObject?.getPropertyValue(
-						templateKeys.resourceName
+						templateKeys.resourceName,
 					)?.asStringValue;
 					if (subnetObject && subnetName) {
 						const subnetTypes = [
@@ -435,15 +436,15 @@ function getInfoFromResourceObject(
 						const subnetInfo = new JsonResourceInfo(
 							[
 								jsonStringToTleExpression(
-									resName.unquotedValue
+									resName.unquotedValue,
 								),
 								jsonStringToTleExpression(
-									subnetName.unquotedValue
+									subnetName.unquotedValue,
 								),
 							],
 							subnetTypes,
 							subnetObject,
-							info
+							info,
 						);
 						results.push(subnetInfo);
 					}
@@ -485,7 +486,7 @@ export function jsonStringToTleExpression(stringUnquotedValue: string): string {
 //     ->
 //   [ "concat(variables('sqlServer')", "variables('firewallRuleName')" ]
 export function splitResourceNameIntoSegments(
-	nameUnquotedValue: string
+	nameUnquotedValue: string,
 ): string[] {
 	if (isJsonStringAnExpression(nameUnquotedValue)) {
 		// It's an expression.  Try to break it into segments by handling certain common patterns
@@ -500,7 +501,7 @@ export function splitResourceNameIntoSegments(
 //   ->
 // [ "'Microsoft.Network/networkSecurityGroups'", "'securityRules'" ]
 function splitResourceTypeIntoSegments(
-	typeNameUnquotedValue: string
+	typeNameUnquotedValue: string,
 ): string[] {
 	if (!typeNameUnquotedValue) {
 		return [`''`];
@@ -523,7 +524,7 @@ function splitResourceTypeIntoSegments(
 		// It's an expression.  Try to break it into segments by handling certain common patterns
 		// Example: "[concat(variables('a'), '/', variables('c'))]"
 		let segmentsAsExpressions = splitExpressionIntoSegments(
-			typeNameUnquotedValue
+			typeNameUnquotedValue,
 		);
 
 		if (segmentsAsExpressions.length >= 2) {
@@ -538,10 +539,10 @@ function splitResourceTypeIntoSegments(
 					const combinedSegment =
 						concatExpressionsWithSeparator(
 							segmentsAsExpressions.slice(0, 2),
-							"/"
+							"/",
 						) ?? "";
 					segmentsAsExpressions = [combinedSegment].concat(
-						segmentsAsExpressions.slice(2)
+						segmentsAsExpressions.slice(2),
 					);
 				}
 			}
@@ -584,7 +585,7 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
 							const refactoredArg: string[] =
 								splitStringAndKeepSeparators(
 									arg.unquotedValue,
-									"/"
+									"/",
 								).map((s) => `'${s}'`);
 							rewrittenArgs.push(...refactoredArg);
 						} else {
@@ -622,7 +623,7 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
 						// Create segments out of the groups - groups with more than one element must be recombined
 						// using 'concat'
 						return segmentGroups.map((g) =>
-							g.length > 1 ? `concat(${g.join(", ")})` : g[0]
+							g.length > 1 ? `concat(${g.join(", ")})` : g[0],
 						);
 					}
 				}
@@ -669,8 +670,9 @@ function getFriendlyNameExpression({
 	let friendlyName: string;
 
 	// Look for displayName tag first
-	let tags = resourceObject?.getPropertyValue(templateKeys.tags)
-		?.asObjectValue;
+	let tags = resourceObject?.getPropertyValue(
+		templateKeys.tags,
+	)?.asObjectValue;
 	let displayName = tags?.getPropertyValue(templateKeys.displayNameTag)
 		?.asStringValue?.unquotedValue;
 	if (displayName) {
@@ -727,7 +729,7 @@ function findAndSetDecoupledChildren(infos: IJsonResourceInfo[]): void {
 	const topLevel = infos.filter((info) => !info.parent);
 	const possibleParents = topLevel;
 	const possibleChildren = topLevel.filter(
-		(info) => !info.parent && info.nameSegmentExpressions.length > 1
+		(info) => !info.parent && info.nameSegmentExpressions.length > 1,
 	);
 
 	for (const parent of possibleParents) {
@@ -737,7 +739,7 @@ function findAndSetDecoupledChildren(infos: IJsonResourceInfo[]): void {
 			// slice() makes a copy of the array so we can modify it while looping
 			assert(
 				!child.parent,
-				"Should have been removed from the array already"
+				"Should have been removed from the array already",
 			);
 			if (areDecoupledChildAndParent(child, parent)) {
 				parent.children.push(child);

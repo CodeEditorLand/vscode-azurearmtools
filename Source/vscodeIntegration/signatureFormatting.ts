@@ -12,7 +12,7 @@ import { UserFunctionParameterDefinition } from "../documents/templates/UserFunc
 
 export function getUserFunctionUsage(
 	func: UserFunctionDefinition,
-	includeNamespaceName: boolean = true
+	includeNamespaceName: boolean = true,
 ): string {
 	const name = includeNamespaceName
 		? func.fullName
@@ -27,11 +27,11 @@ export function getUserFunctionUsage(
 export function getFunctionUsage(
 	name: string,
 	params: IParameterDefinition[],
-	outputTypeAsString: string | null | undefined
+	outputTypeAsString: string | null | undefined,
 ): string {
 	let usage: string = `${name}(${params
 		.map((p) =>
-			getFunctionParamUsage(p.nameValue.unquotedValue, p.validType)
+			getFunctionParamUsage(p.nameValue.unquotedValue, p.validType),
 		)
 		.join(", ")})`;
 	let outputType: ExpressionType | undefined =
@@ -44,7 +44,7 @@ export function getFunctionUsage(
 
 export function getFunctionParamUsage(
 	name: string,
-	typeAsString: string | null | undefined
+	typeAsString: string | null | undefined,
 ): string {
 	const paramType: ExpressionType | undefined =
 		toValidExpressionType(typeAsString);

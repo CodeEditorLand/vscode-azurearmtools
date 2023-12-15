@@ -19,13 +19,13 @@ import { Parser } from "./TLE";
  * @example '[variables('v1')]' => '${v1}'
  */
 export function getFriendlyExpressionFromJsonString(
-	jsonString: string
+	jsonString: string,
 ): string {
 	// If it's an expression - starts and ends with [], but doesn't start with [[, and at least one character inside the []
 	if (isTleExpression(jsonString)) {
 		const quotedBracketedJsonString = `"${jsonString}"`;
 		return getFriendlyExpressionFromTleExpressionCore(
-			quotedBracketedJsonString
+			quotedBracketedJsonString,
 		);
 	}
 
@@ -41,7 +41,7 @@ export function getFriendlyExpressionFromJsonString(
  * @example 'concat(variables('a'), '/', func())' => '[${a}/func()]'
  */
 export function getFriendlyExpressionFromTleExpression(
-	tleExpression: string
+	tleExpression: string,
 ): string {
 	if (isSingleQuoted(tleExpression)) {
 		// Just a string literal, e.g. "'my string'"
@@ -51,12 +51,12 @@ export function getFriendlyExpressionFromTleExpression(
 	// Otherwise it's an expression.  Add brackets so we can parse it.
 	const quotedBracketedJsonString = `"[${tleExpression}]"`;
 	return getFriendlyExpressionFromTleExpressionCore(
-		quotedBracketedJsonString
+		quotedBracketedJsonString,
 	);
 }
 
 function getFriendlyExpressionFromTleExpressionCore(
-	doubleQuotedBracketedJsonString: string
+	doubleQuotedBracketedJsonString: string,
 ): string {
 	const pr = Parser.parse(doubleQuotedBracketedJsonString);
 	if (pr.expression && pr.errors.length === 0) {
@@ -86,12 +86,12 @@ function getFriendlyExpressionFromTleExpressionCore(
 		//   "\"[variables('a')+variables('b')]\"" (invalid expression)
 		//     => "[${a}+${b}]"
 		const unquotedExpression = removeDoubleQuotes(
-			doubleQuotedBracketedJsonString
+			doubleQuotedBracketedJsonString,
 		);
 		// tslint:disable-next-line: no-invalid-template-strings
 		return unquotedExpression.replace(
 			/(\bvariables\b|\bparameters\b)\('([^']+)'\)/gi,
-			"$${$2}"
+			"$${$2}",
 		);
 	}
 }

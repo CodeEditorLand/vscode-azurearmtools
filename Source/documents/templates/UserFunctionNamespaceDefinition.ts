@@ -19,7 +19,7 @@ import { TemplateScope } from "./scopes/TemplateScope";
 import { UserFunctionDefinition } from "./UserFunctionDefinition";
 
 export function isUserNamespaceDefinition(
-	definition: INamedDefinition
+	definition: INamedDefinition,
 ): definition is UserFunctionNamespaceDefinition {
 	return definition.definitionKind === DefinitionKind.Namespace;
 }
@@ -61,7 +61,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 		public readonly parentScope: TemplateScope,
 		public readonly document: IJsonDocument,
 		public readonly nameValue: Json.StringValue,
-		private readonly _value: Json.ObjectValue
+		private readonly _value: Json.ObjectValue,
 	) {
 		assert(_value);
 	}
@@ -69,17 +69,17 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 	public static createIfValid(
 		parentScope: TemplateScope,
 		document: IJsonDocument,
-		functionValue: Json.ObjectValue
+		functionValue: Json.ObjectValue,
 	): UserFunctionNamespaceDefinition | undefined {
 		let nameValue: Json.StringValue | undefined = Json.asStringValue(
-			functionValue.getPropertyValue("namespace")
+			functionValue.getPropertyValue("namespace"),
 		);
 		if (nameValue) {
 			return new UserFunctionNamespaceDefinition(
 				parentScope,
 				document,
 				nameValue,
-				functionValue
+				functionValue,
 			);
 		}
 
@@ -102,7 +102,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 			const membersResult: UserFunctionDefinition[] = [];
 
 			const members: Json.ObjectValue | undefined = Json.asObjectValue(
-				this._value.getPropertyValue(templateKeys.userFunctionMembers)
+				this._value.getPropertyValue(templateKeys.userFunctionMembers),
 			);
 			if (members) {
 				for (let member of members.properties) {
@@ -115,7 +115,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 							this,
 							name,
 							value,
-							member.span
+							member.span,
 						);
 						membersResult.push(func);
 					}
@@ -127,12 +127,13 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 	}
 
 	public getMemberDefinition(
-		functionName: string
+		functionName: string,
 	): UserFunctionDefinition | undefined {
 		if (functionName) {
 			let functionNameLC = functionName.toLowerCase();
 			return this.members.find(
-				(fd) => fd.nameValue.toString().toLowerCase() === functionNameLC
+				(fd) =>
+					fd.nameValue.toString().toLowerCase() === functionNameLC,
 			);
 		} else {
 			return undefined;
@@ -142,7 +143,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 	public get usageInfo(): IUsageInfo {
 		const ns = this.nameValue.unquotedValue;
 		const methodsUsage: string[] = this.members.map((md) =>
-			getUserFunctionUsage(md, false)
+			getUserFunctionUsage(md, false),
 		);
 		let description: string | undefined;
 		if (methodsUsage.length > 0) {

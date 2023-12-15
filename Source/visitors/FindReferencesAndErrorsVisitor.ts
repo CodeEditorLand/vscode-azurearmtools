@@ -45,7 +45,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 			INamedDefinition | undefined,
 			Reference.ReferenceList
 		>,
-		private readonly _errors: Issue[]
+		private readonly _errors: Issue[],
 	) {
 		super();
 
@@ -98,20 +98,20 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 					// ... Namespace exists, add reference
 					this.addReference(
 						userNamespaceDefinition,
-						tleFunctionCall.namespaceToken.span
+						tleFunctionCall.namespaceToken.span,
 					);
 
 					const userFunctionDefinition:
 						| UserFunctionDefinition
 						| undefined = this._scope.getUserFunctionDefinition(
 						userNamespaceDefinition,
-						name
+						name,
 					);
 					if (userFunctionDefinition) {
 						// ... User-defined function exists in namespace, add reference
 						this.addReference(
 							userFunctionDefinition,
-							tleFunctionCall.nameToken.span
+							tleFunctionCall.nameToken.span,
 						);
 
 						// Validate argument count
@@ -119,8 +119,8 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 							validateUserFunctionCallArgCounts(
 								tleFunctionCall,
 								userNamespaceDefinition,
-								userFunctionDefinition
-							)
+								userFunctionDefinition,
+							),
 						);
 					} else {
 						// Undefined user function error
@@ -128,8 +128,8 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 							new UnrecognizedUserFunctionIssue(
 								tleFunctionCall.nameToken.span,
 								namespaceName,
-								tleFunctionCall.name
-							)
+								tleFunctionCall.name,
+							),
 						);
 					}
 				} else {
@@ -137,8 +137,8 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 					this.addError(
 						new UnrecognizedUserNamespaceIssue(
 							tleFunctionCall.namespaceToken.span,
-							namespaceName
-						)
+							namespaceName,
+						),
 					);
 				}
 			}
@@ -151,7 +151,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 			this.addBuiltFunctionRefOrError(
 				metadata,
 				name,
-				tleFunctionCall.nameToken
+				tleFunctionCall.nameToken,
 			);
 
 			if (metadata) {
@@ -159,8 +159,8 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 				this.addErrorIf(
 					validateBuiltInFunctionCallArgCounts(
 						tleFunctionCall,
-						metadata
-					)
+						metadata,
+					),
 				);
 
 				switch (metadata.lowerCaseName) {
@@ -187,7 +187,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 	private addBuiltFunctionRefOrError(
 		metadata: BuiltinFunctionMetadata | undefined,
 		functionName: string,
-		functionNameToken: TLE.Token
+		functionNameToken: TLE.Token,
 	): void {
 		if (metadata) {
 			this.addReference(metadata, functionNameToken.span);
@@ -195,14 +195,14 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 			this.addErrorIf(
 				new UnrecognizedBuiltinFunctionIssue(
 					functionNameToken.span,
-					functionName
-				)
+					functionName,
+				),
 			);
 		}
 	}
 
 	private addVariableRefOrError(
-		tleFunctionCall: TLE.FunctionCallValue
+		tleFunctionCall: TLE.FunctionCallValue,
 	): void {
 		if (tleFunctionCall.argumentExpressions.length === 1) {
 			const arg = tleFunctionCall.argumentExpressions[0];
@@ -218,16 +218,16 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 							new Issue(
 								arg.token.span,
 								"User functions cannot reference variables",
-								IssueKind.varInUdf
-							)
+								IssueKind.varInUdf,
+							),
 						);
 					} else {
 						this.addError(
 							new Issue(
 								arg.token.span,
 								`Undefined variable reference: ${arg.quotedValue}`,
-								IssueKind.undefinedVar
-							)
+								IssueKind.undefinedVar,
+							),
 						);
 					}
 				}
@@ -236,7 +236,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 	}
 
 	private addParameterRefOrError(
-		tleFunctionCall: TLE.FunctionCallValue
+		tleFunctionCall: TLE.FunctionCallValue,
 	): void {
 		if (tleFunctionCall.argumentExpressions.length === 1) {
 			const arg: TLE.Value | undefined =
@@ -252,8 +252,8 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 						new Issue(
 							arg.token.span,
 							`Undefined parameter reference: ${arg.quotedValue}`,
-							IssueKind.undefinedParam
-						)
+							IssueKind.undefinedParam,
+						),
 					);
 				}
 			}
@@ -271,14 +271,14 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 			Reference.ReferenceList
 		>,
 		// Discovered errors are added to this
-		errors: Issue[]
+		errors: Issue[],
 	): FindReferencesAndErrorsVisitor {
 		const visitor = new FindReferencesAndErrorsVisitor(
 			scope,
 			jsonStringStartIndex,
 			metadata,
 			referenceListsMap,
-			errors
+			errors,
 		);
 
 		if (tleValue) {

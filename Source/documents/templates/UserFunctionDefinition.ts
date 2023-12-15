@@ -20,7 +20,7 @@ import { UserFunctionNamespaceDefinition } from "./UserFunctionNamespaceDefiniti
 import { UserFunctionParameterDefinition } from "./UserFunctionParameterDefinition";
 
 export function isUserFunctionDefinition(
-	definition: INamedDefinition
+	definition: INamedDefinition,
 ): definition is UserFunctionDefinition {
 	return definition.definitionKind === DefinitionKind.UserFunction;
 }
@@ -46,7 +46,7 @@ export class UserFunctionDefinition implements INamedDefinition {
 		public readonly namespace: UserFunctionNamespaceDefinition,
 		public readonly nameValue: Json.StringValue,
 		public readonly objectValue: Json.ObjectValue,
-		public readonly span: Span
+		public readonly span: Span,
 	) {}
 
 	/**
@@ -64,7 +64,7 @@ export class UserFunctionDefinition implements INamedDefinition {
 				this.document,
 				this.objectValue,
 				this.parameterDefinitions,
-				`'${this.fullName}' (UDF) scope`
+				`'${this.fullName}' (UDF) scope`,
 			);
 		});
 	}
@@ -79,7 +79,7 @@ export class UserFunctionDefinition implements INamedDefinition {
 	public get output(): OutputDefinition | undefined {
 		return this._output.getOrCacheValue(() => {
 			let output = Json.asObjectValue(
-				this.objectValue.getPropertyValue("output")
+				this.objectValue.getPropertyValue("output"),
 			);
 			if (output) {
 				return new OutputDefinition(output);
@@ -96,7 +96,7 @@ export class UserFunctionDefinition implements INamedDefinition {
 			// User-function parameters are an ordered array, not an object
 			const parametersArray: Json.ArrayValue | undefined =
 				Json.asArrayValue(
-					this.objectValue.getPropertyValue(templateKeys.parameters)
+					this.objectValue.getPropertyValue(templateKeys.parameters),
 				);
 			if (parametersArray) {
 				for (const parameter of parametersArray.elements) {
@@ -105,7 +105,7 @@ export class UserFunctionDefinition implements INamedDefinition {
 						const parameterDefinition =
 							UserFunctionParameterDefinition.createIfValid(
 								this.document,
-								parameterObject
+								parameterObject,
 							);
 						if (parameterDefinition) {
 							parameterDefinitions.push(parameterDefinition);
