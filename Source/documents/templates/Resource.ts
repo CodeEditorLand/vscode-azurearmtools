@@ -24,7 +24,7 @@ export class Resource implements IResource {
 
 	constructor(
 		private readonly parentScope: TemplateScope,
-		public readonly resourceObject: Json.ObjectValue,
+		public readonly resourceObject: Json.ObjectValue
 	) {}
 
 	/**
@@ -39,7 +39,7 @@ export class Resource implements IResource {
 			return getChildTemplateForResourceObject(
 				this.parentScope,
 				this,
-				this.resourceObject,
+				this.resourceObject
 			);
 		});
 	}
@@ -52,7 +52,7 @@ export class Resource implements IResource {
 		return this._nameValueCache.getOrCacheValue(
 			() =>
 				this.resourceObject.getPropertyValue(templateKeys.resourceName)
-					?.asStringValue,
+					?.asStringValue
 		);
 	}
 
@@ -60,7 +60,7 @@ export class Resource implements IResource {
 		return this._resTypeCache.getOrCacheValue(
 			() =>
 				this.resourceObject.getPropertyValue(templateKeys.resourceType)
-					?.asStringValue,
+					?.asStringValue
 		);
 	}
 }

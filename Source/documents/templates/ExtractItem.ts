@@ -21,13 +21,13 @@ export class ExtractItem {
 	public async extractParameter(
 		editor: vscode.TextEditor,
 		template: DeploymentTemplateDoc,
-		context: IActionContext,
+		context: IActionContext
 	): Promise<void> {
 		let selection = this.expandSelection(
 			editor.selection,
 			editor.document,
 			template,
-			editor,
+			editor
 		);
 		editor.selection = selection;
 		let selectedText = editor.document.getText(selection);
@@ -50,11 +50,11 @@ export class ExtractItem {
 			insertText,
 			selection,
 			template,
-			editor,
+			editor
 		);
 		let owningRootObject = this.getVarsParamsOwningRootObject(
 			template,
-			selection,
+			selection
 		);
 		await new InsertItem(this.ui).insertParameterWithDefaultValue(
 			owningRootObject,
@@ -63,28 +63,28 @@ export class ExtractItem {
 			name,
 			texts.selectedText,
 			description,
-			{ undoStopBefore: true, undoStopAfter: false },
+			{ undoStopBefore: true, undoStopAfter: false }
 		);
 		await editor.edit(
 			(builder) => builder.replace(editor.selection, texts.insertText),
-			{ undoStopBefore: false, undoStopAfter: true },
+			{ undoStopBefore: false, undoStopAfter: true }
 		);
 		editor.revealRange(
 			new vscode.Range(editor.selection.start, editor.selection.end),
-			vscode.TextEditorRevealType.Default,
+			vscode.TextEditorRevealType.Default
 		);
 	}
 
 	// Gets the root object where new parameters and variables should be added
 	private getVarsParamsOwningRootObject(
 		template: DeploymentTemplateDoc,
-		selection: vscode.Selection,
+		selection: vscode.Selection
 	): ObjectValue | undefined {
 		let scope = template
 			.getContextFromDocumentLineAndColumnIndexes(
 				selection.start.line,
 				selection.start.character,
-				undefined,
+				undefined
 			)
 			.getScope();
 		return scope.memberOwningRootObject;
@@ -93,13 +93,13 @@ export class ExtractItem {
 	public async extractVariable(
 		editor: vscode.TextEditor,
 		template: DeploymentTemplateDoc,
-		context: IActionContext,
+		context: IActionContext
 	): Promise<void> {
 		let selection = this.expandSelection(
 			editor.selection,
 			editor.document,
 			template,
-			editor,
+			editor
 		);
 		editor.selection = selection;
 		let selectedText = editor.document.getText(selection);
@@ -116,7 +116,7 @@ export class ExtractItem {
 			insertText,
 			selection,
 			template,
-			editor,
+			editor
 		);
 		let topLevel = this.getVarsParamsOwningRootObject(template, selection);
 		await new InsertItem(this.ui).insertVariableWithValue(
@@ -125,15 +125,15 @@ export class ExtractItem {
 			context,
 			name,
 			texts.selectedText,
-			{ undoStopBefore: true, undoStopAfter: false },
+			{ undoStopBefore: true, undoStopAfter: false }
 		);
 		await editor.edit(
 			(builder) => builder.replace(editor.selection, texts.insertText),
-			{ undoStopBefore: false, undoStopAfter: true },
+			{ undoStopBefore: false, undoStopAfter: true }
 		);
 		editor.revealRange(
 			new vscode.Range(editor.selection.start, editor.selection.end),
-			vscode.TextEditorRevealType.Default,
+			vscode.TextEditorRevealType.Default
 		);
 	}
 
@@ -142,7 +142,7 @@ export class ExtractItem {
 		insertText: string,
 		selection: vscode.Selection,
 		template: DeploymentTemplateDoc,
-		editor: vscode.TextEditor,
+		editor: vscode.TextEditor
 	): { selectedText: string; insertText: string } {
 		if (this.isInsideExpression(selection, template, editor)) {
 			// If the selected text is inside an expression ("[concat('selectedText','')]")
@@ -170,7 +170,7 @@ export class ExtractItem {
 		selection: vscode.Selection,
 		document: vscode.TextDocument,
 		template: DeploymentTemplateDoc,
-		editor: vscode.TextEditor,
+		editor: vscode.TextEditor
 	): vscode.Selection {
 		if (selection.start.character === 0) {
 			return selection;
@@ -179,29 +179,29 @@ export class ExtractItem {
 			let pc = template.getContextFromDocumentLineAndColumnIndexes(
 				selection.start.line,
 				selection.start.character,
-				undefined,
+				undefined
 			);
 			if (pc.jsonValue) {
 				const span = pc.jsonValue.span;
 				return new vscode.Selection(
 					editor.document.positionAt(span.startIndex + 1),
-					editor.document.positionAt(span.endIndex),
+					editor.document.positionAt(span.endIndex)
 				);
 			}
 		}
 		const startPos = new vscode.Position(
 			selection.anchor.line,
-			selection.anchor.character - 1,
+			selection.anchor.character - 1
 		);
 		const endPos = new vscode.Position(
 			selection.end.line,
-			selection.end.character + 1,
+			selection.end.character + 1
 		);
 		const textBefore = document.getText(
-			new vscode.Selection(startPos, selection.anchor),
+			new vscode.Selection(startPos, selection.anchor)
 		);
 		const textAfter = document.getText(
-			new vscode.Selection(selection.end, endPos),
+			new vscode.Selection(selection.end, endPos)
 		);
 		if (
 			(textBefore === "[" && textAfter === "]") ||
@@ -233,12 +233,12 @@ export class ExtractItem {
 	private isInsideExpression(
 		selection: vscode.Selection,
 		template: DeploymentTemplateDoc,
-		editor: vscode.TextEditor,
+		editor: vscode.TextEditor
 	): boolean {
 		let pc = template.getContextFromDocumentLineAndColumnIndexes(
 			selection.start.line,
 			selection.start.character,
-			undefined,
+			undefined
 		);
 		if (pc.jsonValue && pc.jsonValue.asStringValue) {
 			let selectedText = editor.document.getText(selection);

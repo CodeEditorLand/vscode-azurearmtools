@@ -34,18 +34,18 @@ export function setContext(value: {
 	commands.executeCommand(
 		"setContext",
 		hasParameterFileContextName,
-		value.isTemplateFile && value.hasParamFile,
+		value.isTemplateFile && value.hasParamFile
 	);
 
 	// Parameter files...
 	commands.executeCommand(
 		"setContext",
 		isParameterFileContextName,
-		value.isParamFile,
+		value.isParamFile
 	);
 	commands.executeCommand(
 		"setContext",
 		hasTemplateFileContextName,
-		value.hasTemplateFile,
+		value.hasTemplateFile
 	);
 }

@@ -16,7 +16,7 @@ export class ConsoleOutputChannelWrapper implements IAzExtOutputChannel {
 		value: string,
 		options?:
 			| { resourceName?: string | undefined; date?: Date | undefined }
-			| undefined,
+			| undefined
 	): void {
 		console.log(value);
 		this.outputChannel.appendLog(value, options);
@@ -44,7 +44,7 @@ export class ConsoleOutputChannelWrapper implements IAzExtOutputChannel {
 
 	public show(
 		column?: vscode.ViewColumn | undefined,
-		preserveFocus?: boolean | undefined,
+		preserveFocus?: boolean | undefined
 	): void;
 
 	// tslint:disable-next-line: no-any

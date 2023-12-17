@@ -28,7 +28,7 @@ export interface IParameterValuesSource {
 
 	// case-insensitive
 	getParameterValue(
-		parameterName: string,
+		parameterName: string
 	): ParameterValueDefinition | undefined;
 	parameterValueDefinitions: ParameterValueDefinition[];
 }

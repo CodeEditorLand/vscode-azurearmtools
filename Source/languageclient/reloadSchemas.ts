@@ -17,7 +17,7 @@ export async function reloadSchemas(): Promise<void> {
 			reload ===
 			(await window.showInformationMessage(
 				"Azure schema cache has been cleared. Please reload Visual Studio Code to reload schemas.",
-				reload,
+				reload
 			))
 		) {
 			// Don't wait
@@ -25,7 +25,7 @@ export async function reloadSchemas(): Promise<void> {
 		}
 	} else {
 		throw new Error(
-			"Language server is not yet ready. Please try again in a little while.",
+			"Language server is not yet ready. Please try again in a little while."
 		);
 	}
 }

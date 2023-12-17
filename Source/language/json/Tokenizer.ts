@@ -48,7 +48,10 @@ export const enum TokenType {
  * An individual Token that has been parsed by a basic Tokenizer.
  */
 export class Token {
-	constructor(private _text: string, private _type: TokenType) {}
+	constructor(
+		private _text: string,
+		private _type: TokenType
+	) {}
 
 	/**
 	 * Gets the original string that this basic token was parsed from.
@@ -102,7 +105,7 @@ export const NewLine = new Token("\n", TokenType.NewLine);
 export const CarriageReturn = new Token("\r", TokenType.CarriageReturn);
 export const CarriageReturnNewLine = new Token(
 	"\r\n",
-	TokenType.CarriageReturnNewLine,
+	TokenType.CarriageReturnNewLine
 );
 
 /**
@@ -147,12 +150,12 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 		const charactersAfterCurrent = 50;
 		return `${this._text.slice(
 			this._textIndex - charactersBeforeCurrent,
-			this._textIndex,
+			this._textIndex
 		)}<<${
 			this._currentToken ? this._currentToken.toString() : ""
 		}>>${this._text.slice(
 			this._textIndex + 1,
-			this._textIndex + 1 + charactersAfterCurrent,
+			this._textIndex + 1 + charactersAfterCurrent
 		)}`;
 	}
 
@@ -323,7 +326,7 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 						this._currentToken = Digits(this.readWhile(isDigit));
 					} else {
 						this._currentToken = Unrecognized(
-							this.currentCharacter,
+							this.currentCharacter
 						);
 						this.nextCharacter();
 					}

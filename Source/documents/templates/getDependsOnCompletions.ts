@@ -21,7 +21,7 @@ import {
 
 // Handle completions for dependsOn array entries
 export function getDependsOnCompletions(
-	pc: TemplatePositionContext,
+	pc: TemplatePositionContext
 ): Completion.Item[] {
 	const completions: Completion.Item[] = [];
 	let span: Span;
@@ -48,7 +48,7 @@ export function getDependsOnCompletions(
 	// Find the nearest IResource containing the current position
 	let currentResource = findClosestEnclosingResource(
 		pc.documentCharacterIndex,
-		infos,
+		infos
 	);
 
 	// Find descendents of the resource
@@ -64,7 +64,7 @@ export function getDependsOnCompletions(
 		const items = getDependsOnCompletionsForResource(
 			resource,
 			span,
-			currentResource?.parent === resource,
+			currentResource?.parent === resource
 		);
 		completions.push(...items);
 	}
@@ -78,7 +78,7 @@ export function getDependsOnCompletions(
 function getDependsOnCompletionsForResource(
 	resource: IJsonResourceInfo,
 	span: Span,
-	isParent: boolean,
+	isParent: boolean
 ): Completion.Item[] {
 	const completions: Completion.Item[] = [];
 
@@ -113,12 +113,12 @@ function getDependsOnCompletionsForResource(
 		completions.push(item);
 
 		const copyName = resource.copyBlockElement?.getPropertyValue(
-			templateKeys.copyName,
+			templateKeys.copyName
 		)?.asStringValue?.unquotedValue;
 		if (copyName) {
 			const copyNameExpression = jsonStringToTleExpression(copyName);
 			const copyLabel = `Loop ${getFriendlyExpressionFromTleExpression(
-				copyNameExpression,
+				copyNameExpression
 			)}`;
 			const copyInsertText = isTleExpression(copyName)
 				? `"[${copyNameExpression}]"`
@@ -153,13 +153,13 @@ from resource \`${friendlyNameExpression}\` of type \`${friendlyTypeExpression}\
 
 function findClosestEnclosingResource(
 	documentIndex: number,
-	infos: IJsonResourceInfo[],
+	infos: IJsonResourceInfo[]
 ): IJsonResourceInfo | undefined {
 	const containsBehavior = ContainsBehavior.enclosed;
 
 	// Find any resource that contains the point
 	const firstMatch = infos.find((info) =>
-		info.resourceObject.span.contains(documentIndex, containsBehavior),
+		info.resourceObject.span.contains(documentIndex, containsBehavior)
 	);
 	if (firstMatch) {
 		// We found an arbitrary resource that contains this position.  Find the deepest child that still contains it
@@ -170,12 +170,12 @@ function findClosestEnclosingResource(
 				(child) =>
 					(<IJsonResourceInfo>child).resourceObject.span.contains(
 						documentIndex,
-						containsBehavior,
-					),
+						containsBehavior
+					)
 			);
 			assert(
 				childrenContainingResource.length <= 1,
-				"Shouldn't find multiple children containing the document position",
+				"Shouldn't find multiple children containing the document position"
 			);
 			if (childrenContainingResource.length > 0) {
 				deepestMatch = <IJsonResourceInfo>childrenContainingResource[0];
@@ -189,7 +189,7 @@ function findClosestEnclosingResource(
 }
 
 function findDescendentsIncludingSelf(
-	resource: IResourceInfo | undefined,
+	resource: IResourceInfo | undefined
 ): Set<IResourceInfo> {
 	const descendentsIncludingSelf: Set<IResourceInfo> =
 		new Set<IResourceInfo>();

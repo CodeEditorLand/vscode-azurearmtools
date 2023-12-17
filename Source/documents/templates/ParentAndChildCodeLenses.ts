@@ -16,11 +16,11 @@ import { TemplateScope } from "./scopes/TemplateScope";
 
 export function getParentAndChildCodeLenses(
 	scope: TemplateScope,
-	infos: IJsonResourceInfo[],
+	infos: IJsonResourceInfo[]
 ): ResolvableCodeLens[] {
 	if (
 		!ext.configuration.get<boolean>(
-			configKeys.codeLensForResourceParentsAndChildren,
+			configKeys.codeLensForResourceParentsAndChildren
 		)
 	) {
 		return [];
@@ -43,29 +43,29 @@ export function getParentAndChildCodeLenses(
 export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 	public constructor(
 		scope: TemplateScope,
-		protected readonly sourceResource: IJsonResourceInfo,
+		protected readonly sourceResource: IJsonResourceInfo
 	) {
 		super(
 			scope,
-			ParentOrChildCodeLens.getCodeLensSpan(scope, sourceResource),
+			ParentOrChildCodeLens.getCodeLensSpan(scope, sourceResource)
 		);
 	}
 
 	private static getCodeLensSpan(
 		scope: TemplateScope,
-		sourceResource: IJsonResourceInfo,
+		sourceResource: IJsonResourceInfo
 	): Span {
 		// To allow the code lens to be collapsed if the resource is collapsed in the editor, we put the
 		//   code lens on the first line *after* the opening brace
 		const resourceSpan = sourceResource.resourceObject.span;
 		const resourceFirstLine = scope.document.getDocumentPosition(
-			resourceSpan.startIndex,
+			resourceSpan.startIndex
 		).line;
 
 		// Start lens on next line
 		let lensStartIndex = scope.document.getDocumentCharacterIndex(
 			resourceFirstLine + 1,
-			0,
+			0
 		);
 		const lensEndIndex = resourceSpan.endIndex;
 
@@ -80,7 +80,7 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 	protected resolveCore(
 		title: string,
 		targets: IJsonResourceInfo[],
-		kind: "parent" | "children",
+		kind: "parent" | "children"
 	): boolean {
 		if (targets.length > 0) {
 			const targetLocations = targets.map(
@@ -89,9 +89,9 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 						this.scope.document.documentUri,
 						getVSCodeRangeFromSpan(
 							this.scope.document,
-							resInfo.resourceObject.span,
-						),
-					),
+							resInfo.resourceObject.span
+						)
+					)
 			);
 			this.command = {
 				title: title,
@@ -127,7 +127,7 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 export class ChildrenCodeLens extends ParentOrChildCodeLens {
 	public constructor(
 		scope: TemplateScope,
-		sourceResource: IJsonResourceInfo,
+		sourceResource: IJsonResourceInfo
 	) {
 		super(scope, sourceResource);
 	}
@@ -142,7 +142,7 @@ export class ChildrenCodeLens extends ParentOrChildCodeLens {
 			}`;
 			const childrenLabels = children
 				.map((child) =>
-					(<IJsonResourceInfo>child).getFriendlyResourceLabel({}),
+					(<IJsonResourceInfo>child).getFriendlyResourceLabel({})
 				)
 				.join(", ");
 			title = `${countOfChildrenTitle}: ${childrenLabels}`;
@@ -160,7 +160,7 @@ export class ChildrenCodeLens extends ParentOrChildCodeLens {
 export class ParentCodeLens extends ParentOrChildCodeLens {
 	public constructor(
 		scope: TemplateScope,
-		sourceResource: IJsonResourceInfo,
+		sourceResource: IJsonResourceInfo
 	) {
 		super(scope, sourceResource);
 	}

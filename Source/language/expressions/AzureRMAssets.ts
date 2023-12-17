@@ -17,7 +17,7 @@ import { DefinitionKind, INamedDefinition } from "../INamedDefinition";
 import { StringValue } from "../json/JSON";
 
 export function isBuiltinFunctionDefinition(
-	definition: INamedDefinition,
+	definition: INamedDefinition
 ): definition is BuiltinFunctionMetadata {
 	return definition.definitionKind === DefinitionKind.BuiltinFunction;
 }
@@ -31,7 +31,7 @@ export class AzureRMAssets {
 
 	// For test dependency injection only
 	public static setFunctionsMetadata(
-		metadataString: string | undefined,
+		metadataString: string | undefined
 	): void {
 		if (!metadataString) {
 			// Reset so next call to getFunctionsMetadata will retrieve real data
@@ -55,13 +55,13 @@ export class AzureRMAssets {
 	}
 
 	public static getFunctionMetadataFromName(
-		functionName: string,
+		functionName: string
 	): BuiltinFunctionMetadata | undefined {
 		return this.getFunctionsMetadata().findbyName(functionName);
 	}
 
 	public static getFunctionMetadataFromPrefix(
-		functionNamePrefix: string,
+		functionNamePrefix: string
 	): BuiltinFunctionMetadata[] {
 		return this.getFunctionsMetadata().filterByPrefix(functionNamePrefix);
 	}
@@ -87,24 +87,24 @@ export class AzureRMAssets {
  */
 export class FunctionsMetadata {
 	public constructor(
-		public readonly functionMetadata: BuiltinFunctionMetadata[],
+		public readonly functionMetadata: BuiltinFunctionMetadata[]
 	) {}
 
 	public findbyName(
-		functionName: string,
+		functionName: string
 	): BuiltinFunctionMetadata | undefined {
 		const lowerCasedFunctionName: string = functionName.toLowerCase();
 		return this.functionMetadata.find(
-			(func) => func.lowerCaseName === lowerCasedFunctionName,
+			(func) => func.lowerCaseName === lowerCasedFunctionName
 		);
 	}
 
 	public filterByPrefix(
-		functionNamePrefix: string,
+		functionNamePrefix: string
 	): BuiltinFunctionMetadata[] {
 		const lowerCasedPrefix: string = functionNamePrefix.toLowerCase();
 		return this.functionMetadata.filter((func) =>
-			func.lowerCaseName.startsWith(lowerCasedPrefix),
+			func.lowerCaseName.startsWith(lowerCasedPrefix)
 		);
 	}
 }
@@ -131,7 +131,7 @@ export class BuiltinFunctionMetadata
 		private readonly _minimumArguments: number,
 		private readonly _maximumArguments: number | undefined,
 		private readonly _returnValueMembers: string[],
-		private readonly _behaviors: FunctionBehaviors[] | undefined | null,
+		private readonly _behaviors: FunctionBehaviors[] | undefined | null
 	) {
 		assert(_maximumArguments !== null, "Use undefined, not null");
 
@@ -178,7 +178,7 @@ export class BuiltinFunctionMetadata
 
 		const parametersSubstring: string = usage.substr(
 			leftParenthesisIndex + 1,
-			rightParenthesisIndex - leftParenthesisIndex - 1,
+			rightParenthesisIndex - leftParenthesisIndex - 1
 		);
 		const result: IFunctionParameterMetadata[] = [];
 		if (parametersSubstring) {
@@ -216,7 +216,7 @@ export class BuiltinFunctionMetadata
 	}
 
 	public static fromString(
-		metadataString: string,
+		metadataString: string
 	): BuiltinFunctionMetadata[] {
 		let metadataJSON: FunctionMetadataContract;
 		try {
@@ -228,7 +228,7 @@ export class BuiltinFunctionMetadata
 	}
 
 	public static fromJSON(
-		metadataJSON: FunctionMetadataContract,
+		metadataJSON: FunctionMetadataContract
 	): BuiltinFunctionMetadata[] {
 		const result: BuiltinFunctionMetadata[] = [];
 
@@ -253,8 +253,8 @@ export class BuiltinFunctionMetadata
 							functionMetadata.minimumArguments,
 							functionMetadata.maximumArguments ?? undefined,
 							returnValueMembers,
-							functionMetadata.behaviors,
-						),
+							functionMetadata.behaviors
+						)
 					);
 				}
 			}

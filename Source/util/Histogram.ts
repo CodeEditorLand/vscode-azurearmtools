@@ -9,7 +9,7 @@ export class Histogram {
 
 	public get keys(): (string | undefined | null)[] {
 		let result: (string | undefined | null)[] = Object.getOwnPropertyNames(
-			this._counts,
+			this._counts
 		);
 		if (this._nullCounts > 0) {
 			result.push(null);
@@ -22,7 +22,7 @@ export class Histogram {
 
 	public add(
 		key: string | Histogram | undefined | null,
-		count: number = 1,
+		count: number = 1
 	): Histogram {
 		if (key === null) {
 			this._nullCounts += count;

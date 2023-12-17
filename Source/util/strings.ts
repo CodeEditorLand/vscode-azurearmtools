@@ -61,7 +61,7 @@ export function quote(value: string | undefined | null): string {
 }
 
 export function escape(
-	value: string | undefined | null,
+	value: string | undefined | null
 ): string | undefined | null {
 	let result: string | undefined | null;
 

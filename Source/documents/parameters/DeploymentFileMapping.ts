@@ -46,7 +46,7 @@ export class DeploymentFileMapping {
 
 		const paramFiles: { [key: string]: unknown } | undefined =
 			this.configuration.get<{ [key: string]: unknown }>(
-				configKeys.parameterFiles,
+				configKeys.parameterFiles
 			) ||
 			// tslint:disable-next-line: strict-boolean-expressions
 			{};
@@ -69,7 +69,7 @@ export class DeploymentFileMapping {
 					// Resolve parameter file relative to template file's folder
 					let resolvedParamPath: string = resolveParameterFilePath(
 						normalizedTemplatePath,
-						paramPath,
+						paramPath
 					);
 					if (isFilePath(resolvedParamPath)) {
 						// If the user has an entry in both workspace and user settings, vscode combines the two objects,
@@ -80,11 +80,11 @@ export class DeploymentFileMapping {
 						this._mapToParams.set(normalizedTemplatePath, {
 							resolvedTemplate: Uri.file(resolvedTemplatePath),
 							normalizedTemplate: Uri.file(
-								normalizedTemplatePath,
+								normalizedTemplatePath
 							),
 							resolvedParams: Uri.file(resolvedParamPath),
 							normalizedParams: Uri.file(
-								normalizeFilePath(resolvedParamPath),
+								normalizeFilePath(resolvedParamPath)
 							),
 						});
 					}
@@ -124,7 +124,7 @@ export class DeploymentFileMapping {
 	 */
 	public async mapParameterFile(
 		templateUri: Uri,
-		paramFileUri: Uri | undefined,
+		paramFileUri: Uri | undefined
 	): Promise<void> {
 		const relativeParamFilePath: string | undefined = paramFileUri
 			? getRelativeParameterFilePath(templateUri, paramFileUri)
@@ -134,7 +134,7 @@ export class DeploymentFileMapping {
 		// We want to adjust the collection in the user settings, ignoring anything in the workspace settings
 		let map =
 			this.configuration.inspect<{ [key: string]: string | undefined }>(
-				configKeys.parameterFiles,
+				configKeys.parameterFiles
 			)?.globalValue ||
 			// tslint:disable-next-line: strict-boolean-expressions
 			{};
@@ -160,7 +160,7 @@ export class DeploymentFileMapping {
 		await this.configuration.update(
 			configKeys.parameterFiles,
 			newMap,
-			ConfigurationTarget.Global,
+			ConfigurationTarget.Global
 		);
 		this.resetCache();
 	}

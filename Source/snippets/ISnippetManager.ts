@@ -29,6 +29,6 @@ export interface ISnippetManager {
 	 */
 	getSnippetsAsCompletionItems(
 		insertionContext: InsertionContext,
-		span: Span,
+		span: Span
 	): Promise<Completion.Item[]>;
 }

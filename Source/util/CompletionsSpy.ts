@@ -26,7 +26,7 @@ export class CompletionsSpy {
 	public postCompletionItemsResult(
 		document: IJsonDocument,
 		completionItems: Completion.Item[],
-		vsCodeCompletionItems: CompletionItem[],
+		vsCodeCompletionItems: CompletionItem[]
 	): void {
 		this._completionsEmitter.fire({
 			document,

@@ -11,7 +11,7 @@ import * as os from "os";
 import * as path from "path";
 
 export const isWebpack: boolean = !!/^(false|0)?$/i.test(
-	process.env.AZCODE_ARM_IGNORE_BUNDLE ?? "",
+	process.env.AZCODE_ARM_IGNORE_BUNDLE ?? ""
 );
 console.log(`isWebpack: ${isWebpack}`);
 
@@ -127,7 +127,7 @@ export const expressionsDiagnosticsCompletionMessage =
 	diagnosticsCompletePrefix + expressionsDiagnosticsSource;
 
 export const isRunningTests: boolean = /^(true|1)$/i.test(
-	process.env.IS_RUNNING_TESTS ?? "",
+	process.env.IS_RUNNING_TESTS ?? ""
 );
 
 export namespace templateKeys {

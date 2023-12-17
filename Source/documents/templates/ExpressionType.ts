@@ -12,7 +12,7 @@ export type ExpressionType =
 	| "array";
 
 export function toValidExpressionType(
-	typeName: string | null | undefined,
+	typeName: string | null | undefined
 ): ExpressionType | undefined {
 	// tslint:disable-next-line: strict-boolean-expressions
 	const lowered = (typeName || "").toLowerCase();

@@ -13,35 +13,35 @@ import { extensionName, globalStateKeys } from "../../common";
 import { ext } from "../extensionVariables";
 
 export async function resetGlobalState(
-	actionContext: IActionContext,
+	actionContext: IActionContext
 ): Promise<void> {
 	if (
 		DialogResponses.yes ===
 		(await ext.ui.showWarningMessage(
 			`Reset all global state for the ${extensionName} extension (VS Code settings will not be changed)? This will cause such things as whether you wish to answer a survey or whether to ignore certain files to be forgotten.`,
 			DialogResponses.yes,
-			DialogResponses.cancel,
+			DialogResponses.cancel
 		))
 	) {
 		ext.context.globalState.update(
 			globalStateKeys.dontAskAboutSchemaFiles,
-			undefined,
+			undefined
 		);
 		ext.context.globalState.update(
 			globalStateKeys.dontAskAboutParameterFiles,
-			undefined,
+			undefined
 		);
 		ext.context.globalState.update(
 			globalStateKeys.survey.neverShowSurvey,
-			undefined,
+			undefined
 		);
 		ext.context.globalState.update(
 			globalStateKeys.survey.surveyPostponedUntilTime,
-			undefined,
+			undefined
 		);
 		ext.context.globalState.update(
 			globalStateKeys.messages.bicepMessagePostponedUntilTime,
-			undefined,
+			undefined
 		);
 
 		const reload = "Reload Now";
@@ -49,7 +49,7 @@ export async function resetGlobalState(
 			reload ===
 			(await window.showInformationMessage(
 				`Global state for ${extensionName} has been reset.`,
-				reload,
+				reload
 			))
 		) {
 			// Don't wait

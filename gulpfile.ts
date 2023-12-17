@@ -66,32 +66,32 @@ const languageServerNugetPackage = "Microsoft.ArmLanguageServer";
 
 const jsonArmGrammarSourcePath: string = path.resolve(
 	"grammars",
-	"JSONC.arm.tmLanguage.json",
+	"JSONC.arm.tmLanguage.json"
 );
 const jsonArmGrammarDestPath: string = path.resolve(
 	"dist",
 	"grammars",
-	"JSONC.arm.tmLanguage.json",
+	"JSONC.arm.tmLanguage.json"
 );
 
 const tleGrammarSourcePath: string = path.resolve(
 	"grammars",
-	"arm-expression-string.tmLanguage.json",
+	"arm-expression-string.tmLanguage.json"
 );
 const tleGrammarBuiltPath: string = path.resolve(
 	"dist",
 	"grammars",
-	"arm-expression-string.tmLanguage.json",
+	"arm-expression-string.tmLanguage.json"
 );
 
 const armConfigurationSourcePath: string = path.resolve(
 	"grammars",
-	"jsonc.arm.language-configuration.json",
+	"jsonc.arm.language-configuration.json"
 );
 const armConfigurationDestPath: string = path.resolve(
 	"dist",
 	"grammars",
-	"jsonc.arm.language-configuration.json",
+	"jsonc.arm.language-configuration.json"
 );
 
 interface IGrammar {
@@ -122,7 +122,7 @@ async function test(): Promise<void> {
 	console.log("");
 	console.log("*******");
 	console.log(
-		"******* NOTE: After the tests run, see testlogs-<platform>/logs/testlog.txt under artifacts for full test log",
+		"******* NOTE: After the tests run, see testlogs-<platform>/logs/testlog.txt under artifacts for full test log"
 	);
 	console.log("*******");
 	console.log("");
@@ -161,7 +161,7 @@ function buildTLEGrammar(): void {
 		.toString();
 	let grammar: string = sourceGrammar;
 	const expressionMetadataPath: string = path.resolve(
-		"assets/ExpressionMetadata.json",
+		"assets/ExpressionMetadata.json"
 	);
 	const expressionMetadata = <IExpressionMetadata>(
 		JSON.parse(fse.readFileSync(expressionMetadataPath).toString())
@@ -169,7 +169,7 @@ function buildTLEGrammar(): void {
 
 	// Add list of built-in functions from our metadata and place at beginning of grammar's preprocess section
 	let builtinFunctions: string[] = expressionMetadata.functionSignatures.map(
-		(sig) => sig.name,
+		(sig) => sig.name
 	);
 	let grammarAsObject = <IGrammar>JSON.parse(grammar);
 	grammarAsObject.preprocess = {
@@ -181,7 +181,7 @@ function buildTLEGrammar(): void {
 	grammarAsObject = {
 		$comment: `DO NOT EDIT - This file was built from ${path.relative(
 			__dirname,
-			tleGrammarSourcePath,
+			tleGrammarSourcePath
 		)}`,
 		...grammarAsObject,
 	};
@@ -190,7 +190,7 @@ function buildTLEGrammar(): void {
 
 	// Get the replacement keys from the preprocess section (ignore those that start with "$")
 	const replacementKeys = Object.getOwnPropertyNames(
-		(<IGrammar>JSON.parse(grammar)).preprocess,
+		(<IGrammar>JSON.parse(grammar)).preprocess
 	).filter((key) => !key.startsWith("$"));
 
 	// Build grammar: Make replacements specified
@@ -203,7 +203,7 @@ function buildTLEGrammar(): void {
 		valueString = valueString.slice(1, valueString.length - 1);
 		if (!sourceGrammar.includes(replacementKey)) {
 			console.log(
-				`WARNING: Preprocess key ${replacementKey} is never referenced in ${tleGrammarSourcePath}`,
+				`WARNING: Preprocess key ${replacementKey} is never referenced in ${tleGrammarSourcePath}`
 			);
 		}
 		grammar = grammar.replace(new RegExp(replacementKey, "g"), valueString);
@@ -219,7 +219,7 @@ function buildTLEGrammar(): void {
 
 	if (grammar.includes("{{")) {
 		throw new Error(
-			"At least one replacement key could not be found in the grammar - '{{' was found in the final file",
+			"At least one replacement key could not be found in the grammar - '{{' was found in the final file"
 		);
 	}
 }
@@ -253,7 +253,7 @@ async function getLanguageServer(): Promise<void> {
 		const destPath = path.join(__dirname, languageServerFolderName);
 
 		console.log(
-			`Retrieving language server ${languageServerNugetPackage}@${languageServerVersion}`,
+			`Retrieving language server ${languageServerNugetPackage}@${languageServerVersion}`
 		);
 
 		// Create temporary config file with credentials
@@ -264,12 +264,12 @@ async function getLanguageServer(): Promise<void> {
 			// tslint:disable-next-line: strict-boolean-expressions
 			.replace(
 				"$LANGSERVER_NUGET_USERNAME",
-				env.LANGSERVER_NUGET_USERNAME || "",
+				env.LANGSERVER_NUGET_USERNAME || ""
 			)
 			// tslint:disable-next-line: strict-boolean-expressions
 			.replace(
 				"$LANGSERVER_NUGET_PASSWORD",
-				env.LANGSERVER_NUGET_PASSWORD || "",
+				env.LANGSERVER_NUGET_PASSWORD || ""
 			);
 		const configPath = getTempFilePath("nuget", ".config");
 		fse.writeFileSync(configPath, withCreds);
@@ -308,18 +308,18 @@ async function getLanguageServer(): Promise<void> {
 		rimraf.sync(languageServerFolderName);
 
 		console.log(
-			`Copying language server binaries to ${languageServerFolderName}`,
+			`Copying language server binaries to ${languageServerFolderName}`
 		);
 		const langServerSourcePath = path.join(
 			pkgsPath,
 			languageServerNugetPackage,
 			"lib",
-			`net${langServerDotnetVersion}`,
+			`net${langServerDotnetVersion}`
 		);
 		const licenseSourcePath = path.join(
 			pkgsPath,
 			languageServerNugetPackage,
-			languageServerLicenseFileName,
+			languageServerLicenseFileName
 		);
 
 		fse.mkdirpSync(destPath);
@@ -327,19 +327,19 @@ async function getLanguageServer(): Promise<void> {
 
 		const licenseDest = path.join(
 			languageServerFolderName,
-			languageServerLicenseFileName,
+			languageServerLicenseFileName
 		);
 		console.log(
-			`Copying language server license ${licenseSourcePath} to ${licenseDest}`,
+			`Copying language server license ${licenseSourcePath} to ${licenseDest}`
 		);
 		fse.copyFileSync(licenseSourcePath, licenseDest);
 
 		console.log(
-			`Language server binaries and license are in ${languageServerFolderName}`,
+			`Language server binaries and license are in ${languageServerFolderName}`
 		);
 	} else {
 		console.warn(
-			`Language server not available, skipping packaging of language server binaries.`,
+			`Language server not available, skipping packaging of language server binaries.`
 		);
 	}
 }
@@ -347,7 +347,7 @@ async function getLanguageServer(): Promise<void> {
 function copyFolder(
 	sourceFolder: string,
 	destFolder: string,
-	sourceRoot: string = sourceFolder,
+	sourceRoot: string = sourceFolder
 ): void {
 	fse.ensureDirSync(destFolder);
 
@@ -369,7 +369,7 @@ async function packageVsix(): Promise<void> {
 	// We use a staging folder so we have more control over exactly what goes into the .vsix
 	function copyToStagingFolder(
 		relativeOrAbsSource: string,
-		relativeDest: string,
+		relativeDest: string
 	): void {
 		const absSource = path.resolve(__dirname, relativeOrAbsSource);
 		const absDest = path.join(stagingFolder, relativeDest);
@@ -395,8 +395,8 @@ async function packageVsix(): Promise<void> {
 	filesInStaging.forEach((fn) =>
 		assert(
 			!/license/i.test(fn),
-			`Should not have copied the original license file into staging: ${fn}`,
-		),
+			`Should not have copied the original license file into staging: ${fn}`
+		)
 	);
 
 	let expectedLicenseFileName: string;
@@ -406,27 +406,27 @@ async function packageVsix(): Promise<void> {
 
 		if (languageServerPackagingPath) {
 			console.warn(
-				`========== WARNING ==========: Packaging language server from local path instead of NuGet location`,
+				`========== WARNING ==========: Packaging language server from local path instead of NuGet location`
 			);
 			languageServerSourcePath = languageServerPackagingPath;
 			licenseSourcePath = path.join(
 				languageServerPackagingPath,
 				"../../../../..",
-				languageServerLicenseFileName,
+				languageServerLicenseFileName
 			);
 		} else {
 			languageServerSourcePath = path.join(
 				__dirname,
-				languageServerFolderName,
+				languageServerFolderName
 			);
 			licenseSourcePath = path.join(
 				__dirname,
 				languageServerFolderName,
-				languageServerLicenseFileName,
+				languageServerLicenseFileName
 			);
 		}
 		console.warn(
-			`  Language server source path: ${languageServerSourcePath}`,
+			`  Language server source path: ${languageServerSourcePath}`
 		);
 		console.warn(`  License source path: ${licenseSourcePath}`);
 
@@ -444,11 +444,11 @@ async function packageVsix(): Promise<void> {
 
 	// Copy package.json to staging
 	let packageContents = fse.readJsonSync(
-		path.join(__dirname, "package.json"),
+		path.join(__dirname, "package.json")
 	);
 	assert(
 		packageContents.license,
-		"package.json doesn't contain a license field?",
+		"package.json doesn't contain a license field?"
 	);
 	// ... modify package.json to point to language server license
 	packageContents.license = `SEE LICENSE IN ${expectedLicenseFileName}`;
@@ -456,14 +456,14 @@ async function packageVsix(): Promise<void> {
 	delete packageContents.scripts["vscode:prepublish"];
 	fse.writeFileSync(
 		path.join(stagingFolder, "package.json"),
-		JSON.stringify(packageContents, null, 2),
+		JSON.stringify(packageContents, null, 2)
 	);
 	assert(
 		fse
 			.readFileSync(path.join(stagingFolder, "package.json"))
 			.toString()
 			.includes(`"license": "SEE LICENSE IN ${expectedLicenseFileName}"`),
-		"Language server license not correctly installed into staged package.json",
+		"Language server license not correctly installed into staged package.json"
 	);
 
 	try {
@@ -502,7 +502,7 @@ async function packageVsix(): Promise<void> {
 // twice (because it's also in the bundle), which causes problems with objects that are supposed to
 // be singletons.  The test errors are somewhat mysterious, so verify that condition here during build.
 async function verifyTestsReferenceOnlyExtensionBundle(
-	testFolder: string,
+	testFolder: string
 ): Promise<void> {
 	const errors: string[] = [];
 
@@ -522,11 +522,11 @@ async function verifyTestsReferenceOnlyExtensionBundle(
 							os.EOL +
 								`${path.relative(
 									__dirname,
-									file,
+									file
 								)}: error: Test code may not import from the src folder, it should import from '../extension.bundle'${
 									os.EOL
 								}` +
-								`  Error is here: ===> ${match}${os.EOL}`,
+								`  Error is here: ===> ${match}${os.EOL}`
 						);
 						console.error(match);
 					}
@@ -542,11 +542,11 @@ async function verifyTestsReferenceOnlyExtensionBundle(
 
 exports["webpack-dev"] = gulp.series(
 	() => gulp_webpack("development"),
-	buildGrammars,
+	buildGrammars
 );
 exports["webpack-prod"] = gulp.series(
 	() => gulp_webpack("production"),
-	buildGrammars,
+	buildGrammars
 );
 exports.test = gulp.series(test);
 exports["build-grammars"] = buildGrammars;
@@ -556,7 +556,7 @@ exports["get-language-server"] = getLanguageServer;
 exports.package = packageVsix;
 exports["error-vsce-package"] = (): never => {
 	throw new Error(
-		`Please do not run vsce package, instead use 'npm run package`,
+		`Please do not run vsce package, instead use 'npm run package`
 	);
 };
 exports["verify-test-uses-extension-bundle"] = (): Promise<void> =>

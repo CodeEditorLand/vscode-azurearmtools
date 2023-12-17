@@ -47,11 +47,11 @@ export class EmptyScope extends TemplateScope {
 			new DeploymentTemplateDoc(
 				"",
 				parseUri("https://emptydoc/scope"),
-				0,
+				0
 			),
 			undefined,
 			undefined,
-			"Empty Scope",
+			"Empty Scope"
 		);
 	}
 
@@ -67,7 +67,7 @@ export class UserFunctionScope extends TemplateScope {
 		rootObject: Json.ObjectValue,
 		private readonly userFunctionParameterDefinitions: IParameterDefinition[],
 		// tslint:disable-next-line:variable-name
-		public readonly __debugDisplay: string, // Convenience for debugging
+		public readonly __debugDisplay: string // Convenience for debugging
 	) {
 		super(parent, document, rootObject, undefined, __debugDisplay);
 	}
@@ -91,7 +91,7 @@ export class UserFunctionScope extends TemplateScope {
 		// User functions can only use their own parameters, they do
 		//   not have access to top-level parameters
 		return new SimpleParameterDefinitionsSource(
-			this.userFunctionParameterDefinitions,
+			this.userFunctionParameterDefinitions
 		);
 	}
 }
@@ -103,20 +103,20 @@ abstract class TemplateScopeFromObject extends TemplateScope {
 		document: IJsonDocument,
 		private _templateRootObject: Json.ObjectValue | undefined,
 		// tslint:disable-next-line: variable-name
-		__debugDisplay: string,
+		__debugDisplay: string
 	) {
 		super(
 			parent,
 			document,
 			_templateRootObject,
 			getDeploymentScopeReferenceFromRootObject(_templateRootObject),
-			__debugDisplay,
+			__debugDisplay
 		);
 		this._parameterDefinitionsSource = new SimpleParameterDefinitionsSource(
 			getParameterDefinitionsFromObject(
 				this.document,
-				this._templateRootObject,
-			),
+				this._templateRootObject
+			)
 		);
 	}
 
@@ -134,7 +134,7 @@ abstract class TemplateScopeFromObject extends TemplateScope {
 		return getNamespaceDefinitionsFromObject(
 			this,
 			this.document,
-			this._templateRootObject,
+			this._templateRootObject
 		);
 	}
 
@@ -148,7 +148,7 @@ export class TopLevelTemplateScope extends TemplateScopeFromObject {
 		document: IJsonDocument,
 		templateTopLevelValue: Json.ObjectValue | undefined,
 		// tslint:disable-next-line: variable-name
-		__debugDisplay: string,
+		__debugDisplay: string
 	) {
 		super(undefined, document, templateTopLevelValue, __debugDisplay);
 	}
@@ -158,18 +158,18 @@ export class TopLevelTemplateScope extends TemplateScopeFromObject {
 
 function getParameterDefinitionsFromObject(
 	document: IJsonDocument,
-	objectValue: Json.ObjectValue | undefined,
+	objectValue: Json.ObjectValue | undefined
 ): ParameterDefinition[] {
 	const parameterDefinitions: ParameterDefinition[] = [];
 
 	if (objectValue) {
 		const parameters: Json.ObjectValue | undefined = Json.asObjectValue(
-			objectValue.getPropertyValue(templateKeys.parameters),
+			objectValue.getPropertyValue(templateKeys.parameters)
 		);
 		if (parameters) {
 			for (const parameter of parameters.properties) {
 				parameterDefinitions.push(
-					new ParameterDefinition(document, parameter),
+					new ParameterDefinition(document, parameter)
 				);
 			}
 		}
@@ -179,11 +179,11 @@ function getParameterDefinitionsFromObject(
 }
 
 function getVariableDefinitionsFromObject(
-	objectValue: Json.ObjectValue | undefined,
+	objectValue: Json.ObjectValue | undefined
 ): IVariableDefinition[] {
 	if (objectValue) {
 		const variables: Json.ObjectValue | undefined = Json.asObjectValue(
-			objectValue.getPropertyValue(templateKeys.variables),
+			objectValue.getPropertyValue(templateKeys.variables)
 		);
 		if (variables) {
 			const varDefs: IVariableDefinition[] = [];
@@ -212,7 +212,7 @@ function getVariableDefinitionsFromObject(
 					for (let varElement of varsArray?.elements ?? []) {
 						const def =
 							TopLevelCopyBlockVariableDefinition.createIfValid(
-								varElement,
+								varElement
 							);
 						if (def) {
 							varDefs.push(def);
@@ -233,7 +233,7 @@ function getVariableDefinitionsFromObject(
 function getNamespaceDefinitionsFromObject(
 	parentScope: TemplateScope,
 	document: IJsonDocument,
-	objectValue: Json.ObjectValue | undefined,
+	objectValue: Json.ObjectValue | undefined
 ): UserFunctionNamespaceDefinition[] {
 	const namespaceDefinitions: UserFunctionNamespaceDefinition[] = [];
 
@@ -262,7 +262,7 @@ function getNamespaceDefinitionsFromObject(
 	if (objectValue) {
 		const functionNamespacesArray: Json.ArrayValue | undefined =
 			Json.asArrayValue(
-				objectValue.getPropertyValue(templateKeys.functions),
+				objectValue.getPropertyValue(templateKeys.functions)
 			);
 		if (functionNamespacesArray) {
 			for (let namespaceElement of functionNamespacesArray.elements) {
@@ -272,7 +272,7 @@ function getNamespaceDefinitionsFromObject(
 						UserFunctionNamespaceDefinition.createIfValid(
 							parentScope,
 							document,
-							namespaceObject,
+							namespaceObject
 						);
 					if (namespace) {
 						namespaceDefinitions.push(namespace);
@@ -286,7 +286,7 @@ function getNamespaceDefinitionsFromObject(
 }
 
 function getResourceObjects(
-	objectValue: Json.ObjectValue | undefined,
+	objectValue: Json.ObjectValue | undefined
 ): Json.ArrayValue | undefined {
 	if (objectValue) {
 		return objectValue?.getPropertyValue(templateKeys.resources)
@@ -300,7 +300,7 @@ function getResourceObjects(
 // CONSIDER: difference between expression scope and template scope?
 export function getResourcesFromObject(
 	owningScope: TemplateScope,
-	objectValue: Json.ObjectValue | undefined,
+	objectValue: Json.ObjectValue | undefined
 ): IResource[] {
 	const resources: IResource[] = [];
 	if (objectValue) {
@@ -341,20 +341,20 @@ export class NestedTemplateInnerScope extends TemplateScopeFromObject {
 		// parameter values, not the definitions inside the template
 		private parameterValuesProperty: Json.Property | undefined,
 		// tslint:disable-next-line: variable-name
-		__debugDisplay: string,
+		__debugDisplay: string
 	) {
 		super(
 			parent,
 			// the scope applies to the "template" property's value
 			document,
 			nestedTemplateObject,
-			__debugDisplay,
+			__debugDisplay
 		);
 
 		this._parameterValuesSource = new ParameterValuesSourceFromJsonObject(
 			this.document,
 			this.parameterValuesProperty,
-			nestedTemplateObject,
+			nestedTemplateObject
 		);
 	}
 
@@ -386,7 +386,7 @@ export class NestedTemplateOuterScope extends TemplateScope {
 		// Parameter values, not the definitions inside the template (note: if this exists, it's an error)
 		public parameterValuesProperty: Json.Property | undefined,
 		// tslint:disable-next-line: variable-name
-		__debugDisplay: string,
+		__debugDisplay: string
 	) {
 		super(
 			parentScope,
@@ -394,7 +394,7 @@ export class NestedTemplateOuterScope extends TemplateScope {
 			// the scope applies to the "template" property's value
 			nestedTemplateObject,
 			getDeploymentScopeReferenceFromRootObject(nestedTemplateObject),
-			__debugDisplay,
+			__debugDisplay
 		);
 	}
 
@@ -446,7 +446,7 @@ export class LinkedTemplateScope
 		private parameterValuesProperty: Json.Property | undefined,
 		public owningDeploymentResource: IResource,
 		// tslint:disable-next-line: variable-name
-		__debugDisplay: string,
+		__debugDisplay: string
 	) {
 		super(
 			parentScope,
@@ -455,13 +455,13 @@ export class LinkedTemplateScope
 			//   this template (they would only apply inside the linked template file itself), so the root object is always undefined.
 			undefined,
 			undefined,
-			__debugDisplay,
+			__debugDisplay
 		);
 
 		this._parameterValuesSource = new ParameterValuesSourceFromJsonObject(
 			this.document,
 			this.parameterValuesProperty,
-			templateLinkObject,
+			templateLinkObject
 		);
 	}
 
@@ -475,17 +475,17 @@ export class LinkedTemplateScope
 	public get isRelativePath(): boolean {
 		return !!(
 			this.templateLinkObject?.hasProperty(
-				templateKeys.linkedDeploymentTemplateLinkRelativePath,
+				templateKeys.linkedDeploymentTemplateLinkRelativePath
 			) &&
 			!this.templateLinkObject?.hasProperty(
-				templateKeys.linkedDeploymentTemplateLinkUri,
+				templateKeys.linkedDeploymentTemplateLinkUri
 			)
 		);
 	}
 
 	public assignLinkedFileReferences(
 		linkedFileReferences: ILinkedTemplateReference[] | undefined,
-		provideOpenDocuments: IProvideOpenedDocuments,
+		provideOpenDocuments: IProvideOpenedDocuments
 	): void {
 		this._linkedFileReferences = linkedFileReferences;
 		this._linkedFileParameterDefinitionsSource.setParameterDefinitions([]);
@@ -497,10 +497,10 @@ export class LinkedTemplateScope
 			const parameterDefinitions: IParameterDefinition[] =
 				getParameterDefinitionsFromLinkedTemplate(
 					firstLinkedFileReference,
-					provideOpenDocuments,
+					provideOpenDocuments
 				);
 			this._linkedFileParameterDefinitionsSource.setParameterDefinitions(
-				parameterDefinitions,
+				parameterDefinitions
 			);
 		}
 	}
@@ -565,10 +565,10 @@ export class LinkedTemplateScope
 }
 
 export function isDeploymentResource(
-	resourceObject: Json.Value | undefined,
+	resourceObject: Json.Value | undefined
 ): boolean {
 	const resourceTypeLC = resourceObject?.asObjectValue?.getPropertyValue(
-		templateKeys.resourceType,
+		templateKeys.resourceType
 	)?.asStringValue?.unquotedValue;
 	return resourceTypeLC?.toLowerCase() === deploymentsResourceTypeLC;
 }
@@ -578,7 +578,7 @@ export function getChildTemplateForResourceObject(
 	parentScope: TemplateScope,
 	resource: IResource,
 	// CONSIDER: get from resource
-	resourceObject: Json.ObjectValue | undefined, // an element of the "resources" section
+	resourceObject: Json.ObjectValue | undefined // an element of the "resources" section
 ): TemplateScope | undefined {
 	// Example nested template
 
@@ -606,10 +606,10 @@ export function getChildTemplateForResourceObject(
 	if (resourceObject && isDeploymentResource(resourceObject)) {
 		// Is it a nested or linked template?
 		const propertiesObject = resourceObject?.getPropertyValue(
-			templateKeys.properties,
+			templateKeys.properties
 		)?.asObjectValue;
 		const nestedTemplateObject = propertiesObject?.getPropertyValue(
-			templateKeys.nestedDeploymentTemplateProperty,
+			templateKeys.nestedDeploymentTemplateProperty
 		)?.asObjectValue;
 		const templateName: string =
 			resourceObject?.getPropertyValue(templateKeys.resourceName)
@@ -629,7 +629,7 @@ export function getChildTemplateForResourceObject(
 						nestedTemplateObject,
 						resource,
 						parameterValuesProperty,
-						`Nested template "${templateName}" with outer scope`,
+						`Nested template "${templateName}" with outer scope`
 					);
 				case ExpressionScopeKind.inner:
 					return new NestedTemplateInnerScope(
@@ -638,14 +638,14 @@ export function getChildTemplateForResourceObject(
 						nestedTemplateObject,
 						resource,
 						parameterValuesProperty,
-						`Nested template "${templateName}" with inner scope`,
+						`Nested template "${templateName}" with inner scope`
 					);
 				default:
 					assertNever(scopeKind);
 			}
 		} else {
 			const templateLinkObject = propertiesObject?.getPropertyValue(
-				templateKeys.linkedDeploymentTemplateLink,
+				templateKeys.linkedDeploymentTemplateLink
 			)?.asObjectValue;
 			if (templateLinkObject) {
 				return new LinkedTemplateScope(
@@ -653,7 +653,7 @@ export function getChildTemplateForResourceObject(
 					templateLinkObject,
 					parameterValuesProperty,
 					resource,
-					`Linked template "${templateName}"`,
+					`Linked template "${templateName}"`
 				);
 			}
 		}
@@ -663,15 +663,15 @@ export function getChildTemplateForResourceObject(
 }
 
 function getExpressionScopeKind(
-	resourceObject: Json.ObjectValue | undefined,
+	resourceObject: Json.ObjectValue | undefined
 ): ExpressionScopeKind {
 	const scopeValue = resourceObject
 		?.getPropertyValue(templateKeys.properties)
 		?.asObjectValue?.getPropertyValue(
-			templateKeys.nestedDeploymentExprEvalOptions,
+			templateKeys.nestedDeploymentExprEvalOptions
 		)
 		?.asObjectValue?.getPropertyValue(
-			templateKeys.nestedDeploymentExprEvalScope,
+			templateKeys.nestedDeploymentExprEvalScope
 		)?.asStringValue?.unquotedValue;
 	return scopeValue?.toLowerCase() ===
 		templateKeys.nestedDeploymentExprEvalScopeInner
@@ -680,10 +680,9 @@ function getExpressionScopeKind(
 }
 
 function getDeploymentScopeReferenceFromRootObject(
-	rootObject: Json.ObjectValue | undefined,
+	rootObject: Json.ObjectValue | undefined
 ): IDeploymentSchemaReference {
-	const schemaStringValue = rootObject?.getPropertyValue(
-		templateKeys.schema,
-	)?.asStringValue;
+	const schemaStringValue = rootObject?.getPropertyValue(templateKeys.schema)
+		?.asStringValue;
 	return getDeploymentScopeReference(schemaStringValue);
 }

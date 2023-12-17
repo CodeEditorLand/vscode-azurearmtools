@@ -31,14 +31,14 @@ export class ParameterValuesSourceFromJsonObject
 	public constructor(
 		public readonly document: IJsonDocument,
 		public readonly parameterValuesProperty: Json.Property | undefined,
-		public readonly deploymentRootObject: Json.ObjectValue | undefined,
+		public readonly deploymentRootObject: Json.ObjectValue | undefined
 	) {}
 	public getParameterValue(
-		parameterName: string,
+		parameterName: string
 	): ParameterValueDefinition | undefined {
 		const parameterProperty =
 			this.parameterValuesProperty?.value?.asObjectValue?.getProperty(
-				parameterName,
+				parameterName
 			);
 		return parameterProperty
 			? new ParameterValueDefinition(parameterProperty)

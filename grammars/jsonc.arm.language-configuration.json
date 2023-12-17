@@ -6,7 +6,12 @@
 		"blockComment": ["/*", "*/"]
 	},
 	"$brackets.comment": "Added parentheses and single quotes to JSON brackets",
-	"brackets": [["{", "}"], ["[", "]"], ["(", ")"], ["'", "'"]],
+	"brackets": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["'", "'"]
+	],
 	"$autoCloseBefore.comment": "Added double quote to the default set of values, otherwise typing e.g. '[' inside a string expression won't auto close because the next character after it is the closing double quote",
 	"autoCloseBefore": ";:.,=}])> \n\t\"",
 	"$autoClosingPairs.comment": "Same as JSON, except allowing auto-closing inside strings for brackets, parentheses and single quotes",

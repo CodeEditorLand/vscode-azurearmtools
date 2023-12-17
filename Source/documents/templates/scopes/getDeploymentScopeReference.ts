@@ -8,7 +8,7 @@ import { findSchemaInfo } from "../schemas";
 import { IDeploymentSchemaReference } from "./IDeploymentSchemaReference";
 
 export function getDeploymentScopeReference(
-	schemaStringValue: Json.StringValue | undefined,
+	schemaStringValue: Json.StringValue | undefined
 ): IDeploymentSchemaReference {
 	const schemaUri = schemaStringValue?.unquotedValue;
 	const matchingInfo = schemaUri ? findSchemaInfo(schemaUri) : undefined;

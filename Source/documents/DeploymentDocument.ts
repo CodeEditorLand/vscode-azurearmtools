@@ -39,48 +39,48 @@ export abstract class DeploymentDocument extends JsonDocument {
 	constructor(
 		documentText: string,
 		documentUri: Uri,
-		public readonly documentVersion: number,
+		public readonly documentVersion: number
 	) {
 		super(documentText, documentUri);
 	}
 
 	// tslint:disable-next-line:function-name
 	public _debugShowTextAt(
-		positionOrRange: number | Span | Range | Position,
+		positionOrRange: number | Span | Range | Position
 	): string {
 		if (positionOrRange instanceof Span) {
 			return __debugMarkRangeInString(
 				this.documentText,
 				positionOrRange.startIndex,
-				positionOrRange.length,
+				positionOrRange.length
 			);
 		} else if (positionOrRange instanceof Range) {
 			const startIndex = this.getDocumentCharacterIndex(
 				positionOrRange.start.line,
 				positionOrRange.start.character,
-				{ allowOutOfBounds: true },
+				{ allowOutOfBounds: true }
 			);
 			const endIndex = this.getDocumentCharacterIndex(
 				positionOrRange.end.line,
 				positionOrRange.end.character,
-				{ allowOutOfBounds: true },
+				{ allowOutOfBounds: true }
 			);
 			return __debugMarkRangeInString(
 				this.documentText,
 				startIndex,
-				endIndex - startIndex,
+				endIndex - startIndex
 			);
 		} else if (positionOrRange instanceof Position) {
 			const index = this.getDocumentCharacterIndex(
 				positionOrRange.line,
 				positionOrRange.character,
-				{ allowOutOfBounds: true },
+				{ allowOutOfBounds: true }
 			);
 			return __debugMarkPositionInString(this.documentText, index);
 		} else {
 			return __debugMarkPositionInString(
 				this.documentText,
-				positionOrRange,
+				positionOrRange
 			);
 		}
 	}
@@ -88,19 +88,19 @@ export abstract class DeploymentDocument extends JsonDocument {
 	public abstract getContextFromDocumentLineAndColumnIndexes(
 		documentLineIndex: number,
 		documentColumnIndex: number,
-		associatedTemplate: DeploymentDocument | undefined,
+		associatedTemplate: DeploymentDocument | undefined
 	): PositionContext;
 
 	public abstract getContextFromDocumentCharacterIndex(
 		documentCharacterIndex: number,
-		associatedTemplate: DeploymentDocument | undefined,
+		associatedTemplate: DeploymentDocument | undefined
 	): PositionContext;
 
 	/**
 	 * Find all references in this document to the given named definition (which may or may not be in this document)
 	 */
 	public abstract findReferencesToDefinition(
-		definition: INamedDefinition,
+		definition: INamedDefinition
 	): ReferenceList;
 
 	/**
@@ -118,7 +118,7 @@ export abstract class DeploymentDocument extends JsonDocument {
 	public abstract getCodeActions(
 		associatedDocument: DeploymentDocument | undefined,
 		range: Range | Selection,
-		context: CodeActionContext,
+		context: CodeActionContext
 	): (Command | CodeAction)[];
 
 	// This should be as fast as possible
@@ -129,7 +129,7 @@ export abstract class DeploymentDocument extends JsonDocument {
 		// If there is no associated parameter file, this should be undefined
 		parameterValuesSourceProvider:
 			| IParameterValuesSourceProvider
-			| undefined,
+			| undefined
 	): ResolvableCodeLens[];
 
 	// CONSIDER: Should we cache?  But that cache would depend on associatedTemplate not changing, not sure if that's
@@ -137,13 +137,13 @@ export abstract class DeploymentDocument extends JsonDocument {
 	// Consider whether associated document should be a function passed in to constructor so that it's a permanent part of the
 	// template state once it's lazily created
 	public getErrors(
-		associatedDocument: DeploymentDocument | undefined,
+		associatedDocument: DeploymentDocument | undefined
 	): Issue[] {
 		return this.getErrorsCore(associatedDocument);
 	}
 
 	public abstract getErrorsCore(
-		associatedDocument: DeploymentDocument | undefined,
+		associatedDocument: DeploymentDocument | undefined
 	): Issue[];
 
 	public abstract getWarnings(): Issue[];
@@ -152,7 +152,7 @@ export abstract class DeploymentDocument extends JsonDocument {
 export abstract class ResolvableCodeLens extends CodeLens {
 	public constructor(
 		public readonly scope: TemplateScope,
-		public readonly span: Span,
+		public readonly span: Span
 	) {
 		super(getVSCodeRangeFromSpan(scope.document, span));
 	}

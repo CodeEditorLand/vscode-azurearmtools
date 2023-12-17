@@ -87,8 +87,8 @@ export function mightBeDeploymentTemplate(textDocument: TextDocument): boolean {
 		let startOfDocument = textDocument.getText(
 			new Range(
 				new Position(0, 0),
-				new Position(maxLinesToDetectSchemaIn - 1, 0),
-			),
+				new Position(maxLinesToDetectSchemaIn - 1, 0)
+			)
 		);
 
 		// Do a quick dirty check if the first portion of the JSON contains a schema string that we're interested in
@@ -100,7 +100,7 @@ export function mightBeDeploymentTemplate(textDocument: TextDocument): boolean {
 }
 
 export function mightBeDeploymentParameters(
-	textDocument: TextDocument,
+	textDocument: TextDocument
 ): boolean {
 	if (!shouldWatchDocument(textDocument)) {
 		return false;
@@ -110,8 +110,8 @@ export function mightBeDeploymentParameters(
 		let startOfDocument = textDocument.getText(
 			new Range(
 				new Position(0, 0),
-				new Position(maxLinesToDetectSchemaIn - 1, 0),
-			),
+				new Position(maxLinesToDetectSchemaIn - 1, 0)
+			)
 		);
 
 		// Do a quick dirty check if the first portion of the JSON contains a schema string that we're interested in
@@ -124,14 +124,14 @@ export function mightBeDeploymentParameters(
 
 export function setLangIdToArm(
 	document: TextDocument,
-	actionContext: IActionContext,
+	actionContext: IActionContext
 ): void {
 	languages.setTextDocumentLanguage(document, armTemplateLanguageId);
 
 	actionContext.telemetry.properties.switchedToArm = "true";
 	actionContext.telemetry.properties.docLangId = document.languageId;
 	actionContext.telemetry.properties.docExtension = path.extname(
-		document.fileName,
+		document.fileName
 	);
 	actionContext.telemetry.suppressIfSuccessful = false;
 }

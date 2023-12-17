@@ -26,7 +26,7 @@ export class ParametersPositionContext extends PositionContext {
 
 	private constructor(
 		deploymentParameters: DeploymentParametersDoc,
-		associatedTemplate: DeploymentTemplateDoc | undefined,
+		associatedTemplate: DeploymentTemplateDoc | undefined
 	) {
 		super(deploymentParameters, associatedTemplate);
 		this._associatedTemplate = associatedTemplate;
@@ -36,26 +36,26 @@ export class ParametersPositionContext extends PositionContext {
 		deploymentParameters: DeploymentParametersDoc,
 		documentLineIndex: number,
 		documentColumnIndex: number,
-		associatedTemplate: DeploymentTemplateDoc | undefined,
+		associatedTemplate: DeploymentTemplateDoc | undefined
 	): ParametersPositionContext {
 		let context = new ParametersPositionContext(
 			deploymentParameters,
-			associatedTemplate,
+			associatedTemplate
 		);
 		context.initFromDocumentLineAndColumnIndices(
 			documentLineIndex,
-			documentColumnIndex,
+			documentColumnIndex
 		);
 		return context;
 	}
 	public static fromDocumentCharacterIndex(
 		deploymentParameters: DeploymentParametersDoc,
 		documentCharacterIndex: number,
-		deploymentTemplate: DeploymentTemplateDoc | undefined,
+		deploymentTemplate: DeploymentTemplateDoc | undefined
 	): ParametersPositionContext {
 		let context = new ParametersPositionContext(
 			deploymentParameters,
-			deploymentTemplate,
+			deploymentTemplate
 		);
 		context.initFromDocumentCharacterIndex(documentCharacterIndex);
 		return context;
@@ -70,7 +70,7 @@ export class ParametersPositionContext extends PositionContext {
 	 * return an object with information about this reference and the corresponding definition
 	 */
 	public getReferenceSiteInfo(
-		_includeDefinition: boolean,
+		_includeDefinition: boolean
 	): IReferenceSite | undefined {
 		if (!this._associatedTemplate) {
 			return undefined;
@@ -81,7 +81,7 @@ export class ParametersPositionContext extends PositionContext {
 			this._associatedTemplate.topLevelScope.parameterDefinitionsSource,
 			this._associatedTemplate.topLevelScope,
 			this.document.topLevelParameterValuesSource,
-			this.documentCharacterIndex,
+			this.documentCharacterIndex
 		);
 	}
 
@@ -93,13 +93,13 @@ export class ParametersPositionContext extends PositionContext {
 		const refInfo = this.getReferenceSiteInfo(false);
 		if (refInfo) {
 			const references = this.document.findReferencesToDefinition(
-				refInfo.definition,
+				refInfo.definition
 			);
 
 			if (this.associatedDocument) {
 				const associatedDocRefs =
 					this.associatedDocument.findReferencesToDefinition(
-						refInfo.definition,
+						refInfo.definition
 					);
 				references.addAll(associatedDocRefs);
 			}
@@ -112,7 +112,7 @@ export class ParametersPositionContext extends PositionContext {
 
 	public async getCompletionItems(
 		triggerCharacter: string | undefined,
-		tabSize: number,
+		tabSize: number
 	): Promise<ICompletionItemsResult> {
 		return {
 			items: getPropertyValueCompletionItems(
@@ -122,7 +122,7 @@ export class ParametersPositionContext extends PositionContext {
 				undefined,
 				tabSize,
 				this.documentCharacterIndex,
-				triggerCharacter,
+				triggerCharacter
 			),
 		};
 	}

@@ -14,13 +14,13 @@ export class RenameCodeActionProvider implements vscode.CodeActionProvider {
 	constructor(
 		private action: (
 			document: vscode.TextDocument,
-			position: vscode.Position,
-		) => Promise<PositionContext | undefined>,
+			position: vscode.Position
+		) => Promise<PositionContext | undefined>
 	) {}
 
 	public async provideCodeActions(
 		document: vscode.TextDocument,
-		range: vscode.Range,
+		range: vscode.Range
 	): Promise<vscode.CodeAction[] | undefined> {
 		let pc = (await this.action(document, range.start)) as
 			| TemplatePositionContext
@@ -35,7 +35,7 @@ export class RenameCodeActionProvider implements vscode.CodeActionProvider {
 	private createCommand(): vscode.CodeAction {
 		const action = new vscode.CodeAction(
 			"Rename...",
-			vscode.CodeActionKind.RefactorRewrite,
+			vscode.CodeActionKind.RefactorRewrite
 		);
 		action.command = { command: command, title: "" };
 		return action;

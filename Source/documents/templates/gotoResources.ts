@@ -12,12 +12,12 @@ import { IGotoResourcesArgs } from "../../vscodeIntegration/commandArguments";
  */
 export async function gotoResources(
 	actionContext: IActionContext,
-	args: IGotoResourcesArgs,
+	args: IGotoResourcesArgs
 ): Promise<void> {
 	// Set telemetry properties
 	Object.assign(
 		actionContext.telemetry.properties,
-		args.telemetryProperties ?? {},
+		args.telemetryProperties ?? {}
 	);
 
 	if (args.targets.length === 1) {
@@ -27,11 +27,11 @@ export async function gotoResources(
 		if (editor && editor.document.uri.fsPath === target.uri.fsPath) {
 			editor.revealRange(
 				target.range,
-				vscode.TextEditorRevealType.Default,
+				vscode.TextEditorRevealType.Default
 			);
 			editor.selection = new vscode.Selection(
 				target.range.start,
-				target.range.start,
+				target.range.start
 			);
 		}
 	} else {
@@ -40,7 +40,7 @@ export async function gotoResources(
 			"editor.action.showReferences",
 			args.source.uri,
 			args.source.range.start,
-			args.targets,
+			args.targets
 		);
 	}
 }

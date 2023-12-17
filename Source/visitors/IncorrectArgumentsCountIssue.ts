@@ -16,7 +16,7 @@ export class IncorrectArgumentsCountIssue extends Issue {
 		private _functionName: string,
 		private _actualArgumentsCount: number,
 		private _minExpectedCount: number,
-		private _maxExpectedCount: number | undefined,
+		private _maxExpectedCount: number | undefined
 	) {
 		super(span, message, IssueKind.badArgsCount);
 	}
@@ -28,7 +28,7 @@ export class IncorrectArgumentsCountIssue extends Issue {
 			this.functionName,
 			this.actual,
 			this.minExpected,
-			this.maxExpected,
+			this.maxExpected
 		);
 	}
 

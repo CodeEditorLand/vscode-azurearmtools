@@ -11,32 +11,32 @@ import { Span } from "../language/Span";
 
 export function getVSCodeRangeFromSpan(
 	deploymentDocument: IDocument,
-	span: Span,
+	span: Span
 ): vscode.Range {
 	assert(span);
 	assert(deploymentDocument);
 
 	const startPosition: LineColPos = deploymentDocument.getDocumentPosition(
-		span.startIndex,
+		span.startIndex
 	);
 	const vscodeStartPosition = new vscode.Position(
 		startPosition.line,
-		startPosition.column,
+		startPosition.column
 	);
 
 	const endPosition: LineColPos = deploymentDocument.getDocumentPosition(
-		span.afterEndIndex,
+		span.afterEndIndex
 	);
 	const vscodeEndPosition = new vscode.Position(
 		endPosition.line,
-		endPosition.column,
+		endPosition.column
 	);
 
 	return new vscode.Range(vscodeStartPosition, vscodeEndPosition);
 }
 
 export function getVSCodePositionFromPosition(
-	position: LineColPos,
+	position: LineColPos
 ): vscode.Position {
 	return new vscode.Position(position.line, position.column);
 }

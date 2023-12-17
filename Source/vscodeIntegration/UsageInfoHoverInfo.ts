@@ -22,7 +22,7 @@ export class UsageInfoHoverInfo implements IHoverInfo {
 	constructor(
 		private _hoverType: string,
 		private readonly _usageInfo: IUsageInfo,
-		private readonly _referenceSpan: Span,
+		private readonly _referenceSpan: Span
 	) {}
 
 	public getHoverText(): MarkdownString {

@@ -20,7 +20,7 @@ export class SimpleParameterDefinitionsSource
 	}
 
 	public setParameterDefinitions(
-		parameterDefinitions: IParameterDefinition[],
+		parameterDefinitions: IParameterDefinition[]
 	): void {
 		this._parameterDefinitions = parameterDefinitions.slice(); // clone
 	}

@@ -65,7 +65,7 @@ class TleInfo implements ITleInfo {
 		 */
 		public readonly tleCharacterIndex: number,
 		public readonly tleValue: TLE.Value | undefined,
-		public readonly scope: TemplateScope,
+		public readonly scope: TemplateScope
 	) {}
 }
 
@@ -83,16 +83,16 @@ export class TemplatePositionContext extends PositionContext {
 		documentLineIndex: number,
 		documentColumnIndex: number,
 		associatedParameters: DeploymentParametersDoc | undefined,
-		allowOutOfBounds: boolean = true,
+		allowOutOfBounds: boolean = true
 	): TemplatePositionContext {
 		let context = new TemplatePositionContext(
 			deploymentTemplate,
-			associatedParameters,
+			associatedParameters
 		);
 		context.initFromDocumentLineAndColumnIndices(
 			documentLineIndex,
 			documentColumnIndex,
-			allowOutOfBounds,
+			allowOutOfBounds
 		);
 		return context;
 	}
@@ -101,22 +101,22 @@ export class TemplatePositionContext extends PositionContext {
 		deploymentTemplate: DeploymentTemplateDoc,
 		documentCharacterIndex: number,
 		associatedParameters: DeploymentParametersDoc | undefined,
-		allowOutOfBounds: boolean = true,
+		allowOutOfBounds: boolean = true
 	): TemplatePositionContext {
 		let context = new TemplatePositionContext(
 			deploymentTemplate,
-			associatedParameters,
+			associatedParameters
 		);
 		context.initFromDocumentCharacterIndex(
 			documentCharacterIndex,
-			allowOutOfBounds,
+			allowOutOfBounds
 		);
 		return context;
 	}
 
 	private constructor(
 		deploymentTemplate: DeploymentTemplateDoc,
-		associatedParameters: DeploymentParametersDoc | undefined,
+		associatedParameters: DeploymentParametersDoc | undefined
 	) {
 		super(deploymentTemplate, associatedParameters);
 	}
@@ -140,19 +140,19 @@ export class TemplatePositionContext extends PositionContext {
 			) {
 				const tleParseResult =
 					this.document.getTLEParseResultFromJsonStringValue(
-						this.jsonValue,
+						this.jsonValue
 					);
 				const tleCharacterIndex =
 					this.documentCharacterIndex - this.jsonTokenStartIndex;
 				const tleValue =
 					tleParseResult.parseResult.getValueAtCharacterIndex(
-						tleCharacterIndex,
+						tleCharacterIndex
 					);
 				return new TleInfo(
 					tleParseResult.parseResult,
 					tleCharacterIndex,
 					tleValue,
-					tleParseResult.scope,
+					tleParseResult.scope
 				);
 			}
 			return undefined;
@@ -169,7 +169,7 @@ export class TemplatePositionContext extends PositionContext {
 	//  Any bad side effects?
 	// tslint:disable-next-line: max-func-body-length cyclomatic-complexity // CONSIDER: refactor
 	public getReferenceSiteInfo(
-		considerDefinitionItself: boolean,
+		considerDefinitionItself: boolean
 	): IReferenceSite | undefined {
 		const tleInfo = this.tleInfo;
 		if (tleInfo) {
@@ -185,7 +185,7 @@ export class TemplatePositionContext extends PositionContext {
 					tleFuncCall.namespaceToken &&
 					tleFuncCall.namespaceToken.span.contains(
 						tleCharacterIndex,
-						ContainsBehavior.strict,
+						ContainsBehavior.strict
 					)
 				) {
 					// Inside the namespace of a user-function reference
@@ -195,7 +195,7 @@ export class TemplatePositionContext extends PositionContext {
 					if (nsDefinition) {
 						const unquotedReferenceSpan: Span =
 							tleFuncCall.namespaceToken.span.translate(
-								this.jsonTokenStartIndex,
+								this.jsonTokenStartIndex
 							);
 						return {
 							referenceKind: ReferenceSiteKind.reference,
@@ -209,14 +209,14 @@ export class TemplatePositionContext extends PositionContext {
 				} else if (tleFuncCall.nameToken) {
 					const unquotedReferenceSpan: Span =
 						tleFuncCall.nameToken.span.translate(
-							this.jsonTokenStartIndex,
+							this.jsonTokenStartIndex
 						);
 					const referenceKind = ReferenceSiteKind.reference;
 
 					if (
 						tleFuncCall.nameToken.span.contains(
 							tleCharacterIndex,
-							ContainsBehavior.strict,
+							ContainsBehavior.strict
 						)
 					) {
 						if (tleFuncCall.namespaceToken) {
@@ -260,7 +260,7 @@ export class TemplatePositionContext extends PositionContext {
 													definitionDocument,
 													scope,
 													referenceKind,
-													arg,
+													arg
 												);
 											if (ref) {
 												return ref;
@@ -275,7 +275,7 @@ export class TemplatePositionContext extends PositionContext {
 													definitionDocument,
 													scope,
 													referenceKind,
-													arg,
+													arg
 												);
 											if (ref) {
 												return ref;
@@ -288,7 +288,7 @@ export class TemplatePositionContext extends PositionContext {
 								| BuiltinFunctionMetadata
 								| undefined =
 								AzureRMAssets.getFunctionMetadataFromName(
-									tleFuncCall.nameToken.stringValue,
+									tleFuncCall.nameToken.stringValue
 								);
 							if (functionMetadata) {
 								return {
@@ -317,7 +317,7 @@ export class TemplatePositionContext extends PositionContext {
 						definitionDocument,
 						scope,
 						referenceKind,
-						tleStringValue,
+						tleStringValue
 					);
 					if (ref) {
 						return ref;
@@ -328,7 +328,7 @@ export class TemplatePositionContext extends PositionContext {
 						definitionDocument,
 						scope,
 						referenceKind,
-						tleStringValue,
+						tleStringValue
 					);
 					if (ref) {
 						return ref;
@@ -370,7 +370,7 @@ export class TemplatePositionContext extends PositionContext {
 							childScope.parameterDefinitionsSource,
 							childScope,
 							childScope.parameterValuesSource,
-							this.documentCharacterIndex,
+							this.documentCharacterIndex
 						);
 					if (infoAsParamValue) {
 						return infoAsParamValue;
@@ -438,13 +438,13 @@ export class TemplatePositionContext extends PositionContext {
 		definitionDocument: DeploymentDocument,
 		scope: TemplateScope,
 		referenceKind: ReferenceSiteKind,
-		arg: TLE.StringValue,
+		arg: TLE.StringValue
 	): IReferenceSite | undefined {
 		const parameterDefinition: IParameterDefinition | undefined =
 			scope.getParameterDefinition(arg.unquotedValue);
 		if (parameterDefinition) {
 			const unquotedReferenceSpan: Span = arg.unquotedSpan.translate(
-				this.jsonTokenStartIndex,
+				this.jsonTokenStartIndex
 			);
 			return {
 				referenceKind,
@@ -462,13 +462,13 @@ export class TemplatePositionContext extends PositionContext {
 		definitionDocument: DeploymentDocument,
 		scope: TemplateScope,
 		referenceKind: ReferenceSiteKind,
-		arg: TLE.StringValue,
+		arg: TLE.StringValue
 	): IReferenceSite | undefined {
 		const variableDefinition: IVariableDefinition | undefined =
 			scope.getVariableDefinition(arg.unquotedValue);
 		if (variableDefinition) {
 			const unquotedReferenceSpan: Span = arg.unquotedSpan.translate(
-				this.jsonTokenStartIndex,
+				this.jsonTokenStartIndex
 			);
 			return {
 				referenceKind,
@@ -482,7 +482,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	private isInsideParameterDefinitions(
-		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[],
+		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[]
 	): boolean {
 		// Is it the top-level "parameters"?
 		//
@@ -512,7 +512,7 @@ export class TemplatePositionContext extends PositionContext {
 			parents[1]?.isPropertyWithName(templateKeys.parameters) &&
 			parents[2] instanceof Json.ObjectValue &&
 			parents[3]?.isPropertyWithName(
-				templateKeys.nestedDeploymentTemplateProperty,
+				templateKeys.nestedDeploymentTemplateProperty
 			)
 		) {
 			return true;
@@ -522,7 +522,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	private isInsideParameterValues(
-		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[],
+		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[]
 	): boolean {
 		// Is it a nested template parameters?
 		//
@@ -546,7 +546,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	private isInsideUserFunctionParameterDefinitions(
-		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[],
+		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[]
 	): boolean {
 		// "functions": [
 		// {
@@ -584,7 +584,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	private isInsideResourceBody(
-		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[],
+		parents: (Json.ObjectValue | Json.ArrayValue | Json.Property)[]
 	): boolean {
 		//     {
 		//         "type": "Microsoft.Network/virtualNetworks",
@@ -638,7 +638,7 @@ export class TemplatePositionContext extends PositionContext {
 
 	public async getCompletionItems(
 		triggerCharacter: string | undefined,
-		tabSize: number,
+		tabSize: number
 	): Promise<ICompletionItemsResult> {
 		const tleInfo = this.tleInfo;
 		const completions: Completion.Item[] = [];
@@ -653,8 +653,8 @@ export class TemplatePositionContext extends PositionContext {
 							.parameterDefinitionsSource,
 						tabSize,
 						this.documentCharacterIndex,
-						triggerCharacter,
-					),
+						triggerCharacter
+					)
 				);
 			}
 		}
@@ -679,7 +679,7 @@ export class TemplatePositionContext extends PositionContext {
 				if (
 					TemplatePositionContext.isInsideSquareBrackets(
 						tleInfo.tleParseResult,
-						tleInfo.tleCharacterIndex,
+						tleInfo.tleCharacterIndex
 					)
 				) {
 					// Inside brackets, so complete with all valid functions and namespaces
@@ -688,12 +688,12 @@ export class TemplatePositionContext extends PositionContext {
 						TemplatePositionContext.getFunctionCompletions(
 							scope,
 							undefined,
-							replaceSpan,
+							replaceSpan
 						);
 					const namespaceCompletions =
 						TemplatePositionContext.getNamespaceCompletions(
 							scope,
-							replaceSpan,
+							replaceSpan
 						);
 					completions.push(...functionCompletions);
 					completions.push(...namespaceCompletions);
@@ -706,24 +706,24 @@ export class TemplatePositionContext extends PositionContext {
 						tleValue,
 						this.jsonToken!,
 						tleInfo.tleCharacterIndex,
-						scope,
-					),
+						scope
+					)
 				);
 			} else if (tleValue instanceof TLE.StringValue) {
 				completions.push(
 					...this.getStringLiteralCompletions(
 						tleValue,
 						tleInfo.tleCharacterIndex,
-						scope,
-					),
+						scope
+					)
 				);
 			} else if (tleValue instanceof TLE.PropertyAccess) {
 				completions.push(
 					...this.getPropertyAccessCompletions(
 						tleValue,
 						tleInfo.tleCharacterIndex,
-						scope,
-					),
+						scope
+					)
 				);
 			}
 		}
@@ -746,7 +746,7 @@ export class TemplatePositionContext extends PositionContext {
 			const scopes = this.document.allScopes; // Note: not unique because resources are unique even when scope is not (see CONSIDER in TemplateScope.ts)
 			for (const parent of objectLineage.reverse()) {
 				const innermostMachingScope = scopes.find(
-					(s) => s.rootObject === parent,
+					(s) => s.rootObject === parent
 				);
 				if (innermostMachingScope) {
 					return innermostMachingScope;
@@ -758,7 +758,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	private getDependsOnCompletionItems(
-		triggerCharacter: string | undefined,
+		triggerCharacter: string | undefined
 	): Completion.Item[] {
 		const insertionContext = this.getInsertionContext({
 			triggerCharacter,
@@ -772,7 +772,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	private async getSnippetCompletionItems(
-		triggerCharacter: string | undefined,
+		triggerCharacter: string | undefined
 	): Promise<ICompletionItemsResult> {
 		const insertionContext = this.getInsertionContext({ triggerCharacter });
 		if (insertionContext.triggerSuggest) {
@@ -784,7 +784,7 @@ export class TemplatePositionContext extends PositionContext {
 				await ext.snippetManager.value.getSnippetsAsCompletionItems(
 					insertionContext,
 					replacementInfo.span ??
-						this.emptySpanAtDocumentCharacterIndex,
+						this.emptySpanAtDocumentCharacterIndex
 				);
 			return { items: snippets };
 		}
@@ -798,7 +798,7 @@ export class TemplatePositionContext extends PositionContext {
 	 */
 	private static isInsideSquareBrackets(
 		parseResult: TLE.TleParseResult,
-		characterIndex: number,
+		characterIndex: number
 	): boolean {
 		const leftSquareBracketToken: TLE.Token | undefined =
 			parseResult.leftSquareBracketToken;
@@ -823,21 +823,21 @@ export class TemplatePositionContext extends PositionContext {
 	private getStringLiteralCompletions(
 		tleStringValue: TLE.StringValue,
 		tleCharacterIndex: number,
-		scope: TemplateScope,
+		scope: TemplateScope
 	): Completion.Item[] {
 		if (tleStringValue.isParametersArgument()) {
 			// The string is a parameter name inside a parameters('xxx') function
 			return this.getParameterCompletions(
 				tleStringValue,
 				tleCharacterIndex,
-				scope,
+				scope
 			);
 		} else if (tleStringValue.isVariablesArgument()) {
 			// The string is a variable name inside a variables('xxx') function
 			return this.getVariableCompletions(
 				tleStringValue,
 				tleCharacterIndex,
-				scope,
+				scope
 			);
 		}
 
@@ -845,7 +845,7 @@ export class TemplatePositionContext extends PositionContext {
 		if (funcCall) {
 			assert(
 				this.jsonToken &&
-					this.jsonToken.type === Json.TokenType.QuotedString,
+					this.jsonToken.type === Json.TokenType.QuotedString
 			);
 			// tslint:disable-next-line: no-non-null-assertion
 			const jsonParentStringToken = this.jsonToken!;
@@ -853,7 +853,7 @@ export class TemplatePositionContext extends PositionContext {
 			return getResourceIdCompletions(
 				this,
 				funcCall,
-				jsonParentStringToken,
+				jsonParentStringToken
 			);
 		}
 
@@ -866,7 +866,7 @@ export class TemplatePositionContext extends PositionContext {
 	private getPropertyAccessCompletions(
 		tleValue: TLE.PropertyAccess,
 		tleCharacterIndex: number,
-		scope: TemplateScope,
+		scope: TemplateScope
 	): Completion.Item[] {
 		const functionSource: TLE.FunctionCallValue | undefined =
 			tleValue.functionSource;
@@ -878,12 +878,12 @@ export class TemplatePositionContext extends PositionContext {
 			const propertyNameToken: TLE.Token | undefined = tleValue.nameToken;
 			if (propertyNameToken) {
 				replaceSpan = propertyNameToken.span.translate(
-					this.jsonTokenStartIndex,
+					this.jsonTokenStartIndex
 				);
 				propertyPrefix = propertyNameToken.stringValue
 					.substring(
 						0,
-						tleCharacterIndex - propertyNameToken.span.startIndex,
+						tleCharacterIndex - propertyNameToken.span.startIndex
 					)
 					.toLowerCase();
 			}
@@ -904,7 +904,7 @@ export class TemplatePositionContext extends PositionContext {
 						propertyPrefix,
 						sourceVariableDefinition,
 						sourcesNameStack,
-						replaceSpan,
+						replaceSpan
 					);
 				}
 			} else if (parameterProperty) {
@@ -920,15 +920,15 @@ export class TemplatePositionContext extends PositionContext {
 						| Json.ObjectValue
 						| undefined = Json.asObjectValue(
 						parameterDefValue.getPropertyValueFromStack(
-							sourcesNameStack,
-						),
+							sourcesNameStack
+						)
 					);
 					if (sourcePropertyDefinition) {
 						return this.getDeepPropertyAccessCompletions(
 							propertyPrefix,
 							sourcePropertyDefinition,
 							sourcesNameStack,
-							replaceSpan,
+							replaceSpan
 						);
 					}
 				}
@@ -959,8 +959,8 @@ export class TemplatePositionContext extends PositionContext {
 								result.push(
 									TemplatePositionContext.createPropertyCompletionItem(
 										returnValueMember,
-										replaceSpan,
-									),
+										replaceSpan
+									)
 								);
 							}
 						}
@@ -982,13 +982,13 @@ export class TemplatePositionContext extends PositionContext {
 		tleValue: TLE.FunctionCallValue,
 		parentStringToken: Json.Token,
 		tleCharacterIndex: number,
-		scope: TemplateScope,
+		scope: TemplateScope
 	): Completion.Item[] {
 		assert(
 			tleValue
 				.getSpan()
 				.contains(tleCharacterIndex, ContainsBehavior.extended),
-			"Position should be inside the function call, or right after it",
+			"Position should be inside the function call, or right after it"
 		);
 
 		const completions: Completion.Item[] = [];
@@ -1014,7 +1014,7 @@ export class TemplatePositionContext extends PositionContext {
 			tleValue.nameToken &&
 			tleValue.nameToken.span.contains(
 				tleCharacterIndex,
-				ContainsBehavior.extended,
+				ContainsBehavior.extended
 			)
 		) {
 			// The caret is inside the function's name (or a namespace before the period has been typed), so one of
@@ -1057,7 +1057,7 @@ export class TemplatePositionContext extends PositionContext {
 			tleValue.periodToken &&
 			tleValue.namespaceToken.span.contains(
 				tleCharacterIndex,
-				ContainsBehavior.extended,
+				ContainsBehavior.extended
 			)
 		) {
 			// "name<CURSOR>space.function"
@@ -1078,7 +1078,7 @@ export class TemplatePositionContext extends PositionContext {
 			return this.getParameterCompletions(
 				tleValue,
 				tleCharacterIndex,
-				scope,
+				scope
 			);
 		} else if (
 			tleValue.isCallToBuiltinWithName(templateKeys.variables) &&
@@ -1089,7 +1089,7 @@ export class TemplatePositionContext extends PositionContext {
 			return this.getVariableCompletions(
 				tleValue,
 				tleCharacterIndex,
-				scope,
+				scope
 			);
 		} else {
 			// Anywhere else (e.g. whitespace after function name, or inside the arguments list).
@@ -1117,7 +1117,7 @@ export class TemplatePositionContext extends PositionContext {
 			assert(completionLength >= 0);
 			replaceSpan = new Span(
 				this.jsonTokenStartIndex,
-				completionLength,
+				completionLength
 			).translate(tleTokenToComplete.span.startIndex);
 		} else {
 			// Nothing getting completed, completion selection will be inserted at current location
@@ -1128,7 +1128,7 @@ export class TemplatePositionContext extends PositionContext {
 			completeBuiltinFunctions ||
 				completeUserFunctions ||
 				completeNamespaces,
-			"Should be completing something",
+			"Should be completing something"
 		);
 		if (completeBuiltinFunctions || completeUserFunctions) {
 			if (completeUserFunctions && namespace) {
@@ -1136,7 +1136,7 @@ export class TemplatePositionContext extends PositionContext {
 					TemplatePositionContext.getFunctionCompletions(
 						scope,
 						namespace,
-						replaceSpan,
+						replaceSpan
 					);
 				completions.push(...userFunctionCompletions);
 			}
@@ -1145,7 +1145,7 @@ export class TemplatePositionContext extends PositionContext {
 					TemplatePositionContext.getFunctionCompletions(
 						scope,
 						undefined,
-						replaceSpan,
+						replaceSpan
 					);
 				completions.push(...builtinCompletions);
 			}
@@ -1154,7 +1154,7 @@ export class TemplatePositionContext extends PositionContext {
 			const namespaceCompletions =
 				TemplatePositionContext.getNamespaceCompletions(
 					scope,
-					replaceSpan,
+					replaceSpan
 				);
 			completions.push(...namespaceCompletions);
 		}
@@ -1162,7 +1162,7 @@ export class TemplatePositionContext extends PositionContext {
 		// If the completion is for 'resourceId' or related function, then in addition
 		// to the regular completions, also add special completions for resourceId
 		completions.push(
-			...getResourceIdCompletions(this, tleValue, parentStringToken),
+			...getResourceIdCompletions(this, tleValue, parentStringToken)
 		);
 
 		return completions;
@@ -1172,15 +1172,15 @@ export class TemplatePositionContext extends PositionContext {
 		propertyPrefix: string,
 		variableOrParameterDefinition: Json.ObjectValue,
 		sourcesNameStack: string[],
-		replaceSpan: Span,
+		replaceSpan: Span
 	): Completion.Item[] {
 		const result: Completion.Item[] = [];
 
 		const sourcePropertyDefinitionObject: Json.ObjectValue | undefined =
 			Json.asObjectValue(
 				variableOrParameterDefinition.getPropertyValueFromStack(
-					sourcesNameStack,
-				),
+					sourcesNameStack
+				)
 			);
 		if (sourcePropertyDefinitionObject) {
 			let matchingPropertyNames: string[];
@@ -1205,8 +1205,8 @@ export class TemplatePositionContext extends PositionContext {
 				result.push(
 					TemplatePositionContext.createPropertyCompletionItem(
 						matchingPropertyName,
-						replaceSpan,
-					),
+						replaceSpan
+					)
 				);
 			}
 		}
@@ -1216,7 +1216,7 @@ export class TemplatePositionContext extends PositionContext {
 
 	private static createPropertyCompletionItem(
 		propertyName: string,
-		replaceSpan: Span,
+		replaceSpan: Span
 	): Completion.Item {
 		return Completion.Item.fromPropertyName(propertyName, replaceSpan);
 	}
@@ -1234,7 +1234,7 @@ export class TemplatePositionContext extends PositionContext {
 				// References in this document
 				const references: ReferenceList =
 					this.document.findReferencesToDefinition(
-						refInfo.definition,
+						refInfo.definition
 					);
 
 				// References in the parameters file or parameter values of a nested/linked template
@@ -1245,7 +1245,7 @@ export class TemplatePositionContext extends PositionContext {
 					const templateReferences =
 						findReferencesToDefinitionInParameterValues(
 							parameterValuesSource,
-							refInfo.definition,
+							refInfo.definition
 						);
 					references.addAll(templateReferences);
 				}
@@ -1258,7 +1258,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	protected getParameterValuesSource(
-		scope: TemplateScope,
+		scope: TemplateScope
 	): IParameterValuesSource | undefined {
 		// tslint:disable-next-line: no-suspicious-comment
 		// TODO: This shouldn't be necessary - a TopLevelTemplateScope should be able to return its own
@@ -1323,7 +1323,7 @@ export class TemplatePositionContext extends PositionContext {
 						| UserFunctionDefinition
 						| undefined = scope.getUserFunctionDefinition(
 						ns.nameValue.unquotedValue,
-						unquotedString,
+						unquotedString
 					);
 					if (
 						userFunctionDefinition &&
@@ -1357,7 +1357,7 @@ export class TemplatePositionContext extends PositionContext {
 					const udfDefinition: UserFunctionDefinition | undefined =
 						this.tleInfo.scope.getUserFunctionDefinition(
 							namespace,
-							name,
+							name
 						);
 					functionMetadata = udfDefinition
 						? UserFunctionMetadata.fromDefinition(udfDefinition)
@@ -1366,7 +1366,7 @@ export class TemplatePositionContext extends PositionContext {
 					// Call to built-in function
 					functionMetadata =
 						AzureRMAssets.getFunctionMetadataFromName(
-							functionToHelpWith.name,
+							functionToHelpWith.name
 						);
 				}
 				if (functionMetadata) {
@@ -1389,7 +1389,7 @@ export class TemplatePositionContext extends PositionContext {
 
 						return new TLE.FunctionSignatureHelp(
 							currentArgumentIndex,
-							functionMetadata,
+							functionMetadata
 						);
 					}
 				}
@@ -1404,7 +1404,7 @@ export class TemplatePositionContext extends PositionContext {
 	 * Returns -1 if the position is inside the function call, but not inside any of the parameters
 	 */
 	public getFunctionCallArgumentIndex(
-		functionCall?: TLE.FunctionCallValue,
+		functionCall?: TLE.FunctionCallValue
 	): number | undefined {
 		const tleInfo = this.tleInfo;
 		const tleValue: TLE.Value | undefined = tleInfo?.tleValue;
@@ -1449,13 +1449,13 @@ export class TemplatePositionContext extends PositionContext {
 	private static getFunctionCompletions(
 		scope: TemplateScope,
 		namespace: UserFunctionNamespaceDefinition | undefined,
-		replaceSpan: Span,
+		replaceSpan: Span
 	): Completion.Item[] {
 		let matches: IFunctionMetadata[];
 		if (namespace) {
 			// User-defined functions
 			matches = namespace.members.map((fd) =>
-				UserFunctionMetadata.fromDefinition(fd),
+				UserFunctionMetadata.fromDefinition(fd)
 			);
 		} else {
 			// Built-in functions
@@ -1463,7 +1463,7 @@ export class TemplatePositionContext extends PositionContext {
 		}
 
 		return matches.map((m) =>
-			Completion.Item.fromFunctionMetadata(m, replaceSpan),
+			Completion.Item.fromFunctionMetadata(m, replaceSpan)
 		);
 	}
 
@@ -1472,10 +1472,10 @@ export class TemplatePositionContext extends PositionContext {
 	 */
 	private static getNamespaceCompletions(
 		scope: TemplateScope,
-		replaceSpan: Span,
+		replaceSpan: Span
 	): Completion.Item[] {
 		return scope.namespaceDefinitions.map((m) =>
-			Completion.Item.fromNamespaceDefinition(m, replaceSpan),
+			Completion.Item.fromNamespaceDefinition(m, replaceSpan)
 		);
 	}
 
@@ -1487,12 +1487,12 @@ export class TemplatePositionContext extends PositionContext {
 	private getParameterCompletions(
 		tleValue: TLE.StringValue | TLE.FunctionCallValue,
 		tleCharacterIndex: number,
-		scope: TemplateScope,
+		scope: TemplateScope
 	): Completion.Item[] {
 		const replaceSpanInfo: ITleReplaceSpanInfo | undefined =
 			this.getParameterOrVariableNameReplaceInfo(
 				tleValue,
-				tleCharacterIndex,
+				tleCharacterIndex
 			);
 
 		const parameterCompletions: Completion.Item[] = [];
@@ -1504,8 +1504,8 @@ export class TemplatePositionContext extends PositionContext {
 						parameterDefinition,
 						replaceSpanInfo.replaceSpan,
 						replaceSpanInfo.includeRightParenthesisInCompletion,
-						replaceSpanInfo.includeSingleQuotesInCompletion,
-					),
+						replaceSpanInfo.includeSingleQuotesInCompletion
+					)
 				);
 			}
 		}
@@ -1521,12 +1521,12 @@ export class TemplatePositionContext extends PositionContext {
 	private getVariableCompletions(
 		tleValue: TLE.StringValue | TLE.FunctionCallValue,
 		tleCharacterIndex: number,
-		scope: TemplateScope,
+		scope: TemplateScope
 	): Completion.Item[] {
 		const replaceSpanInfo: ITleReplaceSpanInfo | undefined =
 			this.getParameterOrVariableNameReplaceInfo(
 				tleValue,
-				tleCharacterIndex,
+				tleCharacterIndex
 			);
 
 		const variableCompletions: Completion.Item[] = [];
@@ -1537,8 +1537,8 @@ export class TemplatePositionContext extends PositionContext {
 						variableDefinition,
 						replaceSpanInfo.replaceSpan,
 						replaceSpanInfo.includeRightParenthesisInCompletion,
-						replaceSpanInfo.includeSingleQuotesInCompletion,
-					),
+						replaceSpanInfo.includeSingleQuotesInCompletion
+					)
 				);
 			}
 		}
@@ -1549,7 +1549,7 @@ export class TemplatePositionContext extends PositionContext {
 	// tslint:disable-next-line: max-func-body-length // lots of comments
 	private getParameterOrVariableNameReplaceInfo(
 		tleValue: TLE.StringValue | TLE.FunctionCallValue,
-		tleCharacterIndex: number,
+		tleCharacterIndex: number
 	): ITleReplaceSpanInfo | undefined {
 		// Note: We icnclude closing parenthesis and single quote in the replacement span and the insertion text,
 		// so that the cursor ends up after them once the replacement happens. This way the user can immediately start
@@ -1637,14 +1637,14 @@ export class TemplatePositionContext extends PositionContext {
 					// Cut off before the ending parenthesis
 					tleReplaceSpan = new Span(
 						stringStartIndex,
-						rightParenthesisIndex + 1,
+						rightParenthesisIndex + 1
 					);
 					includeRightParenthesisInCompletion = true;
 				} else if (rightSquareBracketIndex >= 0) {
 					// Cut off before the ending square bracket
 					tleReplaceSpan = new Span(
 						stringStartIndex,
-						rightSquareBracketIndex,
+						rightSquareBracketIndex
 					);
 					includeRightParenthesisInCompletion = true;
 				} else if (
@@ -1657,7 +1657,7 @@ export class TemplatePositionContext extends PositionContext {
 					tleReplaceSpan = new Span(
 						stringStartIndex,
 						functionValue.rightParenthesisToken.span.afterEndIndex -
-							stringStartIndex,
+							stringStartIndex
 					);
 					includeRightParenthesisInCompletion = true;
 				} else {
@@ -1681,7 +1681,7 @@ export class TemplatePositionContext extends PositionContext {
 					this.documentCharacterIndex,
 					tleValue.rightParenthesisToken.span.startIndex -
 						tleCharacterIndex +
-						1,
+						1
 				);
 				includeRightParenthesisInCompletion = true;
 			} else {
@@ -1693,7 +1693,7 @@ export class TemplatePositionContext extends PositionContext {
 		if (includeRightParenthesisInCompletion) {
 			assert(
 				includeSingleQuotesInCompletion,
-				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion",
+				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion"
 			);
 		}
 

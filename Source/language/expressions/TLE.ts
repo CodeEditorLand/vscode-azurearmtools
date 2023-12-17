@@ -34,31 +34,31 @@ type ITleFormatOptions = {
 };
 
 export function asStringValue(
-	value: Value | undefined,
+	value: Value | undefined
 ): StringValue | undefined {
 	return value instanceof StringValue ? value : undefined;
 }
 
 export function asNumberValue(
-	value: Value | undefined,
+	value: Value | undefined
 ): NumberValue | undefined {
 	return value instanceof NumberValue ? value : undefined;
 }
 
 export function asArrayAccessValue(
-	value: Value | undefined,
+	value: Value | undefined
 ): ArrayAccessValue | undefined {
 	return value instanceof ArrayAccessValue ? value : undefined;
 }
 
 export function asFunctionCallValue(
-	value: Value | undefined,
+	value: Value | undefined
 ): FunctionCallValue | undefined {
 	return value instanceof FunctionCallValue ? value : undefined;
 }
 
 export function asPropertyAccessValue(
-	value: Value | undefined,
+	value: Value | undefined
 ): PropertyAccess | undefined {
 	return value instanceof PropertyAccess ? value : undefined;
 }
@@ -93,7 +93,7 @@ export abstract class Value {
 
 	public formatCore(
 		_options: ITleFormatOptions,
-		_currentIndent: number,
+		_currentIndent: number
 	): string {
 		return this.toString();
 	}
@@ -165,21 +165,21 @@ export class StringValue extends Value {
 	public get unquotedSpan(): Span {
 		return new Span(
 			this.getSpan().startIndex + 1,
-			this.length - (this.hasCloseQuote() ? 2 : 1),
+			this.length - (this.hasCloseQuote() ? 2 : 1)
 		);
 	}
 
 	public get unquotedValue(): string {
 		return this.quotedValue.slice(
 			1,
-			this.length - (this.hasCloseQuote() ? 1 : 0),
+			this.length - (this.hasCloseQuote() ? 1 : 0)
 		);
 	}
 
 	public contains(characterIndex: number): boolean {
 		return this.getSpan().contains(
 			characterIndex,
-			ContainsBehavior.extended,
+			ContainsBehavior.extended
 		);
 	}
 
@@ -266,7 +266,7 @@ export class NumberValue extends Value {
 	public contains(characterIndex: number): boolean {
 		return this.getSpan().contains(
 			characterIndex,
-			ContainsBehavior.extended,
+			ContainsBehavior.extended
 		);
 	}
 
@@ -287,7 +287,7 @@ export class ArrayAccessValue extends ParentValue {
 		private _source: Value,
 		private _leftSquareBracketToken: Token,
 		private _indexValue: Value | undefined,
-		private _rightSquareBracketToken: Token | undefined,
+		private _rightSquareBracketToken: Token | undefined
 	) {
 		super();
 
@@ -295,12 +295,12 @@ export class ArrayAccessValue extends ParentValue {
 		assert(_leftSquareBracketToken);
 		assert.deepStrictEqual(
 			TokenType.LeftSquareBracket,
-			_leftSquareBracketToken.getType(),
+			_leftSquareBracketToken.getType()
 		);
 		assert(
 			!_rightSquareBracketToken ||
 				_rightSquareBracketToken.getType() ===
-					TokenType.RightSquareBracket,
+					TokenType.RightSquareBracket
 		);
 
 		this._source.parent = this;
@@ -361,7 +361,7 @@ export class ArrayAccessValue extends ParentValue {
 			characterIndex,
 			this._rightSquareBracketToken
 				? ContainsBehavior.strict
-				: ContainsBehavior.extended,
+				: ContainsBehavior.extended
 		);
 	}
 
@@ -382,12 +382,12 @@ export class ArrayAccessValue extends ParentValue {
 
 	public formatCore(
 		options: ITleFormatOptions,
-		currentIndent: number,
+		currentIndent: number
 	): string {
 		// Source expression and opening "["
 		let result: string = `${this._source.formatCore(
 			options,
-			currentIndent,
+			currentIndent
 		)}[`;
 
 		// Format the index expression
@@ -402,18 +402,18 @@ export class ArrayAccessValue extends ParentValue {
 		} else if (options.multiline) {
 			// Multi-line formatting
 			const preTab = " ".repeat(
-				currentIndent + options.multiline.tabSize,
+				currentIndent + options.multiline.tabSize
 			);
 			const indexExpressionRaw = this._indexValue.formatCore(
 				options,
-				currentIndent + options.multiline.tabSize,
+				currentIndent + options.multiline.tabSize
 			);
 			indexExpression = `\n${preTab}${indexExpressionRaw}`;
 		} else {
 			// Single-line formatting
 			indexExpression = this._indexValue.formatCore(
 				options,
-				currentIndent,
+				currentIndent
 			);
 		}
 		result += indexExpression;
@@ -438,17 +438,17 @@ export class FunctionCallValue extends ParentValue {
 		private readonly _leftParenthesisToken: Token | undefined,
 		private readonly _commaTokens: Token[],
 		private readonly _argumentExpressions: (Value | undefined)[], // Missing args are undefined
-		private readonly _rightParenthesisToken: Token | undefined,
+		private readonly _rightParenthesisToken: Token | undefined
 	) {
 		super();
 
 		assert(
 			_namespaceToken || _nameToken,
-			"Must have a namespace or name token",
+			"Must have a namespace or name token"
 		);
 		assert(
 			!(_namespaceToken && _nameToken) || periodToken,
-			"If we have a namespace and name, we should have a period token",
+			"If we have a namespace and name, we should have a period token"
 		);
 		assert(_commaTokens);
 		assert(_argumentExpressions);
@@ -506,7 +506,7 @@ export class FunctionCallValue extends ParentValue {
 		} else {
 			assert(
 				this.nameToken,
-				"We asserted in the constructor that we have to have a namespace or a name",
+				"We asserted in the constructor that we have to have a namespace or a name"
 			);
 			// tslint:disable-next-line: no-non-null-assertion
 			return this.name!;
@@ -521,15 +521,15 @@ export class FunctionCallValue extends ParentValue {
 			// tslint:disable-next-line: strict-boolean-expressions
 			Span.union(
 				this._namespaceToken && this._namespaceToken.span,
-				this.periodToken && this.periodToken.span,
+				this.periodToken && this.periodToken.span
 			),
 			// tslint:disable-next-line: strict-boolean-expressions
-			this._nameToken && this._nameToken.span,
+			this._nameToken && this._nameToken.span
 		);
 
 		assert(
 			result,
-			"Should have had at least one of a namespace or a name, therefore span should be non-empty",
+			"Should have had at least one of a namespace or a name, therefore span should be non-empty"
 		);
 		// tslint:disable-next-line: no-non-null-assertion // Asserted
 		return result!;
@@ -544,7 +544,7 @@ export class FunctionCallValue extends ParentValue {
 
 	public doesNameMatch(
 		namespaceName: string | undefined,
-		name: string,
+		name: string
 	): boolean {
 		// tslint:disable-next-line: strict-boolean-expressions
 		namespaceName = namespaceName || "";
@@ -606,7 +606,7 @@ export class FunctionCallValue extends ParentValue {
 
 				if (0 < this.commaTokens.length) {
 					result = result.union(
-						this._commaTokens[this._commaTokens.length - 1].span,
+						this._commaTokens[this._commaTokens.length - 1].span
 					);
 				}
 			}
@@ -624,7 +624,7 @@ export class FunctionCallValue extends ParentValue {
 			characterIndex,
 			this._rightParenthesisToken
 				? ContainsBehavior.strict
-				: ContainsBehavior.extended,
+				: ContainsBehavior.extended
 		);
 	}
 
@@ -634,13 +634,13 @@ export class FunctionCallValue extends ParentValue {
 
 	public toString(): string {
 		return this.getStringFromArguments(
-			this.argumentExpressions.map((arg) => arg?.toString() ?? ""),
+			this.argumentExpressions.map((arg) => arg?.toString() ?? "")
 		);
 	}
 
 	public formatCore(
 		options: ITleFormatOptions,
-		currentIndent: number,
+		currentIndent: number
 	): string {
 		// Format a function call expression
 
@@ -652,7 +652,7 @@ export class FunctionCallValue extends ParentValue {
 					return FunctionCallValue.coalesceConcatArguments(
 						this.argumentExpressions,
 						options,
-						currentIndent,
+						currentIndent
 					);
 
 				case "variables":
@@ -736,7 +736,7 @@ export class FunctionCallValue extends ParentValue {
 	private static coalesceConcatArguments(
 		expressions: (Value | undefined)[],
 		options: ITleFormatOptions,
-		currentIndent: number,
+		currentIndent: number
 	): string {
 		if (expressions.length < 2) {
 			return expressions[0]?.formatCore(options, currentIndent) ?? "";
@@ -766,11 +766,12 @@ export class FunctionCallValue extends ParentValue {
 						prevCoalescedExpression.match(/[\]})]\.[a-zA-Z0-9]/);
 					if (!previousContainsPropertyIndex) {
 						// Merge previous and current expressions into a single-quoted string
-						coalescedExpressions[
-							coalescedExpressions.length - 1
-						] = `'${Utilities.removeSingleQuotes(
-							prevCoalescedExpression,
-						)}${Utilities.removeSingleQuotes(currentExpression)}'`;
+						coalescedExpressions[coalescedExpressions.length - 1] =
+							`'${Utilities.removeSingleQuotes(
+								prevCoalescedExpression
+							)}${Utilities.removeSingleQuotes(
+								currentExpression
+							)}'`;
 						continue;
 					}
 				}
@@ -814,7 +815,7 @@ export class PropertyAccess extends ParentValue {
 	constructor(
 		private _source: Value,
 		private _periodToken: Token,
-		private _nameToken: Token | undefined,
+		private _nameToken: Token | undefined
 	) {
 		super();
 
@@ -842,7 +843,7 @@ export class PropertyAccess extends ParentValue {
 		while (propertyAccessSource && propertyAccessSource.nameToken) {
 			result.push(propertyAccessSource.nameToken.stringValue);
 			propertyAccessSource = asPropertyAccessValue(
-				propertyAccessSource.source,
+				propertyAccessSource.source
 			);
 		}
 
@@ -887,7 +888,7 @@ export class PropertyAccess extends ParentValue {
 	public contains(characterIndex: number): boolean {
 		return this.getSpan().contains(
 			characterIndex,
-			ContainsBehavior.extended,
+			ContainsBehavior.extended
 		);
 	}
 
@@ -905,7 +906,7 @@ export class PropertyAccess extends ParentValue {
 
 	public formatCore(
 		options: ITleFormatOptions,
-		currentIndent: number,
+		currentIndent: number
 	): string {
 		let result = `${this._source.formatCore(options, currentIndent)}.`;
 		if (!!this._nameToken) {
@@ -920,7 +921,7 @@ export class PropertyAccess extends ParentValue {
  */
 export class BraceHighlighter {
 	public static getHighlightCharacterIndexes(
-		context: TemplatePositionContext,
+		context: TemplatePositionContext
 	): number[] {
 		assert(context);
 
@@ -937,7 +938,7 @@ export class BraceHighlighter {
 			) {
 				BraceHighlighter.addTLEBracketHighlights(
 					highlightCharacterIndexes,
-					tleParseResult,
+					tleParseResult
 				);
 			} else {
 				let tleValue: Value | undefined =
@@ -950,7 +951,7 @@ export class BraceHighlighter {
 					) {
 						BraceHighlighter.addTLEFunctionHighlights(
 							highlightCharacterIndexes,
-							tleValue,
+							tleValue
 						);
 					}
 				} else if (tleValue instanceof ArrayAccessValue) {
@@ -960,7 +961,7 @@ export class BraceHighlighter {
 					) {
 						BraceHighlighter.addTLEArrayHighlights(
 							highlightCharacterIndexes,
-							tleValue,
+							tleValue
 						);
 					}
 				}
@@ -974,12 +975,12 @@ export class BraceHighlighter {
 			) {
 				BraceHighlighter.addTLEBracketHighlights(
 					highlightCharacterIndexes,
-					tleParseResult,
+					tleParseResult
 				);
 			} else if (0 <= leftOfTLECharacterIndex) {
 				let tleValue: Value | undefined =
 					tleParseResult.getValueAtCharacterIndex(
-						leftOfTLECharacterIndex,
+						leftOfTLECharacterIndex
 					);
 				if (tleValue instanceof FunctionCallValue) {
 					if (
@@ -989,7 +990,7 @@ export class BraceHighlighter {
 					) {
 						BraceHighlighter.addTLEFunctionHighlights(
 							highlightCharacterIndexes,
-							tleValue,
+							tleValue
 						);
 					}
 				} else if (tleValue instanceof ArrayAccessValue) {
@@ -1000,7 +1001,7 @@ export class BraceHighlighter {
 					) {
 						BraceHighlighter.addTLEArrayHighlights(
 							highlightCharacterIndexes,
-							tleValue,
+							tleValue
 						);
 					}
 				}
@@ -1012,53 +1013,53 @@ export class BraceHighlighter {
 
 	private static addTLEBracketHighlights(
 		highlightCharacterIndexes: number[],
-		tleParseResult: TleParseResult,
+		tleParseResult: TleParseResult
 	): void {
 		assert(tleParseResult);
 		assert(tleParseResult.leftSquareBracketToken);
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted above
 		highlightCharacterIndexes.push(
-			tleParseResult.leftSquareBracketToken!.span.startIndex,
+			tleParseResult.leftSquareBracketToken!.span.startIndex
 		);
 		if (!!tleParseResult.rightSquareBracketToken) {
 			highlightCharacterIndexes.push(
-				tleParseResult.rightSquareBracketToken.span.startIndex,
+				tleParseResult.rightSquareBracketToken.span.startIndex
 			);
 		}
 	}
 
 	private static addTLEFunctionHighlights(
 		highlightCharacterIndexes: number[],
-		tleFunction: FunctionCallValue,
+		tleFunction: FunctionCallValue
 	): void {
 		assert(tleFunction);
 		assert(tleFunction.leftParenthesisToken);
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted
 		highlightCharacterIndexes.push(
-			tleFunction.leftParenthesisToken!.span.startIndex,
+			tleFunction.leftParenthesisToken!.span.startIndex
 		);
 		if (!!tleFunction.rightParenthesisToken) {
 			highlightCharacterIndexes.push(
-				tleFunction.rightParenthesisToken.span.startIndex,
+				tleFunction.rightParenthesisToken.span.startIndex
 			);
 		}
 	}
 
 	private static addTLEArrayHighlights(
 		highlightCharacterIndexes: number[],
-		tleArrayAccess: ArrayAccessValue,
+		tleArrayAccess: ArrayAccessValue
 	): void {
 		assert(tleArrayAccess);
 		assert(tleArrayAccess.leftSquareBracketToken);
 
 		highlightCharacterIndexes.push(
-			tleArrayAccess.leftSquareBracketToken.span.startIndex,
+			tleArrayAccess.leftSquareBracketToken.span.startIndex
 		);
 		if (!!tleArrayAccess.rightSquareBracketToken) {
 			highlightCharacterIndexes.push(
-				tleArrayAccess.rightSquareBracketToken.span.startIndex,
+				tleArrayAccess.rightSquareBracketToken.span.startIndex
 			);
 		}
 	}
@@ -1069,7 +1070,7 @@ export class BraceHighlighter {
  */
 export abstract class TleVisitor {
 	public visitArrayAccess(
-		tleArrayAccess: ArrayAccessValue | undefined,
+		tleArrayAccess: ArrayAccessValue | undefined
 	): void {
 		if (tleArrayAccess) {
 			assert(tleArrayAccess.source);
@@ -1095,7 +1096,7 @@ export abstract class TleVisitor {
 	}
 
 	public visitPropertyAccess(
-		tlePropertyAccess: PropertyAccess | undefined,
+		tlePropertyAccess: PropertyAccess | undefined
 	): void {
 		if (tlePropertyAccess) {
 			assert(tlePropertyAccess.source);
@@ -1111,7 +1112,7 @@ export abstract class TleVisitor {
 export class FunctionSignatureHelp {
 	constructor(
 		private _activeParameterIndex: number,
-		private _functionMetadata: IFunctionMetadata,
+		private _functionMetadata: IFunctionMetadata
 	) {}
 
 	public get activeParameterIndex(): number {
@@ -1139,11 +1140,11 @@ export class Parser {
 		assert(quotedStringValue, "TLE strings cannot be undefined.");
 		assert(
 			1 <= quotedStringValue.length,
-			"TLE strings must be at least 1 character.",
+			"TLE strings must be at least 1 character."
 		);
 		assert(
 			Utilities.isQuoteCharacter(quotedStringValue[0]),
-			"The first character in the TLE string to parse must be a quote character.",
+			"The first character in the TLE string to parse must be a quote character."
 		);
 
 		let leftSquareBracketToken: Token | undefined;
@@ -1156,7 +1157,7 @@ export class Parser {
 			quotedStringValue.substr(1, 2) === "[["
 		) {
 			expression = new StringValue(
-				Token.createQuotedString(0, quotedStringValue),
+				Token.createQuotedString(0, quotedStringValue)
 			);
 		} else {
 			let tokenizer = Tokenizer.fromString(quotedStringValue);
@@ -1169,7 +1170,7 @@ export class Parser {
 				// This is just a plain old string (no brackets). Mark its expression as being
 				// the string value.
 				expression = new StringValue(
-					Token.createQuotedString(0, quotedStringValue),
+					Token.createQuotedString(0, quotedStringValue)
 				);
 			} else {
 				leftSquareBracketToken = tokenizer.current;
@@ -1184,8 +1185,8 @@ export class Parser {
 						new Issue(
 							tokenizer.current.span,
 							"Expected a literal value.",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 					tokenizer.next();
 				}
@@ -1205,8 +1206,8 @@ export class Parser {
 							new Issue(
 								tokenizer.current.span,
 								"Expected the end of the string.",
-								IssueKind.tleSyntax,
-							),
+								IssueKind.tleSyntax
+							)
 						);
 						tokenizer.next();
 					}
@@ -1218,8 +1219,8 @@ export class Parser {
 							new Issue(
 								tokenizer.current.span,
 								"Nothing should exist after the closing ']' except for whitespace.",
-								IssueKind.tleSyntax,
-							),
+								IssueKind.tleSyntax
+							)
 						);
 						tokenizer.next();
 					}
@@ -1228,8 +1229,8 @@ export class Parser {
 						new Issue(
 							new Span(quotedStringValue.length - 1, 1),
 							"Expected a right square bracket (']').",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 				}
 
@@ -1237,15 +1238,15 @@ export class Parser {
 					let errorSpan: Span = leftSquareBracketToken.span;
 					if (!!rightSquareBracketToken) {
 						errorSpan = errorSpan.union(
-							rightSquareBracketToken.span,
+							rightSquareBracketToken.span
 						);
 					}
 					errors.push(
 						new Issue(
 							errorSpan,
 							"Expected a function or property expression.",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 				}
 			}
@@ -1255,13 +1256,13 @@ export class Parser {
 			leftSquareBracketToken,
 			expression,
 			rightSquareBracketToken,
-			errors,
+			errors
 		);
 	}
 
 	private static parseExpression(
 		tokenizer: Tokenizer,
-		errors: Issue[],
+		errors: Issue[]
 	): Value | undefined {
 		let expression: Value;
 		if (tokenizer.current) {
@@ -1277,8 +1278,8 @@ export class Parser {
 						new Issue(
 							token.span,
 							"A constant string is missing an end quote.",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 				}
 				rootExpression = new StringValue(token);
@@ -1294,8 +1295,8 @@ export class Parser {
 					new Issue(
 						token.span,
 						"Template language expressions must start with a function.",
-						IssueKind.tleSyntax,
-					),
+						IssueKind.tleSyntax
+					)
 				);
 				tokenizer.next();
 			}
@@ -1345,8 +1346,8 @@ export class Parser {
 						new Issue(
 							errorSpan!,
 							"Expected a literal value.",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 				}
 
@@ -1355,7 +1356,7 @@ export class Parser {
 				expression = new PropertyAccess(
 					expression,
 					periodToken,
-					propertyNameToken,
+					propertyNameToken
 				);
 			} else if (
 				tokenizer.current.getType() === TokenType.LeftSquareBracket
@@ -1365,7 +1366,7 @@ export class Parser {
 
 				let indexValue: Value | undefined = Parser.parseExpression(
 					tokenizer,
-					errors,
+					errors
 				);
 
 				let rightSquareBracketToken: Token | undefined;
@@ -1381,7 +1382,7 @@ export class Parser {
 					expression,
 					leftSquareBracketToken,
 					indexValue,
-					rightSquareBracketToken,
+					rightSquareBracketToken
 				);
 			} else {
 				break;
@@ -1394,7 +1395,7 @@ export class Parser {
 	// tslint:disable-next-line:cyclomatic-complexity max-func-body-length // CONSIDER: refactor
 	private static parseFunctionCall(
 		tokenizer: Tokenizer,
-		errors: Issue[],
+		errors: Issue[]
 	): FunctionCallValue {
 		assert(tokenizer);
 		assert(tokenizer.current, "tokenizer must have a current token.");
@@ -1402,7 +1403,7 @@ export class Parser {
 		assert.deepEqual(
 			TokenType.Literal,
 			tokenizer.current!.getType(),
-			"tokenizer's current token must be a literal.",
+			"tokenizer's current token must be a literal."
 		);
 		assert(errors);
 
@@ -1437,8 +1438,8 @@ export class Parser {
 					new Issue(
 						periodToken.span,
 						"Expected user-defined function name.",
-						IssueKind.tleSyntax,
-					),
+						IssueKind.tleSyntax
+					)
 				);
 			}
 		} else {
@@ -1466,8 +1467,8 @@ export class Parser {
 						new Issue(
 							getFullNameSpan(),
 							"Missing function argument list.",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 					break;
 				} else {
@@ -1475,8 +1476,8 @@ export class Parser {
 						new Issue(
 							tokenizer.current.span,
 							"Expected the end of the string.",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 					tokenizer.next();
 				}
@@ -1486,8 +1487,8 @@ export class Parser {
 				new Issue(
 					getFullNameSpan(),
 					"Missing function argument list.",
-					IssueKind.tleSyntax,
-				),
+					IssueKind.tleSyntax
+				)
 			);
 		}
 
@@ -1513,8 +1514,8 @@ export class Parser {
 							new Issue(
 								tokenizer.current.span,
 								"Expected a constant string, function, or property expression.",
-								IssueKind.tleSyntax,
-							),
+								IssueKind.tleSyntax
+							)
 						);
 					}
 					argumentExpressions.push(expression);
@@ -1528,8 +1529,8 @@ export class Parser {
 						new Issue(
 							tokenizer.current.span,
 							"Expected a comma (',').",
-							IssueKind.tleSyntax,
-						),
+							IssueKind.tleSyntax
+						)
 					);
 					tokenizer.next();
 				}
@@ -1540,7 +1541,7 @@ export class Parser {
 					expectingArgument,
 					leftParenthesisToken,
 					argumentExpressions.length,
-					tokenizer,
+					tokenizer
 				)
 			) {
 				argumentExpressions.push(undefined);
@@ -1557,8 +1558,8 @@ export class Parser {
 					new Issue(
 						errorSpan,
 						"Expected a constant string, function, or property expression.",
-						IssueKind.tleSyntax,
-					),
+						IssueKind.tleSyntax
+					)
 				);
 			}
 		} else if (!!leftParenthesisToken) {
@@ -1566,8 +1567,8 @@ export class Parser {
 				new Issue(
 					leftParenthesisToken.span,
 					"Expected a right parenthesis (')').",
-					IssueKind.tleSyntax,
-				),
+					IssueKind.tleSyntax
+				)
 			);
 		}
 
@@ -1585,8 +1586,8 @@ export class Parser {
 							new Issue(
 								tokenizer.current.span,
 								"Expected a right parenthesis (')').",
-								IssueKind.tleSyntax,
-							),
+								IssueKind.tleSyntax
+							)
 						);
 					}
 					break;
@@ -1595,7 +1596,7 @@ export class Parser {
 
 		assert(
 			namespaceToken || nameToken,
-			"Should have had a namespace or a name",
+			"Should have had a namespace or a name"
 		);
 		return new FunctionCallValue(
 			namespaceToken,
@@ -1604,7 +1605,7 @@ export class Parser {
 			leftParenthesisToken,
 			commaTokens,
 			argumentExpressions,
-			rightParenthesisToken,
+			rightParenthesisToken
 		);
 
 		function getFullNameSpan(): Span {
@@ -1615,7 +1616,7 @@ export class Parser {
 			} else {
 				// tslint:disable-next-line: strict-boolean-expressions
 				return nameToken.span.union(
-					namespaceToken && namespaceToken.span,
+					namespaceToken && namespaceToken.span
 				);
 			}
 		}
@@ -1625,7 +1626,7 @@ export class Parser {
 		expectingArgument: boolean,
 		leftParenthesisToken: Token | undefined,
 		existingArguments: number,
-		tokenizer: Tokenizer,
+		tokenizer: Tokenizer
 	): boolean {
 		let result = false;
 
@@ -1657,7 +1658,7 @@ export class TleParseResult {
 		private _leftSquareBracketToken: Token | undefined,
 		private _expression: Value | undefined,
 		private _rightSquareBracketToken: Token | undefined,
-		private _errors: Issue[],
+		private _errors: Issue[]
 	) {
 		assert(_errors);
 	}
@@ -1739,7 +1740,7 @@ export class Tokenizer {
 
 	private constructor(
 		private _basicTokenizer: basic.Tokenizer,
-		private _text: string,
+		private _text: string
 	) {}
 
 	public static fromString(stringValue: string): Tokenizer {
@@ -1755,7 +1756,7 @@ export class Tokenizer {
 
 		const tt = new Tokenizer(
 			new basic.Tokenizer(trimmedString),
-			stringValue,
+			stringValue
 		);
 		return tt;
 	}
@@ -1767,7 +1768,7 @@ export class Tokenizer {
 		return __debugMarkRangeInString(
 			this._text,
 			this._currentTokenStartIndex,
-			this._current ? this._current.toString().length : 0,
+			this._current ? this._current.toString().length : 0
 		);
 	}
 
@@ -1804,42 +1805,42 @@ export class Tokenizer {
 			switch (currentBasicToken.getType()) {
 				case basic.TokenType.LeftParenthesis:
 					this._current = Token.createLeftParenthesis(
-						this._currentTokenStartIndex,
+						this._currentTokenStartIndex
 					);
 					this.nextBasicToken();
 					break;
 
 				case basic.TokenType.RightParenthesis:
 					this._current = Token.createRightParenthesis(
-						this._currentTokenStartIndex,
+						this._currentTokenStartIndex
 					);
 					this.nextBasicToken();
 					break;
 
 				case basic.TokenType.LeftSquareBracket:
 					this._current = Token.createLeftSquareBracket(
-						this._currentTokenStartIndex,
+						this._currentTokenStartIndex
 					);
 					this.nextBasicToken();
 					break;
 
 				case basic.TokenType.RightSquareBracket:
 					this._current = Token.createRightSquareBracket(
-						this._currentTokenStartIndex,
+						this._currentTokenStartIndex
 					);
 					this.nextBasicToken();
 					break;
 
 				case basic.TokenType.Comma:
 					this._current = Token.createComma(
-						this._currentTokenStartIndex,
+						this._currentTokenStartIndex
 					);
 					this.nextBasicToken();
 					break;
 
 				case basic.TokenType.Period:
 					this._current = Token.createPeriod(
-						this._currentTokenStartIndex,
+						this._currentTokenStartIndex
 					);
 					this.nextBasicToken();
 					break;
@@ -1852,8 +1853,8 @@ export class Tokenizer {
 					this._current = Token.createWhitespace(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
-							Json.readWhitespace(this._basicTokenizer),
-						),
+							Json.readWhitespace(this._basicTokenizer)
+						)
 					);
 					break;
 
@@ -1861,8 +1862,8 @@ export class Tokenizer {
 					this._current = Token.createQuotedString(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
-							Json.readQuotedString(this._basicTokenizer),
-						),
+							Json.readQuotedString(this._basicTokenizer)
+						)
 					);
 					break;
 
@@ -1870,8 +1871,8 @@ export class Tokenizer {
 					this._current = Token.createQuotedString(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
-							readQuotedTLEString(this._basicTokenizer),
-						),
+							readQuotedTLEString(this._basicTokenizer)
+						)
 					);
 					break;
 
@@ -1880,8 +1881,8 @@ export class Tokenizer {
 					this._current = Token.createNumber(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
-							Json.readNumber(this._basicTokenizer),
-						),
+							Json.readNumber(this._basicTokenizer)
+						)
 					);
 					break;
 
@@ -1904,7 +1905,7 @@ export class Tokenizer {
 
 					this._current = Token.createLiteral(
 						this._currentTokenStartIndex,
-						Utilities.getCombinedText(literalTokens),
+						Utilities.getCombinedText(literalTokens)
 					);
 					break;
 			}
@@ -1940,7 +1941,7 @@ export class Token {
 	public constructor(
 		tokenType: TokenType,
 		startIndex: number,
-		stringValue: string,
+		stringValue: string
 	) {
 		assert(typeof tokenType === "number");
 		assert(typeof stringValue === "string");
@@ -1992,7 +1993,7 @@ export class Token {
 
 	public static createWhitespace(
 		startIndex: number,
-		stringValue: string,
+		stringValue: string
 	): Token {
 		assert(stringValue);
 		assert(1 <= stringValue.length);
@@ -2002,7 +2003,7 @@ export class Token {
 
 	public static createQuotedString(
 		startIndex: number,
-		stringValue: string,
+		stringValue: string
 	): Token {
 		nonNullValue(stringValue, "stringValue");
 		assert(1 <= stringValue.length);
@@ -2021,7 +2022,7 @@ export class Token {
 
 	public static createLiteral(
 		startIndex: number,
-		stringValue: string,
+		stringValue: string
 	): Token {
 		nonNullValue(stringValue, "stringValue");
 		assert(1 <= stringValue.length);
@@ -2056,7 +2057,7 @@ export enum TokenType {
  * e.g. 'That''s all, folks!')
  */
 export function readQuotedTLEString(
-	iterator: Iterator<basic.Token>,
+	iterator: Iterator<basic.Token>
 ): basic.Token[] {
 	assert(iterator.current());
 	// tslint:disable-next-line:no-non-null-assertion // Asserted

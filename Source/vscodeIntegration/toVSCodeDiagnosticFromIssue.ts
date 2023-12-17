@@ -12,11 +12,11 @@ import { getVSCodeRangeFromSpan } from "./vscodePosition";
 export function toVSCodeDiagnosticFromIssue(
 	deploymentDocument: DeploymentDocument,
 	issue: Issue,
-	severity: vscode.DiagnosticSeverity,
+	severity: vscode.DiagnosticSeverity
 ): vscode.Diagnostic {
 	const range: vscode.Range = getVSCodeRangeFromSpan(
 		deploymentDocument,
-		issue.span,
+		issue.span
 	);
 	const message: string = issue.message;
 	let diagnostic = new vscode.Diagnostic(range, message, severity);
@@ -35,11 +35,11 @@ export function toVSCodeDiagnosticFromIssue(
 						ri.location.uri,
 						getVSCodeRangeFromSpan(
 							deploymentDocument,
-							ri.location.span,
-						),
+							ri.location.span
+						)
 					),
-					ri.message,
-				),
+					ri.message
+				)
 		);
 	}
 

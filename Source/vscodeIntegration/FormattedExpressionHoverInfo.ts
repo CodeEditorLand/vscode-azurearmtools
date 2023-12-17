@@ -30,7 +30,7 @@ export class FormattedExpressionHoverInfo implements IHoverInfo {
 		markdown.appendMarkdown("Full expression:");
 		markdown.appendCodeblock(
 			`"[\n${formattedExpression}\n]"`,
-			"arm-template",
+			"arm-template"
 		);
 		return markdown;
 	}

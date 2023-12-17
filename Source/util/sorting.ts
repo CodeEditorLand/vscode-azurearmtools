@@ -9,7 +9,7 @@
 export function compareForSort<T>(
 	value1: T,
 	value2: T,
-	descending?: boolean,
+	descending?: boolean
 ): number {
 	if (descending) {
 		[value1, value2] = [value2, value1];
@@ -32,7 +32,7 @@ export function compareForSort<T>(
 export function sortArray<T, V>(
 	input: T[],
 	getSortValue: (a: T) => V,
-	options?: { descending?: boolean },
+	options?: { descending?: boolean }
 ): T[] {
 	return input.sort((a, b) => {
 		const value1 = getSortValue(a);
@@ -49,7 +49,7 @@ export function sortArray<T, V>(
 export function sortArrayByProperty<T, K extends keyof T>(
 	input: T[],
 	property: K,
-	options?: { descending?: boolean },
+	options?: { descending?: boolean }
 ): T[] {
 	return sortArray(input, (element) => element[property], options);
 }

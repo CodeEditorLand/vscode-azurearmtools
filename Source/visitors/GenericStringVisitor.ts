@@ -9,14 +9,14 @@ import * as Json from "../language/json/JSON";
  */
 export class GenericStringVisitor extends Json.Visitor {
 	private constructor(
-		private onStringValue: (jsonStringValue: Json.StringValue) => void,
+		private onStringValue: (jsonStringValue: Json.StringValue) => void
 	) {
 		super();
 	}
 
 	public static visit(
 		value: Json.Value,
-		onStringValue: (jsonStringValue: Json.StringValue) => void,
+		onStringValue: (jsonStringValue: Json.StringValue) => void
 	): void {
 		const visitor = new GenericStringVisitor(onStringValue);
 		value.accept(visitor);

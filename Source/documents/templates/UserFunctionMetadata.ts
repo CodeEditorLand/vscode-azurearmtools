@@ -22,7 +22,7 @@ export class UserFunctionMetadata implements IFunctionMetadata {
 		public readonly description: string,
 		public readonly parameters: IFunctionParameterMetadata[],
 		public readonly returnType: ExpressionType | undefined,
-		public readonly returnValueMembers: string[],
+		public readonly returnValueMembers: string[]
 	) {
 		this.minimumArguments = this.maximumArguments = parameters.length;
 	}
@@ -31,7 +31,7 @@ export class UserFunctionMetadata implements IFunctionMetadata {
 	public readonly maximumArguments: number;
 
 	public static fromDefinition(
-		func: UserFunctionDefinition,
+		func: UserFunctionDefinition
 	): UserFunctionMetadata {
 		return new UserFunctionMetadata(
 			func.fullName,
@@ -43,10 +43,10 @@ export class UserFunctionMetadata implements IFunctionMetadata {
 					<IFunctionParameterMetadata>{
 						name: pd.nameValue.unquotedValue,
 						type: pd.validType,
-					},
+					}
 			),
 			func.output && func.output.validOutputType,
-			[],
+			[]
 		);
 	}
 

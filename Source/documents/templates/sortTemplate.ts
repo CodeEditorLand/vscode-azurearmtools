@@ -26,7 +26,7 @@ export class SortQuickPickItem implements vscode.QuickPickItem {
 	constructor(
 		label: string,
 		value: TemplateSectionType,
-		description: string,
+		description: string
 	) {
 		this.label = label;
 		this.value = value;
@@ -40,43 +40,43 @@ export function getQuickPickItems(): SortQuickPickItem[] {
 		new SortQuickPickItem(
 			"Functions",
 			TemplateSectionType.Functions,
-			"Sort function namespaces and functions",
-		),
+			"Sort function namespaces and functions"
+		)
 	);
 	items.push(
 		new SortQuickPickItem(
 			"Outputs",
 			TemplateSectionType.Outputs,
-			"Sort outputs",
-		),
+			"Sort outputs"
+		)
 	);
 	items.push(
 		new SortQuickPickItem(
 			"Parameters",
 			TemplateSectionType.Parameters,
-			"Sort parameters for the template",
-		),
+			"Sort parameters for the template"
+		)
 	);
 	items.push(
 		new SortQuickPickItem(
 			"Resources",
 			TemplateSectionType.Resources,
-			"Sort resources based on the name including first level of child resources",
-		),
+			"Sort resources based on the name including first level of child resources"
+		)
 	);
 	items.push(
 		new SortQuickPickItem(
 			"Variables",
 			TemplateSectionType.Variables,
-			"Sort variables",
-		),
+			"Sort variables"
+		)
 	);
 	items.push(
 		new SortQuickPickItem(
 			"Top level",
 			TemplateSectionType.TopLevel,
-			"Sort top level items based on recommended order (parameters, functions, variables, resources, outputs)",
-		),
+			"Sort top level items based on recommended order (parameters, functions, variables, resources, outputs)"
+		)
 	);
 	return items;
 }
@@ -84,7 +84,7 @@ export function getQuickPickItems(): SortQuickPickItem[] {
 export async function sortTemplate(
 	template: DeploymentTemplateDoc | undefined,
 	sectionType: TemplateSectionType,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<void> {
 	if (!template) {
 		return;
@@ -93,37 +93,37 @@ export async function sortTemplate(
 		case TemplateSectionType.Functions:
 			await showSortingResultMessage(
 				() => sortFunctions(template, textEditor),
-				"Functions",
+				"Functions"
 			);
 			break;
 		case TemplateSectionType.Outputs:
 			await showSortingResultMessage(
 				() => sortOutputs(template, textEditor),
-				"Outputs",
+				"Outputs"
 			);
 			break;
 		case TemplateSectionType.Parameters:
 			await showSortingResultMessage(
 				() => sortParameters(template, textEditor),
-				"Parameters",
+				"Parameters"
 			);
 			break;
 		case TemplateSectionType.Resources:
 			await showSortingResultMessage(
 				() => sortResources(template, textEditor),
-				"Resources",
+				"Resources"
 			);
 			break;
 		case TemplateSectionType.Variables:
 			await showSortingResultMessage(
 				() => sortVariables(template, textEditor),
-				"Variables",
+				"Variables"
 			);
 			break;
 		case TemplateSectionType.TopLevel:
 			await showSortingResultMessage(
 				() => sortTopLevel(template, textEditor),
-				"Top-level items",
+				"Top-level items"
 			);
 			break;
 		default:
@@ -140,7 +140,7 @@ export async function sortTemplate(
  */
 async function showSortingResultMessage(
 	sortAction: () => Promise<boolean>,
-	part: string,
+	part: string
 ): Promise<void> {
 	let didSorting = await sortAction();
 	let message = didSorting
@@ -157,14 +157,14 @@ async function showSortingResultMessage(
  */
 async function sortOutputs(
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	let rootValue = template.topLevelValue;
 	if (!rootValue) {
 		return false;
 	}
 	let outputs = Json.asObjectValue(
-		rootValue.getPropertyValue(templateKeys.outputs),
+		rootValue.getPropertyValue(templateKeys.outputs)
 	);
 	if (outputs) {
 		return await sortGeneric<Json.Property>(
@@ -172,7 +172,7 @@ async function sortOutputs(
 			(x) => x.nameValue.quotedValue,
 			(x) => x.span,
 			template,
-			textEditor,
+			textEditor
 		);
 	}
 	return false;
@@ -186,14 +186,14 @@ async function sortOutputs(
  */
 async function sortResources(
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	let rootValue = template.topLevelValue;
 	if (!rootValue) {
 		return false;
 	}
 	let resources = Json.asArrayValue(
-		rootValue.getPropertyValue(templateKeys.resources),
+		rootValue.getPropertyValue(templateKeys.resources)
 	);
 	if (resources) {
 		let didSort1 = await sortGenericDeep<Json.Value, Json.Value>(
@@ -202,14 +202,14 @@ async function sortResources(
 			getNameFromResource,
 			(x) => x.span,
 			template,
-			textEditor,
+			textEditor
 		);
 		let didSort2 = await sortGeneric<Json.Value>(
 			resources.elements,
 			getNameFromResource,
 			(x) => x.span,
 			template,
-			textEditor,
+			textEditor
 		);
 		return didSort1 || didSort2;
 	}
@@ -224,7 +224,7 @@ async function sortResources(
  */
 async function sortTopLevel(
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	let rootValue = template.topLevelValue;
 	if (!rootValue) {
@@ -235,7 +235,7 @@ async function sortTopLevel(
 		(x) => getTopLevelOrder(x.nameValue.quotedValue),
 		(x) => x.span,
 		template,
-		textEditor,
+		textEditor
 	);
 }
 
@@ -247,14 +247,14 @@ async function sortTopLevel(
  */
 async function sortVariables(
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	return await sortGeneric<IVariableDefinition>(
 		template.topLevelScope.variableDefinitions,
 		(x) => x.nameValue.quotedValue,
 		(x) => x.span,
 		template,
-		textEditor,
+		textEditor
 	);
 }
 
@@ -266,14 +266,14 @@ async function sortVariables(
  */
 async function sortParameters(
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	return await sortGeneric<IParameterDefinition>(
 		template.topLevelScope.parameterDefinitionsSource.parameterDefinitions,
 		(x) => x.nameValue.quotedValue,
 		(x) => x.fullSpan,
 		template,
-		textEditor,
+		textEditor
 	);
 }
 
@@ -285,7 +285,7 @@ async function sortParameters(
  */
 async function sortFunctions(
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	let didSort1 = await sortGenericDeep<
 		UserFunctionNamespaceDefinition,
@@ -296,14 +296,14 @@ async function sortFunctions(
 		(x) => x.nameValue.quotedValue,
 		(x) => x.span,
 		template,
-		textEditor,
+		textEditor
 	);
 	let didSort2 = await sortGeneric<UserFunctionNamespaceDefinition>(
 		template.topLevelScope.namespaceDefinitions,
 		(x) => x.nameValue.quotedValue,
 		(x) => x.span,
 		template,
-		textEditor,
+		textEditor
 	);
 	return didSort1 || didSort2;
 }
@@ -311,7 +311,7 @@ async function sortFunctions(
 function createCommentsMap(
 	tokens: Json.Token[],
 	commentTokens: Json.Token[],
-	lastSpan: Span,
+	lastSpan: Span
 ): CommentsMap {
 	let commentsMap: CommentsMap = new Map<number, Span>();
 	let currentCommentsSpan: Span | undefined;
@@ -338,7 +338,7 @@ function createCommentsMap(
 
 function expandSpanToPrecedingComments(
 	span: Span,
-	comments: CommentsMap,
+	comments: CommentsMap
 ): Span {
 	let startIndex = span.startIndex;
 	let commentSpan = comments.get(startIndex);
@@ -380,7 +380,7 @@ async function sortGeneric<T>(
 	sortSelector: (value: T) => string,
 	spanSelector: (value: T) => Span,
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	if (list.length < 2) {
 		return false;
@@ -390,21 +390,21 @@ async function sortGeneric<T>(
 	let comments = createCommentsMap(
 		template.jsonParseResult.tokens,
 		template.jsonParseResult.commentTokens,
-		lastSpan,
+		lastSpan
 	);
 	let selectionWithComments = getSelection(
 		expandSpanToPrecedingComments(spanSelector(list[0]), comments),
 		expandSpanToPrecedingComments(lastSpan, comments),
-		document,
+		document
 	);
 	let indentedTexts = getIndentTexts<T>(
 		list,
 		(x) => expandSpanToPrecedingComments(spanSelector(x), comments),
-		document,
+		document
 	);
 	let orderBefore = list.map(sortSelector);
 	let sorted = list.sort((a, b) =>
-		sortSelector(a).localeCompare(sortSelector(b)),
+		sortSelector(a).localeCompare(sortSelector(b))
 	);
 	let orderAfter = list.map(sortSelector);
 	if (arraysEqual<string>(orderBefore, orderAfter)) {
@@ -413,8 +413,8 @@ async function sortGeneric<T>(
 	let sortedTexts = sorted.map((value) =>
 		getText(
 			expandSpanToPrecedingComments(spanSelector(value), comments),
-			document,
-		),
+			document
+		)
 	);
 	let joined = joinTexts(sortedTexts, indentedTexts);
 	await textEditor.edit((x) => x.replace(selectionWithComments, joined));
@@ -427,7 +427,7 @@ async function sortGenericDeep<T, TChild>(
 	sortSelector: (value: TChild) => string,
 	spanSelector: (value: TChild) => Span,
 	template: DeploymentTemplateDoc,
-	textEditor: vscode.TextEditor,
+	textEditor: vscode.TextEditor
 ): Promise<boolean> {
 	let didSorting = false;
 	for (let item of list) {
@@ -439,7 +439,7 @@ async function sortGenericDeep<T, TChild>(
 					sortSelector,
 					spanSelector,
 					template,
-					textEditor,
+					textEditor
 				)
 			) {
 				didSorting = true;
@@ -468,7 +468,7 @@ function getResourcesFromResource(value: Json.Value): Json.Value[] | undefined {
 		return undefined;
 	}
 	let resources = Json.asArrayValue(
-		objectValue.getPropertyValue("resources"),
+		objectValue.getPropertyValue("resources")
 	);
 	if (!resources) {
 		return undefined;
@@ -488,7 +488,7 @@ function joinTexts(texts: String[], intendentTexts: String[]): string {
 function getIndentTexts<T>(
 	list: T[],
 	spanSelector: (value: T) => Span,
-	document: vscode.TextDocument,
+	document: vscode.TextDocument
 ): String[] {
 	let indentTexts: String[] = [];
 	for (let index = 0; index < list.length - 1; index++) {
@@ -497,8 +497,8 @@ function getIndentTexts<T>(
 		let intendentText = document.getText(
 			new vscode.Range(
 				document.positionAt(span1.afterEndIndex),
-				document.positionAt(span2.startIndex),
-			),
+				document.positionAt(span2.startIndex)
+			)
 		);
 		indentTexts.push(intendentText);
 	}
@@ -508,7 +508,7 @@ function getIndentTexts<T>(
 function getRange(span: Span, document: vscode.TextDocument): vscode.Range {
 	return new vscode.Range(
 		document.positionAt(span.startIndex),
-		document.positionAt(span.afterEndIndex),
+		document.positionAt(span.afterEndIndex)
 	);
 }
 
@@ -521,13 +521,13 @@ function getText(span: Span, document: vscode.TextDocument): String {
 function getSelection(
 	start: Span,
 	end: Span,
-	document: vscode.TextDocument,
+	document: vscode.TextDocument
 ): vscode.Selection {
 	let startIndex = start.startIndex;
 	let endIndex = end.afterEndIndex;
 	let selection = new vscode.Selection(
 		document.positionAt(startIndex),
-		document.positionAt(endIndex),
+		document.positionAt(endIndex)
 	);
 	return selection;
 }

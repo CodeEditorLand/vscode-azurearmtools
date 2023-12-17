@@ -12,7 +12,7 @@ import { IResourceInfo } from "./getResourcesInfo";
  */
 export function areDecoupledChildAndParent(
 	child: IResourceInfo,
-	parent: IResourceInfo,
+	parent: IResourceInfo
 ): boolean {
 	const childTypeSegments = child.typeSegmentExpressions;
 	const parentTypeSegments = parent.typeSegmentExpressions;
@@ -64,7 +64,7 @@ export function areDecoupledChildAndParent(
 
 	function childMatchesParentSegments(
 		childSegments: string[],
-		parentSegments: string[],
+		parentSegments: string[]
 	): boolean {
 		assert(childSegments.length === parentSegments.length + 1);
 		for (let i = 0; i < parentSegments.length; ++i) {

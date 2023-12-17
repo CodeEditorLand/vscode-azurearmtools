@@ -33,7 +33,10 @@ export abstract class JsonDocument implements IJsonDocument {
 	 * @param _documentText The string text of the document
 	 * @param _documentUri The location of the document
 	 */
-	constructor(private _documentText: string, private _documentUri: Uri) {
+	constructor(
+		private _documentText: string,
+		private _documentUri: Uri
+	) {
 		nonNullValue(_documentUri, "_documentUri");
 
 		this._jsonParseResult = Json.parse(_documentText);
@@ -42,41 +45,41 @@ export abstract class JsonDocument implements IJsonDocument {
 
 	// tslint:disable-next-line:function-name
 	public _debugShowTextAt(
-		positionOrRange: number | Span | Range | Position,
+		positionOrRange: number | Span | Range | Position
 	): string {
 		if (positionOrRange instanceof Span) {
 			return __debugMarkRangeInString(
 				this.documentText,
 				positionOrRange.startIndex,
-				positionOrRange.length,
+				positionOrRange.length
 			);
 		} else if (positionOrRange instanceof Range) {
 			const startIndex = this.getDocumentCharacterIndex(
 				positionOrRange.start.line,
 				positionOrRange.start.character,
-				{ allowOutOfBounds: true },
+				{ allowOutOfBounds: true }
 			);
 			const endIndex = this.getDocumentCharacterIndex(
 				positionOrRange.end.line,
 				positionOrRange.end.character,
-				{ allowOutOfBounds: true },
+				{ allowOutOfBounds: true }
 			);
 			return __debugMarkRangeInString(
 				this.documentText,
 				startIndex,
-				endIndex - startIndex,
+				endIndex - startIndex
 			);
 		} else if (positionOrRange instanceof Position) {
 			const index = this.getDocumentCharacterIndex(
 				positionOrRange.line,
 				positionOrRange.character,
-				{ allowOutOfBounds: true },
+				{ allowOutOfBounds: true }
 			);
 			return __debugMarkPositionInString(this.documentText, index);
 		} else {
 			return __debugMarkPositionInString(
 				this.documentText,
-				positionOrRange,
+				positionOrRange
 			);
 		}
 	}
@@ -166,36 +169,36 @@ export abstract class JsonDocument implements IJsonDocument {
 	public getDocumentCharacterIndex(
 		documentLineIndex: number,
 		documentColumnIndex: number,
-		options?: { allowOutOfBounds?: boolean },
+		options?: { allowOutOfBounds?: boolean }
 	): number {
 		return this._jsonParseResult.getCharacterIndex(
 			documentLineIndex,
 			documentColumnIndex,
-			options,
+			options
 		);
 	}
 
 	public getDocumentPosition(documentCharacterIndex: number): LineColPos {
 		return this._jsonParseResult.getPositionFromCharacterIndex(
-			documentCharacterIndex,
+			documentCharacterIndex
 		);
 	}
 
 	public getJSONTokenAtDocumentCharacterIndex(
-		documentCharacterIndex: number,
+		documentCharacterIndex: number
 	): Json.Token | undefined {
 		return this._jsonParseResult.getTokenAtCharacterIndex(
-			documentCharacterIndex,
+			documentCharacterIndex
 		);
 	}
 
 	public getJSONValueAtDocumentCharacterIndex(
 		documentCharacterIndex: number,
-		containsBehavior: ContainsBehavior,
+		containsBehavior: ContainsBehavior
 	): Json.Value | undefined {
 		return this._jsonParseResult.getValueAtCharacterIndex(
 			documentCharacterIndex,
-			containsBehavior,
+			containsBehavior
 		);
 	}
 }

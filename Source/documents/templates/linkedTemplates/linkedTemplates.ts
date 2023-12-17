@@ -118,7 +118,7 @@ export async function onRequestOpenLinkedFile({
 			properties.fileScheme = requestedLinkUri.scheme;
 			properties.hasQuery = String(!!requestedLinkUri.query);
 			properties.uriHasSas = String(
-				!!requestedLinkUri.query.match("[&?]sig="),
+				!!requestedLinkUri.query.match("[&?]sig=")
 			);
 
 			if (requestedLinkUri.scheme === documentSchemes.untitled) {
@@ -137,7 +137,7 @@ export async function onRequestOpenLinkedFile({
 				const result = await tryOpenLocalLinkedFile(
 					localPath,
 					pathType,
-					context,
+					context
 				);
 				if (result.document) {
 					properties.openResult = "Loaded";
@@ -156,7 +156,7 @@ export async function onRequestOpenLinkedFile({
 					const content = await tryLoadNonLocalLinkedFile(
 						requestedLinkUri,
 						context,
-						true,
+						true
 					);
 					properties.openResult = "Loaded";
 					return { content };
@@ -166,14 +166,14 @@ export async function onRequestOpenLinkedFile({
 					return { loadErrorMessage: parsedError.message };
 				}
 			}
-		},
+		}
 	);
 }
 
 export async function tryLoadNonLocalLinkedFile(
 	uri: Uri,
 	context: IActionContext,
-	open: boolean,
+	open: boolean
 ): Promise<string> {
 	uri = removeLinkedTemplateScheme(uri);
 	let content: string;
@@ -185,7 +185,7 @@ export async function tryLoadNonLocalLinkedFile(
 			Errorish & { statusMessage?: string; statusCode?: number }
 		>err;
 		error.message = String(
-			error.message ?? error.statusMessage ?? error.statusCode,
+			error.message ?? error.statusMessage ?? error.statusCode
 		);
 		throw error;
 	}
@@ -214,7 +214,7 @@ export async function tryLoadNonLocalLinkedFile(
 async function tryOpenLocalLinkedFile(
 	localPath: string,
 	pathType: PathType,
-	context: IActionContext,
+	context: IActionContext
 ): Promise<OpenLinkedFileResult> {
 	try {
 		// Check first if the path exists, so we get a better error message if not
@@ -224,7 +224,7 @@ async function tryOpenLocalLinkedFile(
 					new LinkedTemplatePathNotFoundError(
 						pathType === PathType.parametersLink
 							? `Linked parameter not found: "${localPath}"`
-							: `Linked template file not found: "${localPath}"`,
+							: `Linked template file not found: "${localPath}"`
 					)
 				),
 			};
@@ -244,7 +244,7 @@ async function tryOpenLocalLinkedFile(
 		return { document };
 	} catch (err) {
 		ext.outputChannel.appendLine(
-			`... Failed loading ${localPath}: ${parseError(err).message}`,
+			`... Failed loading ${localPath}: ${parseError(err).message}`
 		);
 		return { loadError: <Errorish>err };
 	}
@@ -257,16 +257,16 @@ async function tryOpenLocalLinkedFile(
 export function assignTemplateGraphToDeploymentTemplate(
 	graph: INotifyTemplateGraphArgs,
 	dt: DeploymentTemplateDoc,
-	provideOpenDocuments: IProvideOpenedDocuments,
+	provideOpenDocuments: IProvideOpenedDocuments
 ): void {
 	assert(
 		normalizeUri(parseUri(graph.rootTemplateUri)) ===
-			normalizeUri(dt.documentUri),
+			normalizeUri(dt.documentUri)
 	);
 	// tslint:disable-next-line: strict-boolean-expressions
 	assert(
 		!!graph.fullValidationStatus,
-		"assignTemplateGraphToDeploymentTemplate: graph.fullValidationStatus should never be undefined",
+		"assignTemplateGraphToDeploymentTemplate: graph.fullValidationStatus should never be undefined"
 	);
 
 	// Clear current
@@ -279,7 +279,7 @@ export function assignTemplateGraphToDeploymentTemplate(
 				// The position of the link refers to a previous version of the document, so get the
 				// closest position without throwing an error
 				allowOutOfBounds: true,
-			},
+			}
 		);
 
 		// Since templated deployments can't have children (in the defining document), there can be at most one linked deployment scope whose defining
@@ -287,13 +287,13 @@ export function assignTemplateGraphToDeploymentTemplate(
 		const matchingScope = linkedScopes.find((scope) =>
 			scope.owningDeploymentResource.span.contains(
 				linkPositionInTemplate,
-				ContainsBehavior.enclosed,
-			),
+				ContainsBehavior.enclosed
+			)
 		);
 		if (matchingScope) {
 			matchingScope.assignLinkedFileReferences(
 				[linkReference],
-				provideOpenDocuments,
+				provideOpenDocuments
 			);
 		}
 	}
@@ -306,15 +306,15 @@ export function assignTemplateGraphToDeploymentTemplate(
  */
 export async function openLinkedTemplateFileCommand(
 	linkedTemplateUri: Uri,
-	actionContext: IActionContext,
+	actionContext: IActionContext
 ): Promise<void> {
 	let targetUri: Uri;
 	actionContext.telemetry.properties.scheme = linkedTemplateUri.scheme;
 	actionContext.telemetry.properties.uriHasQuery = String(
-		!!linkedTemplateUri.query,
+		!!linkedTemplateUri.query
 	);
 	actionContext.telemetry.properties.uriHasSas = String(
-		!!linkedTemplateUri.query.match("[&?]sig="),
+		!!linkedTemplateUri.query.match("[&?]sig=")
 	);
 
 	if (linkedTemplateUri.scheme === documentSchemes.file) {
@@ -325,7 +325,7 @@ export async function openLinkedTemplateFileCommand(
 			const response = await ext.ui.showWarningMessage(
 				`Could not find file "${fsPath}".  Do you want to create it?`,
 				DialogResponses.yes,
-				DialogResponses.cancel,
+				DialogResponses.cancel
 			);
 			if (response === DialogResponses.yes) {
 				await fse.mkdirs(path.dirname(fsPath));
@@ -347,7 +347,7 @@ export async function openLinkedTemplateFileCommand(
 
 export async function reloadLinkedTemplateFileCommand(
 	linkedTemplateUri: Uri,
-	actionContext: IActionContext,
+	actionContext: IActionContext
 ): Promise<void> {
 	let targetUri: Uri;
 	actionContext.telemetry.properties.scheme = linkedTemplateUri.scheme;
@@ -360,7 +360,7 @@ export async function reloadLinkedTemplateFileCommand(
 			const response = await ext.ui.showWarningMessage(
 				`Could not find file "${fsPath}".  Do you want to create it?`,
 				DialogResponses.yes,
-				DialogResponses.cancel,
+				DialogResponses.cancel
 			);
 			if (response === DialogResponses.yes) {
 				await fse.writeFile(fsPath, "", {});
@@ -384,7 +384,7 @@ export async function reloadLinkedTemplateFileCommand(
  * because vscode doesn't natively support navigating to non-file URIs.
  */
 export function convertDiagnosticUrisToLinkedTemplateSchema(
-	diagnostic: Diagnostic,
+	diagnostic: Diagnostic
 ): void {
 	if (diagnostic.relatedInformation) {
 		for (const ri of diagnostic.relatedInformation) {

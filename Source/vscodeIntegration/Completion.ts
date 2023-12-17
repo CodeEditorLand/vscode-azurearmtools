@@ -111,7 +111,7 @@ export class Item {
 
 	public static fromFunctionMetadata(
 		metadata: IFunctionMetadata,
-		span: Span,
+		span: Span
 	): Item {
 		// We want to show the fully-qualified name in the completion's title, but we only need to insert the
 		// unqualified name, since the namespace is already there (if any)
@@ -136,7 +136,7 @@ export class Item {
 
 	public static fromNamespaceDefinition(
 		namespace: UserFunctionNamespaceDefinition,
-		span: Span,
+		span: Span
 	): Item {
 		const label: string = namespace.nameValue.unquotedValue;
 		let insertText: string = `${label}`;
@@ -165,7 +165,7 @@ export class Item {
 		parameter: IParameterDefinition,
 		span: Span,
 		includeRightParenthesisInCompletion: boolean,
-		includeSingleQuotesInCompletion: boolean,
+		includeSingleQuotesInCompletion: boolean
 	): Item {
 		const parameterName = parameter.nameValue.unquotedValue;
 		const label: string = includeSingleQuotesInCompletion
@@ -176,7 +176,7 @@ export class Item {
 		if (includeRightParenthesisInCompletion) {
 			assert(
 				includeSingleQuotesInCompletion,
-				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion",
+				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion"
 			);
 			insertText = `${insertText})`;
 		}
@@ -195,7 +195,7 @@ export class Item {
 		variable: IVariableDefinition,
 		span: Span,
 		includeRightParenthesisInCompletion: boolean,
-		includeSingleQuotesInCompletion: boolean,
+		includeSingleQuotesInCompletion: boolean
 	): Item {
 		const variableName = variable.nameValue.unquotedValue;
 		const label: string = includeSingleQuotesInCompletion
@@ -206,7 +206,7 @@ export class Item {
 		if (includeRightParenthesisInCompletion) {
 			assert(
 				includeSingleQuotesInCompletion,
-				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion",
+				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion"
 			);
 			insertText = `${insertText})`;
 		}

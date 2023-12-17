@@ -24,6 +24,6 @@ export interface IDocument extends IDocumentLocation {
 	getDocumentCharacterIndex(
 		documentLineIndex: number,
 		documentColumnIndex: number,
-		options?: { allowOutOfBounds?: boolean },
+		options?: { allowOutOfBounds?: boolean }
 	): number;
 }
