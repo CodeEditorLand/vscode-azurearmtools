@@ -3,15 +3,15 @@
 // ----------------------------------------------------------------------------
 
 import { assert } from "../../fixed_assert";
+import { ContainsBehavior, Span } from "../../language/Span";
 import { AzureRMAssets } from "../../language/expressions/AzureRMAssets";
 import * as TLE from "../../language/expressions/TLE";
 import * as Json from "../../language/json/JSON";
-import { ContainsBehavior, Span } from "../../language/Span";
 import * as Completion from "../../vscodeIntegration/Completion";
 import { PositionContext } from "../positionContexts/PositionContext";
 import { TemplatePositionContext } from "../positionContexts/TemplatePositionContext";
-import { getResourcesInfo, IResourceInfo } from "./getResourcesInfo";
 import { FunctionBehaviors } from "./IFunctionMetadata";
+import { IResourceInfo, getResourcesInfo } from "./getResourcesInfo";
 import { TemplateScope } from "./scopes/TemplateScope";
 
 // Handle completions for resourceId and similar functions with the usesResourceIdCompletions behavior
@@ -19,11 +19,11 @@ import { TemplateScope } from "./scopes/TemplateScope";
 export function getResourceIdCompletions(
 	pc: TemplatePositionContext,
 	funcCall: TLE.FunctionCallValue,
-	parentStringToken: Json.Token
+	parentStringToken: Json.Token,
 ): Completion.Item[] {
 	assert(
 		parentStringToken.type === Json.TokenType.QuotedString,
-		"parentStringToken should be a string token"
+		"parentStringToken should be a string token",
 	);
 
 	// Use scope at current position
@@ -31,11 +31,11 @@ export function getResourceIdCompletions(
 
 	if (!funcCall.isUserDefinedFunction && funcCall.name) {
 		const functionMetadata = AzureRMAssets.getFunctionMetadataFromName(
-			funcCall.name
+			funcCall.name,
 		);
 		if (
 			functionMetadata?.hasBehavior(
-				FunctionBehaviors.usesResourceIdCompletions
+				FunctionBehaviors.usesResourceIdCompletions,
 			)
 		) {
 			// If the completion is for 'resourceId' or a related function, then in addition
@@ -51,7 +51,7 @@ export function getResourceIdCompletions(
 					funcCall,
 					parentStringToken,
 					segmentIndex,
-					{ maxOptionalParameters: 2 }
+					{ maxOptionalParameters: 2 },
 				);
 			}
 		}
@@ -66,7 +66,7 @@ function getCompletions(
 	funcCall: TLE.FunctionCallValue,
 	parentStringToken: Json.Token,
 	argIndexAtCursor: number,
-	resourceIdCompletions: { maxOptionalParameters: number }
+	resourceIdCompletions: { maxOptionalParameters: number },
 ): Completion.Item[] {
 	if (argIndexAtCursor === 0) {
 		// For the first argument, we always provide completions for the list of resource types,
@@ -77,7 +77,7 @@ function getCompletions(
 			scope,
 			resourceIdCompletions,
 			argIndexAtCursor,
-			parentStringToken
+			parentStringToken,
 		);
 	}
 
@@ -87,12 +87,12 @@ function getCompletions(
 	});
 
 	// Check previous arguments in the call to see if any of them matches a known resource type
-	let argWithResourceType = findFunctionCallArgumentWithResourceType(
+	const argWithResourceType = findFunctionCallArgumentWithResourceType(
 		allResources,
 		pc,
 		funcCall,
 		parentStringToken,
-		argIndexAtCursor - 1
+		argIndexAtCursor - 1,
 	);
 
 	if (!argWithResourceType) {
@@ -104,14 +104,14 @@ function getCompletions(
 			scope,
 			resourceIdCompletions,
 			argIndexAtCursor,
-			parentStringToken
+			parentStringToken,
 		);
 	}
 
 	// Only look at resources with that type
 	let filteredResources = filterResourceInfosByType(
 		allResources,
-		argWithResourceType.typeExpression
+		argWithResourceType.typeExpression,
 	);
 
 	// Previous parts of the name must also match what is currently specified in the function call
@@ -134,11 +134,11 @@ function getCompletions(
 			break;
 		}
 
-		let argExpression: string | undefined = getArgumentExpressionText(
+		const argExpression: string | undefined = getArgumentExpressionText(
 			pc,
 			funcCall,
 			parentStringToken,
-			argIndex
+			argIndex,
 		);
 		if (!argExpression) {
 			return [];
@@ -147,7 +147,7 @@ function getCompletions(
 		filteredResources = filterResourceInfosByNameSegment(
 			filteredResources,
 			argExpression,
-			nameSegmentIndex
+			nameSegmentIndex,
 		);
 		++argIndex;
 		++nameSegmentIndex;
@@ -155,16 +155,16 @@ function getCompletions(
 
 	// Add completions for all remaining resources, at the given name segment index
 	const results: Completion.Item[] = [];
-	for (let info of filteredResources) {
+	for (const info of filteredResources) {
 		const insertText = info.nameSegmentExpressions[nameSegmentIndex];
 		if (insertText) {
 			const label = insertText;
 
-			let nameSegmentArgument = funcCall.argumentExpressions[argIndex];
-			let span = getReplacementSpan(
+			const nameSegmentArgument = funcCall.argumentExpressions[argIndex];
+			const span = getReplacementSpan(
 				pc,
 				nameSegmentArgument,
-				parentStringToken
+				parentStringToken,
 			);
 
 			results.push(
@@ -185,7 +185,7 @@ function getCompletions(
 						arg: String(argIndexAtCursor),
 						function: funcCall.fullName,
 					},
-				})
+				}),
 			);
 		}
 	}
@@ -206,23 +206,23 @@ function findFunctionCallArgumentWithResourceType(
 	pc: TemplatePositionContext,
 	funcCall: TLE.FunctionCallValue,
 	parentStringToken: Json.Token,
-	maxIndex: number
+	maxIndex: number,
 ): { argIndex: number; typeExpression: string } | undefined {
 	for (let argIndex = 0; argIndex <= maxIndex; ++argIndex) {
-		let argText: string | undefined = getArgumentExpressionText(
+		const argText: string | undefined = getArgumentExpressionText(
 			pc,
 			funcCall,
 			parentStringToken,
-			argIndex
+			argIndex,
 		);
 		if (argText) {
 			if (looksLikeResourceTypeStringLiteral(argText)) {
 				return { argIndex, typeExpression: argText };
 			}
 
-			let argTextLC = argText?.toLowerCase();
+			const argTextLC = argText?.toLowerCase();
 			if (argTextLC) {
-				for (let info of resources) {
+				for (const info of resources) {
 					if (
 						info.getFullTypeExpression()?.toLowerCase() ===
 						argTextLC
@@ -239,7 +239,7 @@ function findFunctionCallArgumentWithResourceType(
 
 function filterResourceInfosByType(
 	infos: IResourceInfo[],
-	typeExpression: string
+	typeExpression: string,
 ): IResourceInfo[] {
 	if (!typeExpression) {
 		return [];
@@ -247,14 +247,14 @@ function filterResourceInfosByType(
 	const typeExpressionLC = typeExpression.toLowerCase();
 	return infos.filter(
 		(info) =>
-			info.getFullTypeExpression()?.toLowerCase() === typeExpressionLC
+			info.getFullTypeExpression()?.toLowerCase() === typeExpressionLC,
 	);
 }
 
 function filterResourceInfosByNameSegment(
 	infos: IResourceInfo[],
 	segmentExpression: string,
-	segmentIndex: number
+	segmentIndex: number,
 ): IResourceInfo[] {
 	if (!segmentExpression) {
 		return [];
@@ -263,8 +263,8 @@ function filterResourceInfosByNameSegment(
 	return infos.filter(
 		(info) =>
 			lowerCaseAndNoWhitespace(
-				info.nameSegmentExpressions[segmentIndex]
-			) === segmentExpressionLC
+				info.nameSegmentExpressions[segmentIndex],
+			) === segmentExpressionLC,
 	);
 }
 
@@ -282,7 +282,7 @@ function getResourceTypeCompletions(
 	scope: TemplateScope,
 	resourceIdCompletions: { maxOptionalParameters: number },
 	argumentIndex: number,
-	parentStringToken: Json.Token
+	parentStringToken: Json.Token,
 ): Completion.Item[] {
 	if (argumentIndex > resourceIdCompletions.maxOptionalParameters) {
 		// The resource type must be the argument after the optional arguments.
@@ -299,8 +299,12 @@ function getResourceTypeCompletions(
 		const insertText = info.getFullTypeExpression();
 		if (insertText) {
 			const label = insertText;
-			let typeArgument = funcCall.argumentExpressions[argumentIndex];
-			let span = getReplacementSpan(pc, typeArgument, parentStringToken);
+			const typeArgument = funcCall.argumentExpressions[argumentIndex];
+			const span = getReplacementSpan(
+				pc,
+				typeArgument,
+				parentStringToken,
+			);
 
 			const item = new Completion.Item({
 				label,
@@ -323,7 +327,7 @@ function getResourceTypeCompletions(
 			if (
 				item.span.contains(
 					pc.documentCharacterIndex,
-					ContainsBehavior.strict
+					ContainsBehavior.strict,
 				)
 			) {
 				results.push(item);
@@ -341,9 +345,9 @@ function getResourceTypeCompletions(
 function getReplacementSpan(
 	pc: PositionContext,
 	argument: TLE.Value | undefined,
-	parentStringToken: Json.Token
+	parentStringToken: Json.Token,
 ): Span {
-	let span =
+	const span =
 		argument?.getSpan()?.translate(parentStringToken.span.startIndex) ??
 		pc.emptySpanAtDocumentCharacterIndex;
 	return span;
@@ -356,7 +360,7 @@ function getArgumentExpressionText(
 	pc: TemplatePositionContext,
 	funcCall: TLE.FunctionCallValue,
 	parentStringToken: Json.Token,
-	argumentIndex: number
+	argumentIndex: number,
 ): string | undefined {
 	const argExpressionValue: TLE.Value | undefined =
 		funcCall.argumentExpressions[argumentIndex];

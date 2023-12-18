@@ -5,8 +5,8 @@
 
 import { commands } from "vscode";
 import {
-	callWithTelemetryAndErrorHandling,
 	IActionContext,
+	callWithTelemetryAndErrorHandling,
 	parseError,
 } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
@@ -18,7 +18,7 @@ interface IDotnetAcquireResult {
 
 // Returns undefined if acquisition fails.
 export async function acquireSharedDotnetInstallation(
-	version: string
+	version: string,
 ): Promise<string | undefined> {
 	return await callWithTelemetryAndErrorHandling(
 		"acquireSharedDotnet",
@@ -38,7 +38,7 @@ export async function acquireSharedDotnetInstallation(
 					{
 						version,
 						requestingExtensionId: ext.extensionId,
-					}
+					},
 				);
 			} catch (err) {
 				message = parseError(err).message;
@@ -47,14 +47,14 @@ export async function acquireSharedDotnetInstallation(
 				result?.dotnetPath ? "path returned" : "undefined";
 
 			if (!message) {
-				if (!result) {
-					message = "dotnet.acquire failed";
-				} else {
+				if (result) {
 					dotnetPath = result.dotnetPath;
 					if (!dotnetPath) {
 						message =
 							"dotnet.acquire returned an undefined dotnetPath";
 					}
+				} else {
+					message = "dotnet.acquire failed";
 				}
 			}
 
@@ -63,7 +63,7 @@ export async function acquireSharedDotnetInstallation(
 				const err = wrapError(linkMessage, `Details: ${message}`);
 				ext.outputChannel.appendLog(parseError(err).message);
 				ext.outputChannel.appendLog(
-					`See '.NET Runtime' in the output window for more information.`
+					`See '.NET Runtime' in the output window for more information.`,
 				);
 				ext.outputChannel.show();
 				actionContext.telemetry.properties.dotnetAcquireError = message;
@@ -71,6 +71,6 @@ export async function acquireSharedDotnetInstallation(
 			}
 
 			return dotnetPath;
-		}
+		},
 	);
 }

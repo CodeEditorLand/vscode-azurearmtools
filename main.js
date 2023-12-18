@@ -3,22 +3,20 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-"use strict";
-
 console.log(">>> main.js");
 
 // This is the extension entrypoint, which imports extension.js, the actual extension code.
 //
 // This is in a separate file so we can properly measure extension.js load time.
 
-let perfStats = {
+const perfStats = {
 	loadStartTime: Date.now(),
 	loadEndTime: undefined,
 };
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const ignoreBundle = !/^(false|0)?$/i.test(
-	process.env.AZCODE_ARM_IGNORE_BUNDLE || ""
+	process.env.AZCODE_ARM_IGNORE_BUNDLE || "",
 );
 const extensionPath = ignoreBundle
 	? "./out/src/extension.js"

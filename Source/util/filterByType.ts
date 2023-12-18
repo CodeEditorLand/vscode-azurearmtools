@@ -8,7 +8,7 @@ type Constructor<T> = new (...args: any[]) => T;
 
 export function filterByType<TElements, TFilter extends TElements>(
 	array: TElements[],
-	filterType: Constructor<TFilter>
+	filterType: Constructor<TFilter>,
 ): TFilter[] {
 	return <TFilter[]>array.filter((e) => e instanceof filterType);
 }

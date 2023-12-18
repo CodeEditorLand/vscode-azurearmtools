@@ -9,7 +9,7 @@ import { ext } from "../extensionVariables";
  */
 export function indentMultilineString(
 	multilineText: string,
-	indent: number
+	indent: number,
 ): string {
 	const lines = splitIntoLines(multilineText);
 	const indentation: string = " ".repeat(indent);
@@ -22,7 +22,7 @@ export function indentMultilineString(
  */
 export function unindentMultilineString(
 	multilineText: string,
-	ignoreFirstLineWhenCalculatingIndent: boolean = false
+	ignoreFirstLineWhenCalculatingIndent = false,
 ): string {
 	const lines = splitIntoLines(multilineText);
 	const linesToCalculateIndent = ignoreFirstLineWhenCalculatingIndent
@@ -32,7 +32,7 @@ export function unindentMultilineString(
 		.map(getLineIndentation)
 		.reduce(
 			(previous, current) => Math.min(previous, current),
-			Number.MAX_SAFE_INTEGER
+			Number.MAX_SAFE_INTEGER,
 		);
 	const removeFromStart = new RegExp(`^\\s{0,${minIndent}}`, "gm");
 	const unindentedLines = lines.map((l) => l.replace(removeFromStart, ""));

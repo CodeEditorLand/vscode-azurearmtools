@@ -12,7 +12,7 @@ import { DefinitionKind } from "../language/INamedDefinition";
  * If it cannot be renamed: An error message is returned.
  */
 export function getRenameError(
-	referenceSiteInfo: IReferenceSite
+	referenceSiteInfo: IReferenceSite,
 ): string | undefined {
 	if (
 		referenceSiteInfo.definition.definitionKind ===

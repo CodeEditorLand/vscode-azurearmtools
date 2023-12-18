@@ -6,14 +6,14 @@ import { TLE } from "../../extension.bundle";
 import { UserFunctionDefinition } from "../documents/templates/UserFunctionDefinition";
 import { UserFunctionNamespaceDefinition } from "../documents/templates/UserFunctionNamespaceDefinition";
 import { assert } from "../fixed_assert";
-import * as assets from "../language/expressions/AzureRMAssets";
 import { Issue } from "../language/Issue";
+import * as assets from "../language/expressions/AzureRMAssets";
 import { IncorrectArgumentsCountIssue } from "./IncorrectArgumentsCountIssue";
 
 export function validateUserFunctionCallArgCounts(
 	tleFunction: TLE.FunctionCallValue,
 	nsDefinition: UserFunctionNamespaceDefinition,
-	functionDefinition: UserFunctionDefinition
+	functionDefinition: UserFunctionDefinition,
 ): Issue | undefined {
 	let actualFullFunctionName: string;
 	let minimumArguments: number;
@@ -27,13 +27,13 @@ export function validateUserFunctionCallArgCounts(
 		actualFullFunctionName,
 		minimumArguments,
 		maximumArguments,
-		tleFunction
+		tleFunction,
 	);
 }
 
 export function validateBuiltInFunctionCallArgCounts(
 	tleFunction: TLE.FunctionCallValue,
-	functionMetadata: assets.BuiltinFunctionMetadata
+	functionMetadata: assets.BuiltinFunctionMetadata,
 ): Issue | undefined {
 	let actualFullFunctionName: string;
 	let minimumArguments: number;
@@ -44,7 +44,7 @@ export function validateBuiltInFunctionCallArgCounts(
 	minimumArguments = functionMetadata.minimumArguments;
 	assert(
 		typeof minimumArguments === "number",
-		`TLE function metadata for '${actualFullFunctionName}' has a null or undefined minimum argument value.`
+		`TLE function metadata for '${actualFullFunctionName}' has a null or undefined minimum argument value.`,
 	);
 
 	maximumArguments = functionMetadata.maximumArguments;
@@ -53,7 +53,7 @@ export function validateBuiltInFunctionCallArgCounts(
 		actualFullFunctionName,
 		minimumArguments,
 		maximumArguments,
-		tleFunction
+		tleFunction,
 	);
 }
 
@@ -61,7 +61,7 @@ function getFunctionArgumentCountError(
 	actualFullFunctionName: string,
 	minimumArguments: number,
 	maximumArguments: number | undefined,
-	tleFunction: TLE.FunctionCallValue
+	tleFunction: TLE.FunctionCallValue,
 ): Issue | undefined {
 	const functionCallArgumentCount: number =
 		tleFunction.argumentExpressions.length;
@@ -70,13 +70,13 @@ function getFunctionArgumentCountError(
 	if (minimumArguments === maximumArguments) {
 		if (functionCallArgumentCount !== minimumArguments) {
 			message = `The function '${actualFullFunctionName}' takes ${minimumArguments} ${getArgumentsString(
-				minimumArguments
+				minimumArguments,
 			)}.`;
 		}
 	} else if (typeof maximumArguments !== "number") {
 		if (functionCallArgumentCount < minimumArguments) {
 			message = `The function '${actualFullFunctionName}' takes at least ${minimumArguments} ${getArgumentsString(
-				minimumArguments
+				minimumArguments,
 			)}.`;
 		}
 	} else {
@@ -87,19 +87,19 @@ function getFunctionArgumentCountError(
 		) {
 			// tslint:disable-next-line:max-line-length
 			message = `The function '${actualFullFunctionName}' takes between ${minimumArguments} and ${maximumArguments} ${getArgumentsString(
-				maximumArguments
+				maximumArguments,
 			)}.`;
 		}
 	}
 
 	if (message) {
-		let issue = new IncorrectArgumentsCountIssue(
+		const issue = new IncorrectArgumentsCountIssue(
 			tleFunction.getSpan(),
 			message,
 			actualFullFunctionName,
 			tleFunction.argumentExpressions.length,
 			minimumArguments,
-			maximumArguments
+			maximumArguments,
 		);
 		return issue;
 	}

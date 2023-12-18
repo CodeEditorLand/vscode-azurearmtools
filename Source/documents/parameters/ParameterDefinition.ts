@@ -7,8 +7,8 @@ import {
 	DefinitionKind,
 	INamedDefinition,
 } from "../../language/INamedDefinition";
-import * as Json from "../../language/json/JSON";
 import { Span } from "../../language/Span";
+import * as Json from "../../language/json/JSON";
 import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
 import {
 	ExpressionType,
@@ -18,7 +18,7 @@ import { IJsonDocument } from "../templates/IJsonDocument";
 import { IParameterDefinition } from "./IParameterDefinition";
 
 export function isParameterDefinition(
-	definition: INamedDefinition
+	definition: INamedDefinition,
 ): definition is IParameterDefinition {
 	return definition.definitionKind === DefinitionKind.Parameter;
 }
@@ -31,7 +31,7 @@ export class ParameterDefinition implements IParameterDefinition {
 
 	constructor(
 		public readonly document: IJsonDocument,
-		private readonly _property: Json.Property
+		private readonly _property: Json.Property,
 	) {
 		assert(_property);
 	}
@@ -67,12 +67,12 @@ export class ParameterDefinition implements IParameterDefinition {
 			Json.asObjectValue(this._property.value);
 		if (parameterDefinition) {
 			const metadata: Json.ObjectValue | undefined = Json.asObjectValue(
-				parameterDefinition.getPropertyValue("metadata")
+				parameterDefinition.getPropertyValue("metadata"),
 			);
 			if (metadata) {
 				const description: Json.StringValue | undefined =
 					Json.asStringValue(
-						metadata.getPropertyValue("description")
+						metadata.getPropertyValue("description"),
 					);
 				if (description) {
 					return description.toString();

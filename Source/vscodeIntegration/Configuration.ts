@@ -13,7 +13,7 @@ export interface IConfiguration {
 	update(
 		section: string,
 		value: unknown,
-		configurationTarget?: ConfigurationTarget | boolean
+		configurationTarget?: ConfigurationTarget | boolean,
 	): Promise<void>;
 }
 
@@ -32,7 +32,7 @@ export class VsCodeConfiguration implements IConfiguration {
 	public async update(
 		section: string,
 		value: unknown,
-		configurationTarget?: ConfigurationTarget
+		configurationTarget?: ConfigurationTarget,
 	): Promise<void> {
 		await workspace
 			.getConfiguration(this.section)

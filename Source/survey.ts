@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { commands, MessageItem, window } from "vscode";
+import { MessageItem, commands, window } from "vscode";
 import {
-	callWithTelemetryAndErrorHandling,
 	IActionContext,
+	callWithTelemetryAndErrorHandling,
 } from "vscode-azureextensionui";
 import { globalStateKeys } from "../common";
 import { ext } from "./extensionVariables";
@@ -119,7 +119,7 @@ export namespace survey {
 						// Try again after a while
 						await postponeSurvey(
 							context,
-							surveyConstants.msToPostponeAfterNotAccessible
+							surveyConstants.msToPostponeAfterNotAccessible,
 						);
 						return;
 					}
@@ -132,16 +132,16 @@ export namespace survey {
 					} else {
 						await postponeSurvey(
 							context,
-							surveyConstants.msToPostponeAfterNotSelected
+							surveyConstants.msToPostponeAfterNotSelected,
 						);
 					}
 				} finally {
 					isReentrant = false;
 				}
-			}
+			},
 		).catch((err) => {
 			assert.fail(
-				"callWithTelemetryAndErrorHandling in survey.registerActiveUseNoThrow shouldn't throw"
+				"callWithTelemetryAndErrorHandling in survey.registerActiveUseNoThrow shouldn't throw",
 			);
 		});
 	}
@@ -157,7 +157,7 @@ async function checkForDebugMode(context: IActionContext): Promise<void> {
 			surveyDisabled = false;
 			await ext.context.globalState.update(
 				stateKeys.neverShowSurvey,
-				false
+				false,
 			);
 		}
 	}
@@ -178,7 +178,7 @@ async function requestTakeSurvey(context: IActionContext): Promise<void> {
 			surveyPrompt,
 			neverAsk,
 			later,
-			yes
+			yes,
 		)) ?? dismissed;
 	context.telemetry.properties.response = String(response.title);
 
@@ -192,7 +192,7 @@ async function requestTakeSurvey(context: IActionContext): Promise<void> {
 	} else {
 		assert(
 			response === dismissed,
-			`Unexpected response: ${response.title}`
+			`Unexpected response: ${response.title}`,
 		);
 		await postponeSurvey(context, surveyConstants.msToPostponeAfterLater);
 	}
@@ -209,14 +209,14 @@ function getIsUserSelected(): boolean {
 
 async function postponeSurvey(
 	context: IActionContext,
-	milliseconds: number
+	milliseconds: number,
 ): Promise<void> {
 	assert(milliseconds > 0);
 	let untilTimeMs = Date.now() + milliseconds;
 
 	const currentPostpone = ext.context.globalState.get<number>(
 		stateKeys.surveyPostponedUntilTime,
-		0
+		0,
 	);
 	if (Number.isInteger(currentPostpone)) {
 		untilTimeMs = Math.max(currentPostpone, untilTimeMs);
@@ -225,7 +225,7 @@ async function postponeSurvey(
 	context.telemetry.properties.postpone = String(untilTimeMs - Date.now());
 	await ext.context.globalState.update(
 		stateKeys.surveyPostponedUntilTime,
-		untilTimeMs
+		untilTimeMs,
 	);
 }
 
@@ -241,14 +241,14 @@ async function getIsSurveyAccessible(): Promise<boolean> {
 function getShouldNeverShowSurvey(): boolean {
 	return ext.context.globalState.get<boolean>(
 		stateKeys.neverShowSurvey,
-		false
+		false,
 	);
 }
 
 function getIsSurveyPostponed(): boolean {
 	const postponedUntilTime = ext.context.globalState.get<number>(
 		stateKeys.surveyPostponedUntilTime,
-		0
+		0,
 	);
 	return postponedUntilTime > Date.now();
 }

@@ -21,17 +21,17 @@ export class ExtractItem {
 	public async extractParameter(
 		editor: vscode.TextEditor,
 		template: DeploymentTemplateDoc,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
-		let selection = this.expandSelection(
+		const selection = this.expandSelection(
 			editor.selection,
 			editor.document,
 			template,
-			editor
+			editor,
 		);
 		editor.selection = selection;
-		let selectedText = editor.document.getText(selection);
-		let name = await this.ui.showInputBox({
+		const selectedText = editor.document.getText(selection);
+		const name = await this.ui.showInputBox({
 			prompt: "Enter the new parameter name",
 		});
 		if (!name) {
@@ -40,7 +40,7 @@ export class ExtractItem {
 		}
 		const leaveEmpty =
 			"Press 'Enter' if you do not want to add a description.";
-		let description = await this.ui.showInputBox({
+		const description = await this.ui.showInputBox({
 			prompt: "Description?",
 			placeHolder: leaveEmpty,
 		});
@@ -50,11 +50,11 @@ export class ExtractItem {
 			insertText,
 			selection,
 			template,
-			editor
+			editor,
 		);
-		let owningRootObject = this.getVarsParamsOwningRootObject(
+		const owningRootObject = this.getVarsParamsOwningRootObject(
 			template,
-			selection
+			selection,
 		);
 		await new InsertItem(this.ui).insertParameterWithDefaultValue(
 			owningRootObject,
@@ -63,28 +63,28 @@ export class ExtractItem {
 			name,
 			texts.selectedText,
 			description,
-			{ undoStopBefore: true, undoStopAfter: false }
+			{ undoStopBefore: true, undoStopAfter: false },
 		);
 		await editor.edit(
 			(builder) => builder.replace(editor.selection, texts.insertText),
-			{ undoStopBefore: false, undoStopAfter: true }
+			{ undoStopBefore: false, undoStopAfter: true },
 		);
 		editor.revealRange(
 			new vscode.Range(editor.selection.start, editor.selection.end),
-			vscode.TextEditorRevealType.Default
+			vscode.TextEditorRevealType.Default,
 		);
 	}
 
 	// Gets the root object where new parameters and variables should be added
 	private getVarsParamsOwningRootObject(
 		template: DeploymentTemplateDoc,
-		selection: vscode.Selection
+		selection: vscode.Selection,
 	): ObjectValue | undefined {
-		let scope = template
+		const scope = template
 			.getContextFromDocumentLineAndColumnIndexes(
 				selection.start.line,
 				selection.start.character,
-				undefined
+				undefined,
 			)
 			.getScope();
 		return scope.memberOwningRootObject;
@@ -93,47 +93,50 @@ export class ExtractItem {
 	public async extractVariable(
 		editor: vscode.TextEditor,
 		template: DeploymentTemplateDoc,
-		context: IActionContext
+		context: IActionContext,
 	): Promise<void> {
-		let selection = this.expandSelection(
+		const selection = this.expandSelection(
 			editor.selection,
 			editor.document,
 			template,
-			editor
+			editor,
 		);
 		editor.selection = selection;
-		let selectedText = editor.document.getText(selection);
-		let name = await this.ui.showInputBox({
+		const selectedText = editor.document.getText(selection);
+		const name = await this.ui.showInputBox({
 			prompt: "Enter the new variable name",
 		});
 		if (!name) {
 			context.telemetry.properties.cancelStep = "name";
 			throw new UserCancelledError();
 		}
-		let insertText = `[variables('${name}')]`;
+		const insertText = `[variables('${name}')]`;
 		const texts = this.fixExtractTexts(
 			selectedText,
 			insertText,
 			selection,
 			template,
-			editor
+			editor,
 		);
-		let topLevel = this.getVarsParamsOwningRootObject(template, selection);
+		const topLevel = this.getVarsParamsOwningRootObject(
+			template,
+			selection,
+		);
 		await new InsertItem(this.ui).insertVariableWithValue(
 			topLevel,
 			editor,
 			context,
 			name,
 			texts.selectedText,
-			{ undoStopBefore: true, undoStopAfter: false }
+			{ undoStopBefore: true, undoStopAfter: false },
 		);
 		await editor.edit(
 			(builder) => builder.replace(editor.selection, texts.insertText),
-			{ undoStopBefore: false, undoStopAfter: true }
+			{ undoStopBefore: false, undoStopAfter: true },
 		);
 		editor.revealRange(
 			new vscode.Range(editor.selection.start, editor.selection.end),
-			vscode.TextEditorRevealType.Default
+			vscode.TextEditorRevealType.Default,
 		);
 	}
 
@@ -142,7 +145,7 @@ export class ExtractItem {
 		insertText: string,
 		selection: vscode.Selection,
 		template: DeploymentTemplateDoc,
-		editor: vscode.TextEditor
+		editor: vscode.TextEditor,
 	): { selectedText: string; insertText: string } {
 		if (this.isInsideExpression(selection, template, editor)) {
 			// If the selected text is inside an expression ("[concat('selectedText','')]")
@@ -170,38 +173,38 @@ export class ExtractItem {
 		selection: vscode.Selection,
 		document: vscode.TextDocument,
 		template: DeploymentTemplateDoc,
-		editor: vscode.TextEditor
+		editor: vscode.TextEditor,
 	): vscode.Selection {
 		if (selection.start.character === 0) {
 			return selection;
 		}
 		if (selection.start.character === selection.end.character) {
-			let pc = template.getContextFromDocumentLineAndColumnIndexes(
+			const pc = template.getContextFromDocumentLineAndColumnIndexes(
 				selection.start.line,
 				selection.start.character,
-				undefined
+				undefined,
 			);
 			if (pc.jsonValue) {
 				const span = pc.jsonValue.span;
 				return new vscode.Selection(
 					editor.document.positionAt(span.startIndex + 1),
-					editor.document.positionAt(span.endIndex)
+					editor.document.positionAt(span.endIndex),
 				);
 			}
 		}
 		const startPos = new vscode.Position(
 			selection.anchor.line,
-			selection.anchor.character - 1
+			selection.anchor.character - 1,
 		);
 		const endPos = new vscode.Position(
 			selection.end.line,
-			selection.end.character + 1
+			selection.end.character + 1,
 		);
 		const textBefore = document.getText(
-			new vscode.Selection(startPos, selection.anchor)
+			new vscode.Selection(startPos, selection.anchor),
 		);
 		const textAfter = document.getText(
-			new vscode.Selection(selection.end, endPos)
+			new vscode.Selection(selection.end, endPos),
 		);
 		if (
 			(textBefore === "[" && textAfter === "]") ||
@@ -233,15 +236,15 @@ export class ExtractItem {
 	private isInsideExpression(
 		selection: vscode.Selection,
 		template: DeploymentTemplateDoc,
-		editor: vscode.TextEditor
+		editor: vscode.TextEditor,
 	): boolean {
-		let pc = template.getContextFromDocumentLineAndColumnIndexes(
+		const pc = template.getContextFromDocumentLineAndColumnIndexes(
 			selection.start.line,
 			selection.start.character,
-			undefined
+			undefined,
 		);
 		if (pc.jsonValue && pc.jsonValue.asStringValue) {
-			let selectedText = editor.document.getText(selection);
+			const selectedText = editor.document.getText(selection);
 			if (selectedText === pc.jsonValue.asStringValue.unquotedValue) {
 				return false;
 			}

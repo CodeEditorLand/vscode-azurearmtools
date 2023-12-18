@@ -65,7 +65,7 @@ export abstract class TemplateScope
 			| IDeploymentSchemaReference
 			| undefined,
 		// tslint:disable-next-line:variable-name
-		public readonly __debugDisplay: string // Provides context for debugging
+		public readonly __debugDisplay: string, // Provides context for debugging
 	) {}
 
 	public abstract readonly scopeKind: TemplateScopeKind;
@@ -130,7 +130,7 @@ export abstract class TemplateScope
 	public get variableDefinitions(): IVariableDefinition[] {
 		return (
 			this._variableDefinitions.getOrCacheValue(() =>
-				this.getVariableDefinitions()
+				this.getVariableDefinitions(),
 			) ?? []
 		);
 	}
@@ -138,7 +138,7 @@ export abstract class TemplateScope
 	public get namespaceDefinitions(): UserFunctionNamespaceDefinition[] {
 		return (
 			this._functionDefinitions.getOrCacheValue(() =>
-				this.getNamespaceDefinitions()
+				this.getNamespaceDefinitions(),
 			) ?? []
 		);
 	}
@@ -158,7 +158,7 @@ export abstract class TemplateScope
 
 	public get childScopes(): TemplateScope[] {
 		const scopes: TemplateScope[] = [];
-		for (let resource of this.resources ?? []) {
+		for (const resource of this.resources ?? []) {
 			if (resource.childDeployment) {
 				scopes.push(resource.childDeployment);
 			}
@@ -168,8 +168,8 @@ export abstract class TemplateScope
 		// (If it's not unique, we'd end up getting the parent's function definitions
 		// instead of our own, so ignore)
 		if (this.hasUniqueParamsVarsAndFunctions) {
-			for (let namespace of this.namespaceDefinitions) {
-				for (let member of namespace.members) {
+			for (const namespace of this.namespaceDefinitions) {
+				for (const member of namespace.members) {
 					scopes.push(member.scope);
 				}
 			}
@@ -180,11 +180,11 @@ export abstract class TemplateScope
 
 	// parameterName can be surrounded with single quotes or not.  Search is case-insensitive
 	public getParameterDefinition(
-		parameterName: string
+		parameterName: string,
 	): IParameterDefinition | undefined {
 		const unquotedParameterName = strings.unquote(parameterName);
 		if (unquotedParameterName) {
-			let parameterNameLC = unquotedParameterName.toLowerCase();
+			const parameterNameLC = unquotedParameterName.toLowerCase();
 
 			// Find the last definition that matches, because that's what Azure does if there are matching names
 			for (
@@ -194,7 +194,7 @@ export abstract class TemplateScope
 				i >= 0;
 				--i
 			) {
-				let pd =
+				const pd =
 					this.parameterDefinitionsSource.parameterDefinitions[i];
 				if (pd.nameValue.toString().toLowerCase() === parameterNameLC) {
 					return pd;
@@ -207,34 +207,34 @@ export abstract class TemplateScope
 
 	// Search is case-insensitive
 	public getFunctionNamespaceDefinition(
-		namespaceName: string
+		namespaceName: string,
 	): UserFunctionNamespaceDefinition | undefined {
 		if (!namespaceName) {
 			return undefined;
 		}
 
-		let namespaceNameLC = namespaceName.toLowerCase();
+		const namespaceNameLC = namespaceName.toLowerCase();
 		return this.namespaceDefinitions.find(
 			(nd: UserFunctionNamespaceDefinition) =>
-				nd.nameValue.toString().toLowerCase() === namespaceNameLC
+				nd.nameValue.toString().toLowerCase() === namespaceNameLC,
 		);
 	}
 
 	// Search is case-insensitive
 	public getUserFunctionDefinition(
 		namespace: string | UserFunctionNamespaceDefinition,
-		functionName: string
+		functionName: string,
 	): UserFunctionDefinition | undefined {
 		if (!functionName) {
 			return undefined;
 		}
 
-		let nd =
+		const nd =
 			typeof namespace === "string"
 				? this.getFunctionNamespaceDefinition(namespace)
 				: namespace;
 		if (nd) {
-			let result = nd.getMemberDefinition(functionName);
+			const result = nd.getMemberDefinition(functionName);
 			return result ? result : undefined;
 		}
 
@@ -243,7 +243,7 @@ export abstract class TemplateScope
 
 	// variableName can be surrounded with single quotes or not.  Search is case-insensitive
 	public getVariableDefinition(
-		variableName: string
+		variableName: string,
 	): IVariableDefinition | undefined {
 		const unquotedVariableName = strings.unquote(variableName);
 		if (unquotedVariableName) {
@@ -251,7 +251,7 @@ export abstract class TemplateScope
 
 			// Find the last definition that matches, because that's what Azure does
 			for (let i = this.variableDefinitions.length - 1; i >= 0; --i) {
-				let vd = this.variableDefinitions[i];
+				const vd = this.variableDefinitions[i];
 				if (vd.nameValue.toString().toLowerCase() === variableNameLC) {
 					return vd;
 				}
@@ -265,13 +265,13 @@ export abstract class TemplateScope
 	 * If the function call is a variables() reference, return the related variable definition
 	 */
 	public getVariableDefinitionFromFunctionCall(
-		tleFunction: TLE.FunctionCallValue
+		tleFunction: TLE.FunctionCallValue,
 	): IVariableDefinition | undefined {
 		let result: IVariableDefinition | undefined;
 
 		if (tleFunction.isCallToBuiltinWithName(templateKeys.variables)) {
 			const variableName: TLE.StringValue | undefined = TLE.asStringValue(
-				tleFunction.argumentExpressions[0]
+				tleFunction.argumentExpressions[0],
 			);
 			if (variableName) {
 				result = this.getVariableDefinition(variableName.toString());
@@ -285,7 +285,7 @@ export abstract class TemplateScope
 	 * If the function call is a parameters() reference, return the related parameter definition
 	 */
 	public getParameterDefinitionFromFunctionCall(
-		tleFunction: TLE.FunctionCallValue
+		tleFunction: TLE.FunctionCallValue,
 	): IParameterDefinition | undefined {
 		assert(tleFunction);
 
@@ -293,7 +293,7 @@ export abstract class TemplateScope
 
 		if (tleFunction.isCallToBuiltinWithName(templateKeys.parameters)) {
 			const propertyName: TLE.StringValue | undefined = TLE.asStringValue(
-				tleFunction.argumentExpressions[0]
+				tleFunction.argumentExpressions[0],
 			);
 			if (propertyName) {
 				result = this.getParameterDefinition(propertyName.toString());
@@ -315,7 +315,7 @@ export abstract class TemplateScope
 
 		assert(
 			parent,
-			"Should have found parent with unique params/vars/functions (top-level should be unique)"
+			"Should have found parent with unique params/vars/functions (top-level should be unique)",
 		);
 		return parent;
 	}

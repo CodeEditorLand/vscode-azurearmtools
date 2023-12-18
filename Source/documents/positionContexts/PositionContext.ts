@@ -3,22 +3,22 @@
 // ----------------------------------------------------------------------------
 
 import { assert } from "../../fixed_assert";
-import { FunctionSignatureHelp } from "../../language/expressions/TLE";
 import { INamedDefinition } from "../../language/INamedDefinition";
-import * as Json from "../../language/json/JSON";
 import { LineColPos } from "../../language/LineColPos";
 import { ReferenceList } from "../../language/ReferenceList";
 import { ContainsBehavior, Span } from "../../language/Span";
+import { FunctionSignatureHelp } from "../../language/expressions/TLE";
+import * as Json from "../../language/json/JSON";
 import { InsertionContext } from "../../snippets/InsertionContext";
 import { KnownContexts } from "../../snippets/KnownContexts";
 import { CachedValue } from "../../util/CachedValue";
-import { __debugMarkPositionInString } from "../../util/debugMarkStrings";
 import { InitializeBeforeUse } from "../../util/InitializeBeforeUse";
+import { __debugMarkPositionInString } from "../../util/debugMarkStrings";
 import { nonNullValue } from "../../util/nonNull";
 import * as Completion from "../../vscodeIntegration/Completion";
 import { IHoverInfo } from "../../vscodeIntegration/IHoverInfo";
 import { UsageInfoHoverInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
-import { DeploymentDocument as DeploymentDocument } from "../DeploymentDocument";
+import { DeploymentDocument } from "../DeploymentDocument";
 import { IJsonDocument } from "../templates/IJsonDocument";
 import { TemplateScope } from "../templates/scopes/TemplateScope";
 
@@ -78,7 +78,7 @@ export abstract class PositionContext {
 
 	protected constructor(
 		private _document: DeploymentDocument,
-		protected _associatedDocument: DeploymentDocument | undefined
+		protected _associatedDocument: DeploymentDocument | undefined,
 	) {
 		nonNullValue(this._document, "document");
 	}
@@ -86,20 +86,20 @@ export abstract class PositionContext {
 	protected initFromDocumentLineAndColumnIndices(
 		documentLineIndex: number,
 		documentColumnIndex: number,
-		allowOutOfBounds: boolean = true
+		allowOutOfBounds = true,
 	): void {
 		nonNullValue(documentLineIndex, "documentLineIndex");
 		assert(documentLineIndex >= 0, "documentLineIndex cannot be negative");
 		nonNullValue(documentColumnIndex, "documentColumnIndex");
 		assert(
 			documentColumnIndex >= 0,
-			"documentColumnIndex cannot be negative"
+			"documentColumnIndex cannot be negative",
 		);
 
 		if (documentLineIndex >= this._document.lineCount) {
 			assert(
 				allowOutOfBounds,
-				`documentLineIndex cannot be greater than or equal to the deployment template's line count`
+				`documentLineIndex cannot be greater than or equal to the deployment template's line count`,
 			);
 			documentLineIndex = this._document.lineCount - 1;
 		}
@@ -109,7 +109,7 @@ export abstract class PositionContext {
 		) {
 			assert(
 				allowOutOfBounds,
-				`documentColumnIndex cannot be greater than the line's maximum index`
+				`documentColumnIndex cannot be greater than the line's maximum index`,
 			);
 			documentColumnIndex =
 				this._document.getMaxColumnIndex(documentLineIndex);
@@ -117,36 +117,36 @@ export abstract class PositionContext {
 
 		this._documentPosition.value = new LineColPos(
 			documentLineIndex,
-			documentColumnIndex
+			documentColumnIndex,
 		);
 		this._documentCharacterIndex.value =
 			this._document.getDocumentCharacterIndex(
 				documentLineIndex,
 				documentColumnIndex,
-				{ allowOutOfBounds }
+				{ allowOutOfBounds },
 			);
 	}
 
 	protected initFromDocumentCharacterIndex(
 		documentCharacterIndex: number,
-		allowOutOfBounds: boolean = true
+		allowOutOfBounds = true,
 	): void {
 		nonNullValue(documentCharacterIndex, "documentCharacterIndex");
 		assert(
 			documentCharacterIndex >= 0,
-			"documentCharacterIndex cannot be negative"
+			"documentCharacterIndex cannot be negative",
 		);
 		if (documentCharacterIndex > this._document.maxCharacterIndex) {
 			assert(
 				allowOutOfBounds,
-				`documentCharacterIndex cannot be greater than the maximum character index`
+				`documentCharacterIndex cannot be greater than the maximum character index`,
 			);
 			documentCharacterIndex = this._document.maxCharacterIndex;
 		}
 
 		this._documentCharacterIndex.value = documentCharacterIndex;
 		this._documentPosition.value = this._document.getDocumentPosition(
-			documentCharacterIndex
+			documentCharacterIndex,
 		);
 	}
 
@@ -162,11 +162,11 @@ export abstract class PositionContext {
 	 * Convenient way of seeing what this object represents in the debugger, shouldn't be used for production code
 	 */
 	public get __debugDisplay(): string {
-		let docText: string = this._document.documentText;
+		const docText: string = this._document.documentText;
 		return __debugMarkPositionInString(
 			docText,
 			this.documentCharacterIndex,
-			"<CURSOR>"
+			"<CURSOR>",
 		);
 	}
 
@@ -174,13 +174,13 @@ export abstract class PositionContext {
 	 * Convenient way of seeing what this object represents in the debugger, shouldn't be used for production code
 	 */
 	public get __debugFullDisplay(): string {
-		let docText: string = this._document.documentText;
+		const docText: string = this._document.documentText;
 		return __debugMarkPositionInString(
 			docText,
 			this.documentCharacterIndex,
 			"<CURSOR>",
 			Number.MAX_SAFE_INTEGER,
-			Number.MAX_SAFE_INTEGER
+			Number.MAX_SAFE_INTEGER,
 		);
 	}
 
@@ -203,7 +203,7 @@ export abstract class PositionContext {
 	public get jsonToken(): Json.Token | undefined {
 		return this._jsonToken.getOrCacheValue(() => {
 			return this._document.getJSONTokenAtDocumentCharacterIndex(
-				this.documentCharacterIndex
+				this.documentCharacterIndex,
 			);
 		});
 	}
@@ -213,7 +213,7 @@ export abstract class PositionContext {
 		return this._jsonValue.getOrCacheValue(() => {
 			return this._document.getJSONValueAtDocumentCharacterIndex(
 				this.documentCharacterIndex,
-				ContainsBehavior.extended
+				ContainsBehavior.extended,
 			);
 		});
 	}
@@ -221,7 +221,7 @@ export abstract class PositionContext {
 	public get jsonTokenStartIndex(): number {
 		assert(
 			!!this.jsonToken,
-			"The jsonTokenStartIndex can only be requested when the PositionContext is inside a JSONToken."
+			"The jsonTokenStartIndex can only be requested when the PositionContext is inside a JSONToken.",
 		);
 		// tslint:disable-next-line:no-non-null-assertion no-unnecessary-type-assertion // Asserted
 		return this.jsonToken!.span.startIndex;
@@ -250,7 +250,7 @@ export abstract class PositionContext {
 				this.document.getJSONTokenAtDocumentCharacterIndex(index - 1);
 			if (tokenAfterCursor) {
 				const line = this.document.getDocumentPosition(
-					tokenAfterCursor.span.startIndex
+					tokenAfterCursor.span.startIndex,
 				).line;
 				if (line === this.documentPosition.line) {
 					tokenAtCursor = tokenAfterCursor;
@@ -294,7 +294,7 @@ export abstract class PositionContext {
 	 * return an object with information about this reference and the corresponding definition
 	 */
 	public abstract getReferenceSiteInfo(
-		includeDefinition: boolean
+		includeDefinition: boolean,
 	): IReferenceSite | undefined;
 
 	/**
@@ -317,8 +317,8 @@ export abstract class PositionContext {
 				new UsageInfoHoverInfo(
 					definition.definitionKind,
 					definition.usageInfo,
-					span
-				)
+					span,
+				),
 			);
 		}
 
@@ -327,7 +327,7 @@ export abstract class PositionContext {
 
 	public abstract getCompletionItems(
 		triggerCharacter: string | undefined,
-		tabSize: number
+		tabSize: number,
 	): Promise<ICompletionItemsResult>;
 
 	public abstract getSignatureHelp(): FunctionSignatureHelp | undefined;
@@ -360,7 +360,7 @@ export abstract class PositionContext {
 			const pcAtStartOfString =
 				this.document.getContextFromDocumentCharacterIndex(
 					this.jsonTokenStartIndex,
-					this._associatedDocument
+					this._associatedDocument,
 				);
 			insertionParent = pcAtStartOfString.getInsertionParent();
 		}
@@ -372,7 +372,7 @@ export abstract class PositionContext {
 				this.document.topLevelValue.findLineage(insertionParent);
 			assert(
 				lineage,
-				`Couldn't find JSON value inside the top-level value: ${insertionParent.toFullFriendlyString()}`
+				`Couldn't find JSON value inside the top-level value: ${insertionParent.toFullFriendlyString()}`,
 			);
 
 			// parents = a list of all ancestors, starting with insertionParent
@@ -490,7 +490,7 @@ export abstract class PositionContext {
 	public get isInsideComment(): boolean {
 		return !!this.document.jsonParseResult.getCommentTokenAtDocumentIndex(
 			this.documentCharacterIndex,
-			ContainsBehavior.enclosed
+			ContainsBehavior.enclosed,
 		);
 	}
 
@@ -504,7 +504,7 @@ export abstract class PositionContext {
 		const enclosingJsonValue =
 			this.document.jsonParseResult.getValueAtCharacterIndex(
 				this.documentCharacterIndex,
-				ContainsBehavior.enclosed
+				ContainsBehavior.enclosed,
 			);
 		if (
 			!(
@@ -535,7 +535,7 @@ export abstract class PositionContext {
 		const enclosingJsonValue =
 			this.document.jsonParseResult.getValueAtCharacterIndex(
 				this.documentCharacterIndex,
-				ContainsBehavior.enclosed
+				ContainsBehavior.enclosed,
 			);
 		if (enclosingJsonValue) {
 			const lineage:

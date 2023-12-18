@@ -3,14 +3,13 @@
 // ----------------------------------------------------------------------------
 
 export class Histogram {
-	private _nullCounts: number = 0;
-	private _undefinedCounts: number = 0;
+	private _nullCounts = 0;
+	private _undefinedCounts = 0;
 	private _counts: { [key: string]: number } = {};
 
 	public get keys(): (string | undefined | null)[] {
-		let result: (string | undefined | null)[] = Object.getOwnPropertyNames(
-			this._counts
-		);
+		const result: (string | undefined | null)[] =
+			Object.getOwnPropertyNames(this._counts);
 		if (this._nullCounts > 0) {
 			result.push(null);
 		}
@@ -22,7 +21,7 @@ export class Histogram {
 
 	public add(
 		key: string | Histogram | undefined | null,
-		count: number = 1
+		count = 1,
 	): Histogram {
 		if (key === null) {
 			this._nullCounts += count;
@@ -30,13 +29,13 @@ export class Histogram {
 			this._undefinedCounts += count;
 		} else if (typeof key === "string") {
 			// tslint:disable-next-line: strict-boolean-expressions
-			if (!this._counts[key]) {
-				this._counts[key] = count;
-			} else {
+			if (this._counts[key]) {
 				this._counts[key] += count;
+			} else {
+				this._counts[key] = count;
 			}
 		} else {
-			for (let rhsKey of key.keys) {
+			for (const rhsKey of key.keys) {
 				this.add(rhsKey, key.getCount(rhsKey));
 			}
 		}

@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fse from "fs-extra";
 import * as os from "os";
 import * as path from "path";
+import * as fse from "fs-extra";
 import {
 	CancellationToken,
 	CompletionContext,
@@ -22,10 +22,10 @@ import {
 	workspace,
 } from "vscode";
 import {
-	callWithTelemetryAndErrorHandling,
-	callWithTelemetryAndErrorHandlingSync,
 	IActionContext,
 	ITelemetryContext,
+	callWithTelemetryAndErrorHandling,
+	callWithTelemetryAndErrorHandlingSync,
 	parseError,
 } from "vscode-azureextensionui";
 import {
@@ -49,9 +49,9 @@ import {
 import { delay } from "../../test/support/delay";
 import { acquireSharedDotnetInstallation } from "../acquisition/acquireSharedDotnetInstallation";
 import {
-	convertDiagnosticUrisToLinkedTemplateSchema,
 	INotifyTemplateGraphArgs,
 	IRequestOpenLinkedFileArgs,
+	convertDiagnosticUrisToLinkedTemplateSchema,
 	onRequestOpenLinkedFile,
 } from "../documents/templates/linkedTemplates/linkedTemplates";
 import { templateDocumentSelector } from "../documents/templates/supported";
@@ -67,17 +67,17 @@ const _notifyTemplateGraphAvailableEmitter: EventEmitter<
 	INotifyTemplateGraphArgs & ITelemetryContext
 > = new EventEmitter<INotifyTemplateGraphArgs & ITelemetryContext>();
 
-let haveFirstSchemasStartedLoading: boolean = false;
-let haveFirstSchemasFinishedLoading: boolean = false;
-let isShowingLoadingSchemasProgress: boolean = false;
+let haveFirstSchemasStartedLoading = false;
+let haveFirstSchemasFinishedLoading = false;
+let isShowingLoadingSchemasProgress = false;
 
 export enum LanguageServerState {
-	NotStarted, // 0
-	Starting, // 1
-	Failed, // 2
-	Running, // 3
-	Stopped, // 4
-	LoadingSchemas, // 5
+	NotStarted = 0, // 0
+	Starting = 1, // 1
+	Failed = 2, // 2
+	Running = 3, // 3
+	Stopped = 4, // 4
+	LoadingSchemas = 5, // 5
 }
 
 /**
@@ -95,7 +95,7 @@ export async function stopArmLanguageServer(): Promise<void> {
 		ext.languageServerState === LanguageServerState.Stopped
 	) {
 		ext.outputChannel.appendLine(
-			`${languageServerName} already stopped...`
+			`${languageServerName} already stopped...`,
 		);
 		return;
 	}
@@ -103,7 +103,7 @@ export async function stopArmLanguageServer(): Promise<void> {
 	ext.outputChannel.appendLine(`Stopping ${languageServerName}...`);
 	ext.languageServerState = LanguageServerState.Stopped;
 	if (ext.languageServerClient) {
-		let client: LanguageClient = ext.languageServerClient;
+		const client: LanguageClient = ext.languageServerClient;
 		ext.languageServerClient = undefined;
 		await client.stop();
 	}
@@ -145,8 +145,8 @@ export function startArmLanguageServerInBackground(): void {
 					async (actionContext: IActionContext) => {
 						try {
 							// The server is implemented in .NET Core. We run it by calling 'dotnet' with the dll as an argument
-							let serverDllPath: string = findLanguageServer();
-							let dotnetExePath: string | undefined =
+							const serverDllPath: string = findLanguageServer();
+							const dotnetExePath: string | undefined =
 								await getDotNetPath();
 							if (!dotnetExePath) {
 								// Acquisition failed
@@ -159,7 +159,7 @@ export function startArmLanguageServerInBackground(): void {
 
 							await startLanguageClient(
 								serverDllPath,
-								dotnetExePath
+								dotnetExePath,
 							);
 
 							ext.languageServerState =
@@ -178,14 +178,14 @@ export function startArmLanguageServerInBackground(): void {
 								LanguageServerState.Failed;
 							throw error;
 						}
-					}
+					},
 				);
 			} catch (err) {
 				assert.fail(
-					"callWithTelemetryAndErrorHandling in startArmLanguageServerInBackground onTemplateGraphAvailable shouldn't throw"
+					"callWithTelemetryAndErrorHandling in startArmLanguageServerInBackground onTemplateGraphAvailable shouldn't throw",
 				);
 			}
-		}
+		},
 	);
 }
 
@@ -201,13 +201,13 @@ async function getLangServerVersion(): Promise<string | undefined> {
 				{ config: { ARM_LANGUAGE_SERVER_NUGET_VERSION: string } }
 			>await fse.readJson(packagePath);
 			return packageContents.config.ARM_LANGUAGE_SERVER_NUGET_VERSION;
-		}
+		},
 	);
 }
 
 async function startLanguageClient(
 	serverDllPath: string,
-	dotnetExePath: string
+	dotnetExePath: string,
 ): Promise<void> {
 	// tslint:disable-next-line: no-suspicious-comment
 	// tslint:disable-next-line: max-func-body-length // TODO: Refactor function
@@ -225,14 +225,14 @@ async function startLanguageClient(
 			//   Error
 			//   Critical
 			//   None
-			let trace: string =
+			const trace: string =
 				workspace
 					.getConfiguration(configPrefix)
 					.get<string>(configKeys.traceLevel) ||
 				// tslint:disable-next-line: strict-boolean-expressions
 				defaultTraceLevel;
 
-			let commonArgs = [serverDllPath, "--logLevel", trace];
+			const commonArgs = [serverDllPath, "--logLevel", trace];
 
 			const waitForDebugger =
 				workspace
@@ -248,7 +248,7 @@ async function startLanguageClient(
 
 			// If the extension is launched in debug mode then the debug server options are used
 			// Otherwise the run options are used
-			let serverOptions: ServerOptions = {
+			const serverOptions: ServerOptions = {
 				run: {
 					command: dotnetExePath,
 					args: commonArgs,
@@ -262,7 +262,7 @@ async function startLanguageClient(
 			};
 
 			// Options to control the language client
-			let clientOptions: LanguageClientOptions = {
+			const clientOptions: LanguageClientOptions = {
 				documentSelector: templateDocumentSelector,
 				diagnosticCollectionName: `${languageServerName} diagnostics`,
 				outputChannel: ext.outputChannel, // Use the same output channel as the extension does
@@ -274,7 +274,7 @@ async function startLanguageClient(
 					handleDiagnostics: (
 						uri: Uri,
 						diagnostics: Diagnostic[],
-						next: (uri: Uri, diagnostics: Diagnostic[]) => void
+						next: (uri: Uri, diagnostics: Diagnostic[]) => void,
 					): void => {
 						for (const d of diagnostics) {
 							if (
@@ -294,7 +294,7 @@ async function startLanguageClient(
 							document: TextDocument,
 							position: Position,
 							context: CompletionContext,
-							token: CancellationToken
+							token: CancellationToken,
 						) =>
 							| undefined
 							| null
@@ -305,7 +305,7 @@ async function startLanguageClient(
 									| null
 									| CompletionItem[]
 									| CompletionList
-							  >
+							  >,
 					): Promise<
 						undefined | null | CompletionItem[] | CompletionList
 					> => {
@@ -317,13 +317,13 @@ async function startLanguageClient(
 							document,
 							position,
 							context,
-							token
+							token,
 						);
 
 						if (result) {
 							let items: CompletionList | CompletionItem[] =
 								result;
-							let isIncomplete: boolean = false;
+							let isIncomplete = false;
 							if (items instanceof CompletionList) {
 								isIncomplete = items.isIncomplete ?? false;
 								items = items.items;
@@ -333,7 +333,7 @@ async function startLanguageClient(
 								items.every(
 									(item) =>
 										typeof item.label === "string" &&
-										isApiVersion(item.label)
+										isApiVersion(item.label),
 								)
 							) {
 								// It's a list of apiVersion completions
@@ -346,7 +346,7 @@ async function startLanguageClient(
 										).toString(10);
 										sortText = sortText.padStart(
 											10 - sortText.length,
-											"0"
+											"0",
 										);
 										ci.sortText = sortText;
 									}
@@ -354,7 +354,7 @@ async function startLanguageClient(
 								});
 								result = new CompletionList(
 									items,
-									isIncomplete
+									isIncomplete,
 								);
 							}
 						}
@@ -371,41 +371,41 @@ async function startLanguageClient(
 			actionContext.telemetry.properties.langServerNugetVersion =
 				langServerVersion;
 			ext.outputChannel.appendLine(
-				`Starting ${languageServerName} at ${serverDllPath}`
+				`Starting ${languageServerName} at ${serverDllPath}`,
 			);
 			ext.outputChannel.appendLine(
-				`Language server nuget version: ${langServerVersion}`
+				`Language server nuget version: ${langServerVersion}`,
 			);
 			ext.outputChannel.appendLine(
 				`Client options:${os.EOL}${JSON.stringify(
 					clientOptions,
 					undefined,
-					2
-				)}`
+					2,
+				)}`,
 			);
 			ext.outputChannel.appendLine(
 				`Server options:${os.EOL}${JSON.stringify(
 					serverOptions,
 					undefined,
-					2
-				)}`
+					2,
+				)}`,
 			);
-			let client: LanguageClient = new LanguageClient(
+			const client: LanguageClient = new LanguageClient(
 				armTemplateLanguageId,
 				languageFriendlyName, // Used in the Output window combobox
 				serverOptions,
-				clientOptions
+				clientOptions,
 			);
 
 			// Use an error handler that sends telemetry
-			let defaultHandler = client.createDefaultErrorHandler();
+			const defaultHandler = client.createDefaultErrorHandler();
 			client.clientOptions.errorHandler = new WrappedErrorHandler(
-				defaultHandler
+				defaultHandler,
 			);
 
 			if (waitForDebugger) {
 				window.showWarningMessage(
-					`The ${configPrefix}.languageServer.waitForDebugger option is set.  The language server will pause on startup until a debugger is attached.`
+					`The ${configPrefix}.languageServer.waitForDebugger option is set.  The language server will pause on startup until a debugger is attached.`,
 				);
 			}
 
@@ -416,24 +416,23 @@ async function startLanguageClient(
 				}) => {
 					const eventName = telemetryData.eventName.replace(
 						/^\/|\/$/g,
-						""
+						"",
 					); // Remove slashes at beginning or end
 					const fullEventName = `langserver/${eventName}`;
 
 					if (
 						sanitizeTelemetryData(
 							fullEventName,
-							telemetryData.properties
+							telemetryData.properties,
 						)
 					) {
 						callWithTelemetryAndErrorHandlingSync(
 							fullEventName,
 							(telemetryActionContext) => {
-								telemetryActionContext.errorHandling.suppressDisplay =
-									true;
+								telemetryActionContext.errorHandling.suppressDisplay = true;
 
 								for (let prop of Object.getOwnPropertyNames(
-									telemetryData.properties
+									telemetryData.properties,
 								)) {
 									const value =
 										telemetryData.properties[prop];
@@ -450,16 +449,16 @@ async function startLanguageClient(
 									telemetryActionContext.telemetry.properties.result =
 										"Failed";
 								}
-							}
+							},
 						);
 					}
-				}
+				},
 			);
 
 			try {
 				// client.trace = Trace.Messages;
 
-				let disposable = client.start();
+				const disposable = client.start();
 				ext.context.subscriptions.push(disposable);
 
 				await client.onReady();
@@ -469,44 +468,44 @@ async function startLanguageClient(
 					notifications.requestOpenLinkedTemplate,
 					async (args: IRequestOpenLinkedFileArgs) => {
 						return onRequestOpenLinkedFile(args);
-					}
+					},
 				);
 
 				client.onNotification(
 					notifications.notifyTemplateGraph,
 					async (args: INotifyTemplateGraphArgs) => {
 						onNotifyTemplateGraph(args);
-					}
+					},
 				);
 
 				client.onNotification(
 					notifications.schemaValidationNotification,
 					async (
-						args: notifications.ISchemaValidationNotificationArgs
+						args: notifications.ISchemaValidationNotificationArgs,
 					) => {
 						onSchemaValidationNotication(args);
-					}
+					},
 				);
 			} catch (error) {
 				throw new Error(
 					`${languageServerName}: An error occurred starting the language server.${
 						os.EOL
-					}${os.EOL}${parseError(error).message}`
+					}${os.EOL}${parseError(error).message}`,
 				);
 			}
-		}
+		},
 	);
 }
 
 function sanitizeTelemetryData(
 	fullEventName: string,
-	properties: { [key: string]: string | undefined }
+	properties: { [key: string]: string | undefined },
 ): boolean {
 	switch (fullEventName) {
 		case "langserver/VS/WebTools/Languages/JSON/UnrecognizedResourceApiVersion":
 			if (
 				!/^[0-9]{4}-[0-9]{2}-[0-9]{2}(-(alpha|beta|preview)+)?$/i.test(
-					properties["vS.WebTools.Languages.JSON.apiVersion"] ?? ""
+					properties["vS.WebTools.Languages.JSON.apiVersion"] ?? "",
 				)
 			) {
 				{
@@ -549,12 +548,12 @@ async function getDotNetPath(): Promise<string | undefined> {
 				ext.outputChannel.appendLine(
 					`WARNING: ${configPrefix}.${configKeys.dotnetExePath} is set. ` +
 						`This overrides the automatic download and usage of the dotnet runtime and should only be used to work around dotnet installation issues. ` +
-						`If you encounter problems, please try clearing this setting.`
+						`If you encounter problems, please try clearing this setting.`,
 				);
 				ext.outputChannel.appendLine("");
 				if (!(await isFile(overriddenDotNetExePath))) {
 					throw new Error(
-						`Invalid path given for ${configPrefix}.${configKeys.dotnetExePath} setting. Must point to dotnet executable. Could not find file ${overriddenDotNetExePath}`
+						`Invalid path given for ${configPrefix}.${configKeys.dotnetExePath} setting. Must point to dotnet executable. Could not find file ${overriddenDotNetExePath}`,
 					);
 				}
 				dotnetPath = overriddenDotNetExePath;
@@ -565,20 +564,20 @@ async function getDotNetPath(): Promise<string | undefined> {
 					"false";
 
 				dotnetPath = await acquireSharedDotnetInstallation(
-					downloadDotnetVersion
+					downloadDotnetVersion,
 				);
 				if (!dotnetPath) {
 					// Error is handled by dotnet extension
 					actionContext.errorHandling.suppressDisplay = true;
 					actionContext.errorHandling.rethrow = false;
 					throw new Error(
-						"acquireSharedDotnetInstallation failed (didn't return a path)"
+						"acquireSharedDotnetInstallation failed (didn't return a path)",
 					);
 				}
 
 				if (!(await isFile(dotnetPath))) {
 					throw new Error(
-						`The path returned for .net core does not exist: ${dotnetPath}`
+						`The path returned for .net core does not exist: ${dotnetPath}`,
 					);
 				}
 
@@ -586,7 +585,7 @@ async function getDotNetPath(): Promise<string | undefined> {
 				try {
 					// E.g. "c:\Users\<user>\AppData\Roaming\Code - Insiders\User\globalStorage\msazurermtools.azurerm-vscode-tools\.dotnet\2.2.5\dotnet.exe"
 					const versionMatch = dotnetPath.match(
-						/dotnet[\\/]([^\\/]+)[\\/]/
+						/dotnet[\\/]([^\\/]+)[\\/]/,
 					);
 					// tslint:disable-next-line: strict-boolean-expressions
 					const actualVersion =
@@ -599,11 +598,11 @@ async function getDotNetPath(): Promise<string | undefined> {
 			}
 
 			ext.outputChannel.appendLine(
-				`Using dotnet core executable at ${dotnetPath}`
+				`Using dotnet core executable at ${dotnetPath}`,
 			);
 
 			return dotnetPath;
-		}
+		},
 	);
 }
 
@@ -615,7 +614,7 @@ function findLanguageServer(): string {
 				actionContext.errorHandling.rethrow = true;
 				actionContext.errorHandling.suppressDisplay = true; // Let caller handle
 
-				let serverDllPathSetting: string | undefined = workspace
+				const serverDllPathSetting: string | undefined = workspace
 					.getConfiguration(configPrefix)
 					.get<string | undefined>(configKeys.langServerPath);
 				if (
@@ -627,18 +626,18 @@ function findLanguageServer(): string {
 
 					// Default behavior: <configPrefix>.languageServer.path is not set - look for the files in their normal installed location under languageServerFolderName
 					const serverFolderPath = ext.context.asAbsolutePath(
-						languageServerFolderName
+						languageServerFolderName,
 					);
 					const fullPath = path.join(
 						serverFolderPath,
-						languageServerDllName
+						languageServerDllName,
 					);
 					if (
 						!fse.existsSync(serverFolderPath) ||
 						!fse.existsSync(fullPath)
 					) {
 						throw new Error(
-							`Cannot find the ${languageServerName} at ${fullPath}. Only template string expression functionality will be available.`
+							`Cannot find the ${languageServerName} at ${fullPath}. Only template string expression functionality will be available.`,
 						);
 					}
 					return fullPath;
@@ -652,21 +651,21 @@ function findLanguageServer(): string {
 					}
 					if (!fse.existsSync(fullPath)) {
 						throw new Error(
-							`Couldn't find the ${languageServerName} at ${fullPath}.  Please verify or remove your '${configPrefix}.languageServer.path' setting.`
+							`Couldn't find the ${languageServerName} at ${fullPath}.  Please verify or remove your '${configPrefix}.languageServer.path' setting.`,
 						);
 					}
 
 					window.showInformationMessage(
-						`Using custom path for ${languageServerName}: ${fullPath}`
+						`Using custom path for ${languageServerName}: ${fullPath}`,
 					);
 					return fullPath;
 				}
-			}
+			},
 		);
 
 	assert(
 		typeof serverDllPath === "string",
-		"Should have thrown instead of returning undefined"
+		"Should have thrown instead of returning undefined",
 	);
 	// tslint:disable-next-line:no-non-null-assertion // Asserted
 	return serverDllPath!;
@@ -692,14 +691,14 @@ function onNotifyTemplateGraph(args: INotifyTemplateGraphArgs): void {
 			_notifyTemplateGraphAvailableEmitter.fire(
 				<INotifyTemplateGraphArgs & ITelemetryContext>(
 					Object.assign({}, context.telemetry, args)
-				)
+				),
 			);
-		}
+		},
 	);
 }
 
 function onSchemaValidationNotication(
-	args: notifications.ISchemaValidationNotificationArgs
+	args: notifications.ISchemaValidationNotificationArgs,
 ): void {
 	if (!haveFirstSchemasStartedLoading) {
 		haveFirstSchemasStartedLoading = true;
@@ -716,8 +715,8 @@ function onSchemaValidationNotication(
 			? LanguageServerState.LoadingSchemas
 			: !isLoadingSchemas &&
 				  ext.languageServerState === LanguageServerState.LoadingSchemas
-				? LanguageServerState.Running
-				: ext.languageServerState;
+			  ? LanguageServerState.Running
+			  : ext.languageServerState;
 	ext.languageServerState = newState;
 
 	if (newState === LanguageServerState.LoadingSchemas) {
@@ -739,8 +738,8 @@ function showLoadingSchemasProgress(): void {
 						500,
 						() =>
 							ext.languageServerState ===
-							LanguageServerState.LoadingSchemas
-					)
+							LanguageServerState.LoadingSchemas,
+					),
 			)
 			.then(() => {
 				isShowingLoadingSchemasProgress = false;

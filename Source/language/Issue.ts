@@ -11,9 +11,9 @@ import { IssueKind } from "./IssueKind";
 import { Span } from "./Span";
 
 export enum IssueSeverity {
-	Error,
-	Warning,
-	Information,
+	Error = 0,
+	Warning = 1,
+	Information = 2,
 }
 
 /**
@@ -26,12 +26,12 @@ export class Issue {
 	constructor(
 		private _span: Span,
 		private _message: string,
-		public readonly kind: IssueKind
+		public readonly kind: IssueKind,
 	) {
 		nonNullValue(_span, "_span");
 		assert(
 			0 <= _span.length,
-			"_span's length must be greater than or equal to 0."
+			"_span's length must be greater than or equal to 0.",
 		);
 		nonNullValue(_message, "_message");
 		assert(_message !== "", "_message must not be empty.");
@@ -106,7 +106,7 @@ export class Issue {
 		return new Issue(
 			this._span.translate(movement),
 			this._message,
-			this.kind
+			this.kind,
 		);
 	}
 }

@@ -4,8 +4,8 @@
 // ---------------------------------------------------------------------------------------------
 
 import { MarkdownString } from "vscode";
-import * as TLE from "../language/expressions/TLE";
 import { Span } from "../language/Span";
+import * as TLE from "../language/expressions/TLE";
 import { indentMultilineString } from "../util/multilineStrings";
 import { IHoverInfo } from "./IHoverInfo";
 
@@ -15,7 +15,7 @@ import { IHoverInfo } from "./IHoverInfo";
 export class FormattedExpressionHoverInfo implements IHoverInfo {
 	constructor(private readonly _expression: TLE.Value) {}
 
-	public hoverType: string = "formattedExpression";
+	public hoverType = "formattedExpression";
 
 	public get span(): Span {
 		return this._expression.getSpan();
@@ -30,7 +30,7 @@ export class FormattedExpressionHoverInfo implements IHoverInfo {
 		markdown.appendMarkdown("Full expression:");
 		markdown.appendCodeblock(
 			`"[\n${formattedExpression}\n]"`,
-			"arm-template"
+			"arm-template",
 		);
 		return markdown;
 	}

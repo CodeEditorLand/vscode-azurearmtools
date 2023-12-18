@@ -11,12 +11,12 @@ import * as Json from "../language/json/JSON";
  */
 export function mapJsonObjectValue(
 	objectValue: Json.ObjectValue,
-	map: (prop: Json.Property) => Json.Property | Json.Property[]
+	map: (prop: Json.Property) => Json.Property | Json.Property[],
 ): Json.ObjectValue {
 	let changed = false;
 	const modifiedProps: Json.Property[] = [];
 
-	for (let prop of objectValue.properties) {
+	for (const prop of objectValue.properties) {
 		const newProp: Json.Property | Json.Property[] = map(prop);
 		if (newProp instanceof Json.Property) {
 			modifiedProps.push(newProp);
@@ -26,7 +26,7 @@ export function mapJsonObjectValue(
 		} else {
 			// Returned an array of properties - add them all
 			const newProperties: Json.Property[] = newProp;
-			for (let propElement of newProperties) {
+			for (const propElement of newProperties) {
 				modifiedProps.push(propElement);
 			}
 			changed = true;
@@ -37,7 +37,7 @@ export function mapJsonObjectValue(
 		// Create a new object from the modified properties
 		const modifiedObject = new Json.ObjectValue(
 			objectValue.span,
-			modifiedProps
+			modifiedProps,
 		);
 		return modifiedObject;
 	} else {

@@ -11,7 +11,7 @@ import * as https from "https";
 export function httpGet(url: string): Promise<string> {
 	assert(
 		url,
-		"Cannot make a HTTP request for a null, undefined, or empty url."
+		"Cannot make a HTTP request for a null, undefined, or empty url.",
 	);
 
 	if (!url.startsWith("http")) {
@@ -36,7 +36,7 @@ export function httpGet(url: string): Promise<string> {
 					200 <= response.statusCode &&
 					response.statusCode < 400
 				) {
-					let responseContent: string = "";
+					let responseContent = "";
 					let encoding: BufferEncoding | undefined;
 
 					response
@@ -45,7 +45,7 @@ export function httpGet(url: string): Promise<string> {
 								dataChunk instanceof Buffer
 									? dataChunk
 									: new Buffer(dataChunk);
-							let byteOrderMarkLength: number = 0;
+							let byteOrderMarkLength = 0;
 							if (!encoding) {
 								if (
 									dataChunk[0] === 0xff &&

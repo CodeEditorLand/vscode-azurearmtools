@@ -8,8 +8,8 @@ import {
 	DefinitionKind,
 	INamedDefinition,
 } from "../../language/INamedDefinition";
-import * as Json from "../../language/json/JSON";
 import { Span } from "../../language/Span";
+import * as Json from "../../language/json/JSON";
 import { CachedValue } from "../../util/CachedValue";
 import { mapJsonObjectValue } from "../../util/mapJsonObjectValue";
 import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
@@ -25,7 +25,7 @@ export interface IVariableDefinition extends INamedDefinition {
 }
 
 export function isVariableDefinition(
-	definition: INamedDefinition
+	definition: INamedDefinition,
 ): definition is IVariableDefinition {
 	return definition.definitionKind === DefinitionKind.Variable;
 }
@@ -84,7 +84,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 	}
 
 	private expandCopyBlocks(
-		value: Json.Value | undefined
+		value: Json.Value | undefined,
 	): Json.Value | undefined {
 		const valueAsObject = Json.asObjectValue(value);
 		if (!valueAsObject) {
@@ -121,20 +121,20 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 				const loopVarProperties: Json.Property[] = [];
 
 				// ... For each element of the copy block array, add a new loop variable
-				for (let copyElement of arrayValue.elements) {
+				for (const copyElement of arrayValue.elements) {
 					// Element has to be an object
 					const loopVarObject = Json.asObjectValue(copyElement);
 					if (loopVarObject) {
 						const name = Json.asStringValue(
 							loopVarObject.getPropertyValue(
-								templateKeys.copyName
-							)
+								templateKeys.copyName,
+							),
 						);
 						const input = loopVarObject.getPropertyValue(
-							templateKeys.copyInput
+							templateKeys.copyInput,
 						);
 						const count = loopVarObject.getPropertyValue(
-							templateKeys.copyCount
+							templateKeys.copyCount,
 						);
 
 						// If both name and count are there, ARM processes this as a copy block, otherwise it considers
@@ -159,7 +159,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 							const loopValueProperty = new Json.Property(
 								input.span,
 								name,
-								array
+								array,
 							);
 							loopVarProperties.push(loopValueProperty);
 						}
@@ -178,7 +178,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 					return new Json.Property(
 						prop.span,
 						prop.nameValue,
-						processedValue
+						processedValue,
 					);
 				}
 
@@ -210,7 +210,7 @@ export class TopLevelCopyBlockVariableDefinition extends VariableDefinition {
 		 * The "input" property from the copy block, represents the value of each instance of the
 		 * resulting variable array
 		 */
-		input: Json.Value | undefined
+		input: Json.Value | undefined,
 	) {
 		super();
 
@@ -226,7 +226,7 @@ export class TopLevelCopyBlockVariableDefinition extends VariableDefinition {
 	}
 
 	public static createIfValid(
-		copyVariableObject: Json.Value
+		copyVariableObject: Json.Value,
 	): IVariableDefinition | undefined {
 		// E.g.
 		//   "variables": {
@@ -242,14 +242,14 @@ export class TopLevelCopyBlockVariableDefinition extends VariableDefinition {
 		const asObject = Json.asObjectValue(copyVariableObject);
 		if (asObject) {
 			const nameValue = Json.asStringValue(
-				asObject.getPropertyValue(templateKeys.copyName)
+				asObject.getPropertyValue(templateKeys.copyName),
 			);
 			if (nameValue) {
 				const value = asObject.getPropertyValue(templateKeys.copyInput);
 				return new TopLevelCopyBlockVariableDefinition(
 					asObject,
 					nameValue,
-					value
+					value,
 				);
 			}
 		}

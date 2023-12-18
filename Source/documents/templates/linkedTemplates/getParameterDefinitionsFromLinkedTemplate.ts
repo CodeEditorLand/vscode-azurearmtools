@@ -11,7 +11,7 @@ import { ILinkedTemplateReference } from "./ILinkedTemplateReference";
 
 export function getParameterDefinitionsFromLinkedTemplate(
 	linkedTemplate: ILinkedTemplateReference,
-	provideOpenDocuments: IProvideOpenedDocuments
+	provideOpenDocuments: IProvideOpenedDocuments,
 ): IParameterDefinition[] {
 	let dt: DeploymentTemplateDoc | undefined;
 	try {

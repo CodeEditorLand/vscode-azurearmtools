@@ -9,8 +9,8 @@ import * as vscode from "vscode";
 import { IAzExtOutputChannel, IAzureUserInput } from "vscode-azureextensionui";
 import { LanguageClient } from "vscode-languageclient/node";
 import { configPrefix, isWebpack } from "../common";
-import { DeploymentFileMapping } from "./documents/parameters/DeploymentFileMapping";
 import { IProvideOpenedDocuments } from "./IProvideOpenedDocuments";
+import { DeploymentFileMapping } from "./documents/parameters/DeploymentFileMapping";
 import { LanguageServerState } from "./languageclient/startArmLanguageServer";
 import { ISnippetManager } from "./snippets/ISnippetManager";
 import { CompletionsSpy } from "./util/CompletionsSpy";
@@ -97,13 +97,13 @@ class ExtensionVariables {
 	// Suite support - lets us know when diagnostics have been completely published for a file
 	// tslint:disable-next-line: no-suspicious-comment
 	// TODO: Switch to using notifications?
-	public addCompletedDiagnostic: boolean = false;
+	public addCompletedDiagnostic = false;
 
 	// Note: We can't effectively change the configuration for all actions right now because
 	// the language server reads the vscode configuration directly in order to
 	// receive the parameter file mappings.
 	public readonly configuration: IConfiguration = new VsCodeConfiguration(
-		configPrefix
+		configPrefix,
 	);
 
 	public readonly completionItemsSpy: CompletionsSpy = new CompletionsSpy();

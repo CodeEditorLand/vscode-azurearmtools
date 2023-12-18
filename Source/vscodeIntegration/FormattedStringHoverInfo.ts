@@ -4,8 +4,8 @@
 // ---------------------------------------------------------------------------------------------
 
 import { MarkdownString } from "vscode";
-import * as Json from "../language/json/JSON";
 import { Span } from "../language/Span";
+import * as Json from "../language/json/JSON";
 import { IHoverInfo } from "./IHoverInfo";
 
 /**
@@ -14,14 +14,14 @@ import { IHoverInfo } from "./IHoverInfo";
 export class FormattedStringHoverInfo implements IHoverInfo {
 	constructor(private readonly _value: Json.StringValue) {}
 
-	public hoverType: string = "formattedString";
+	public hoverType = "formattedString";
 
 	public get span(): Span {
 		return this._value.span;
 	}
 
 	public getHoverText(): MarkdownString {
-		let formattedString = this._value.quotedValue
+		const formattedString = this._value.quotedValue
 			.replace(/\\r\\n/g, "\n")
 			.replace(/\\r/g, "\n")
 			.replace(/\\n/g, "\n")

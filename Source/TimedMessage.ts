@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { commands, MessageItem, Uri, window } from "vscode";
+import { MessageItem, Uri, commands, window } from "vscode";
 import {
-	callWithTelemetryAndErrorHandling,
 	IActionContext,
+	callWithTelemetryAndErrorHandling,
 } from "vscode-azureextensionui";
 import { ext } from "./extensionVariables";
 import { assert } from "./fixed_assert";
@@ -24,13 +24,13 @@ const debugSettings: ISettings = {
 
 export class TimedMessage {
 	private _settings: ISettings = defaultSettings;
-	private _alreadyCheckedThisSession: boolean = false;
+	private _alreadyCheckedThisSession = false;
 
 	public constructor(
 		private _postponeUntilTimeKey: string,
 		private _debugSettingKey: string,
 		private _message: string,
-		private _learnMoreUri: Uri
+		private _learnMoreUri: Uri,
 	) {}
 
 	/**
@@ -53,7 +53,7 @@ export class TimedMessage {
 
 				const postponeUntilTime: number =
 					ext.context.globalState.get<number>(
-						this._postponeUntilTimeKey
+						this._postponeUntilTimeKey,
 					) ?? 0;
 				if (postponeUntilTime < 0) {
 					// This means never show again
@@ -81,7 +81,7 @@ export class TimedMessage {
 					(await window.showInformationMessage(
 						this._message,
 						moreInfo,
-						neverAskAgain
+						neverAskAgain,
 					)) ?? neverAskAgain;
 				context.telemetry.properties.response = String(response.title);
 
@@ -91,15 +91,15 @@ export class TimedMessage {
 				if (response === moreInfo) {
 					await commands.executeCommand(
 						"vscode.open",
-						this._learnMoreUri
+						this._learnMoreUri,
 					);
 				} else {
 					assert(response === neverAskAgain);
 				}
-			}
+			},
 		).catch((err) => {
 			assert.fail(
-				"callWithTelemetryAndErrorHandling in TimedMessage.registerActiveUseNoThrow shouldn't throw"
+				"callWithTelemetryAndErrorHandling in TimedMessage.registerActiveUseNoThrow shouldn't throw",
 			);
 		});
 	}
@@ -118,7 +118,7 @@ export class TimedMessage {
 	private async postpone(): Promise<void> {
 		await ext.context.globalState.update(
 			this._postponeUntilTimeKey,
-			Date.now() + this._settings.delayBetweenAttempts
+			Date.now() + this._settings.delayBetweenAttempts,
 		);
 	}
 }

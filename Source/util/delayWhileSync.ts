@@ -6,8 +6,8 @@
 export async function delayWhileSync(
 	pollMs: number,
 	predicate: () => boolean,
-	timeout: number = 0,
-	timeoutErrorMessage: string = "Timed out"
+	timeout = 0,
+	timeoutErrorMessage = "Timed out",
 ): Promise<void> {
 	return new Promise((resolve, reject): void => {
 		const start = Date.now();

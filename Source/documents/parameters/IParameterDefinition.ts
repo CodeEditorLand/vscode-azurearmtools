@@ -3,8 +3,8 @@
 // ----------------------------------------------------------------------------
 
 import { INamedDefinition } from "../../language/INamedDefinition";
-import * as Json from "../../language/json/JSON";
 import { Span } from "../../language/Span";
+import * as Json from "../../language/json/JSON";
 import { ExpressionType } from "../templates/ExpressionType";
 import { IJsonDocument } from "../templates/IJsonDocument";
 

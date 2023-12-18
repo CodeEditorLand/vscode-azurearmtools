@@ -4,8 +4,8 @@
 
 import { assert } from "../../fixed_assert";
 import { DefinitionKind } from "../../language/INamedDefinition";
-import * as Json from "../../language/json/JSON";
 import { Span } from "../../language/Span";
+import * as Json from "../../language/json/JSON";
 import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
 import { IParameterDefinition } from "../parameters/IParameterDefinition";
 import { ExpressionType, toValidExpressionType } from "./ExpressionType";
@@ -20,23 +20,23 @@ export class UserFunctionParameterDefinition implements IParameterDefinition {
 	private constructor(
 		public readonly document: IJsonDocument,
 		private _name: Json.StringValue,
-		private _objectValue: Json.ObjectValue
+		private _objectValue: Json.ObjectValue,
 	) {
 		assert(_objectValue);
 	}
 
 	public static createIfValid(
 		document: IJsonDocument,
-		parameterObject: Json.ObjectValue
+		parameterObject: Json.ObjectValue,
 	): UserFunctionParameterDefinition | undefined {
 		const name = Json.asStringValue(
-			parameterObject.getPropertyValue("name")
+			parameterObject.getPropertyValue("name"),
 		);
 		if (name) {
 			return new UserFunctionParameterDefinition(
 				document,
 				name,
-				parameterObject
+				parameterObject,
 			);
 		}
 
@@ -53,7 +53,7 @@ export class UserFunctionParameterDefinition implements IParameterDefinition {
 			Json.asObjectValue(this._objectValue);
 		if (parameterDefinition) {
 			return Json.asStringValue(
-				parameterDefinition.getPropertyValue("type")
+				parameterDefinition.getPropertyValue("type"),
 			);
 		}
 

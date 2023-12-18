@@ -16,42 +16,39 @@ import * as Iterator from "../../util/Iterator";
  * This tokenizer knows nothing about JSON, it just recognizes basic punctuation
  * and groups of digits and letters (not grouped into numbers or strings etc).
  */
-export const enum TokenType {
-	LeftCurlyBracket,
-	RightCurlyBracket,
-	LeftSquareBracket,
-	RightSquareBracket,
-	LeftParenthesis,
-	RightParenthesis,
-	Underscore,
-	Period,
-	Dash,
-	Plus,
-	Comma,
-	Colon,
-	SingleQuote,
-	DoubleQuote,
-	Backslash,
-	ForwardSlash,
-	Asterisk,
-	Space,
-	Tab,
-	NewLine,
-	CarriageReturn,
-	CarriageReturnNewLine,
-	Letters,
-	Digits,
-	Unrecognized,
+export enum TokenType {
+	LeftCurlyBracket = 0,
+	RightCurlyBracket = 1,
+	LeftSquareBracket = 2,
+	RightSquareBracket = 3,
+	LeftParenthesis = 4,
+	RightParenthesis = 5,
+	Underscore = 6,
+	Period = 7,
+	Dash = 8,
+	Plus = 9,
+	Comma = 10,
+	Colon = 11,
+	SingleQuote = 12,
+	DoubleQuote = 13,
+	Backslash = 14,
+	ForwardSlash = 15,
+	Asterisk = 16,
+	Space = 17,
+	Tab = 18,
+	NewLine = 19,
+	CarriageReturn = 20,
+	CarriageReturnNewLine = 21,
+	Letters = 22,
+	Digits = 23,
+	Unrecognized = 24,
 }
 
 /**
  * An individual Token that has been parsed by a basic Tokenizer.
  */
 export class Token {
-	constructor(
-		private _text: string,
-		private _type: TokenType
-	) {}
+	constructor(private _text: string, private _type: TokenType) {}
 
 	/**
 	 * Gets the original string that this basic token was parsed from.
@@ -105,7 +102,7 @@ export const NewLine = new Token("\n", TokenType.NewLine);
 export const CarriageReturn = new Token("\r", TokenType.CarriageReturn);
 export const CarriageReturnNewLine = new Token(
 	"\r\n",
-	TokenType.CarriageReturnNewLine
+	TokenType.CarriageReturnNewLine,
 );
 
 /**
@@ -134,7 +131,7 @@ export function Unrecognized(text: string): Token {
  */
 export class Tokenizer implements Iterator.Iterator<Token> {
 	private _textLength: number;
-	private _textIndex: number = -1;
+	private _textIndex = -1;
 
 	private _currentToken: Token | undefined;
 
@@ -150,12 +147,12 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 		const charactersAfterCurrent = 50;
 		return `${this._text.slice(
 			this._textIndex - charactersBeforeCurrent,
-			this._textIndex
+			this._textIndex,
 		)}<<${
 			this._currentToken ? this._currentToken.toString() : ""
 		}>>${this._text.slice(
 			this._textIndex + 1,
-			this._textIndex + 1 + charactersAfterCurrent
+			this._textIndex + 1 + charactersAfterCurrent,
 		)}`;
 	}
 
@@ -201,9 +198,7 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 			this.nextCharacter();
 		}
 
-		if (!this.currentCharacter) {
-			this._currentToken = undefined;
-		} else {
+		if (this.currentCharacter) {
 			switch (this.currentCharacter) {
 				case "{":
 					this._currentToken = LeftCurlyBracket;
@@ -326,12 +321,14 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 						this._currentToken = Digits(this.readWhile(isDigit));
 					} else {
 						this._currentToken = Unrecognized(
-							this.currentCharacter
+							this.currentCharacter,
 						);
 						this.nextCharacter();
 					}
 					break;
 			}
+		} else {
+			this._currentToken = undefined;
 		}
 
 		return !!this._currentToken;

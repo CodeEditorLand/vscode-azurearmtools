@@ -6,7 +6,7 @@ import * as fse from "fs-extra";
 import { Uri } from "vscode";
 
 export async function pathExistsNoThrow(
-	path: Uri | string | undefined
+	path: Uri | string | undefined,
 ): Promise<boolean> {
 	try {
 		const localPath = path instanceof Uri ? path.fsPath : path;

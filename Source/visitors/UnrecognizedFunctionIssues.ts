@@ -7,21 +7,18 @@ import { IssueKind } from "../language/IssueKind";
 import { Span } from "../language/Span";
 
 export class UnrecognizedBuiltinFunctionIssue extends Issue {
-	constructor(
-		span: Span,
-		private _functionName: string
-	) {
+	constructor(span: Span, private _functionName: string) {
 		super(
 			span,
 			`Unrecognized function name '${_functionName}'.`,
-			IssueKind.undefinedFunc
+			IssueKind.undefinedFunc,
 		);
 	}
 
 	public translate(movement: number): Issue {
 		return new UnrecognizedBuiltinFunctionIssue(
 			this.span.translate(movement),
-			this.functionName
+			this.functionName,
 		);
 	}
 
@@ -31,21 +28,18 @@ export class UnrecognizedBuiltinFunctionIssue extends Issue {
 }
 
 export class UnrecognizedUserNamespaceIssue extends Issue {
-	constructor(
-		span: Span,
-		private _namspaceName: string
-	) {
+	constructor(span: Span, private _namspaceName: string) {
 		super(
 			span,
 			`Unrecognized user-defined function namespace '${_namspaceName}'.`,
-			IssueKind.undefinedNs
+			IssueKind.undefinedNs,
 		);
 	}
 
 	public translate(movement: number): Issue {
 		return new UnrecognizedUserNamespaceIssue(
 			this.span.translate(movement),
-			this._namspaceName
+			this._namspaceName,
 		);
 	}
 
@@ -58,12 +52,12 @@ export class UnrecognizedUserFunctionIssue extends Issue {
 	constructor(
 		span: Span,
 		private _namespaceName: string,
-		private _functionName: string
+		private _functionName: string,
 	) {
 		super(
 			span,
 			`Unrecognized function name '${_functionName}' in user-defined namespace '${_namespaceName}'.`,
-			IssueKind.undefinedUdf
+			IssueKind.undefinedUdf,
 		);
 	}
 
@@ -71,7 +65,7 @@ export class UnrecognizedUserFunctionIssue extends Issue {
 		return new UnrecognizedUserFunctionIssue(
 			this.span.translate(movement),
 			this.namespaceName,
-			this.functionName
+			this.functionName,
 		);
 	}
 

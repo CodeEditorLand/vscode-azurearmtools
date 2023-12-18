@@ -9,10 +9,10 @@ import { DeploymentTemplateDoc } from "./documents/templates/DeploymentTemplateD
 
 export interface IProvideOpenedDocuments {
 	getOpenedDeploymentTemplate(
-		documentOrUri: Uri
+		documentOrUri: Uri,
 	): DeploymentTemplateDoc | undefined;
 	setOpenedDeploymentDocument(
 		documentOrUri: Uri,
-		document: DeploymentDocument
+		document: DeploymentDocument,
 	): void;
 }

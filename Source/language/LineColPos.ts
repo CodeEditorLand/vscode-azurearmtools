@@ -6,10 +6,7 @@ import * as assert from "assert";
 import { nonNullValue } from "../util/nonNull";
 
 export class LineColPos {
-	constructor(
-		private _line: number,
-		private _column: number
-	) {
+	constructor(private _line: number, private _column: number) {
 		nonNullValue(_line, "_line");
 		assert(_line >= 0, "_line cannot be less than 0");
 		nonNullValue(_column, "_column");

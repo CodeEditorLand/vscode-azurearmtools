@@ -9,7 +9,7 @@ import { CaseInsensitiveMap } from "../util/CaseInsensitiveMap";
 import { getAvailableResourceTypesAndVersionsNoThrow } from "./getAvailableResourceTypesAndVersionsNoThrow";
 
 export async function showAvailableResourceTypesAndVersions(
-	schema: string
+	schema: string,
 ): Promise<void> {
 	await callWithTelemetryAndErrorHandlingSync(
 		"showAvailableResourceTypesAndVersions",
@@ -23,6 +23,6 @@ export async function showAvailableResourceTypesAndVersions(
 					ext.outputChannel.appendLine(`${key}@${version}`);
 				}
 			}
-		}
+		},
 	);
 }

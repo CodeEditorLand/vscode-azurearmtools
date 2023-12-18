@@ -20,24 +20,24 @@ import { IActionContext } from "vscode-azureextensionui";
 import { configKeys, templateKeys } from "../../../common";
 import { TemplateScopeKind } from "../../../extension.bundle";
 import { ext } from "../../extensionVariables";
+import { INamedDefinition } from "../../language/INamedDefinition";
+import { Issue } from "../../language/Issue";
+import { IssueKind } from "../../language/IssueKind";
+import { ReferenceList } from "../../language/ReferenceList";
+import { ContainsBehavior, Span } from "../../language/Span";
 import {
 	AzureRMAssets,
 	FunctionsMetadata,
 } from "../../language/expressions/AzureRMAssets";
-import { isTleExpression } from "../../language/expressions/isTleExpression";
 import * as TLE from "../../language/expressions/TLE";
-import { INamedDefinition } from "../../language/INamedDefinition";
-import { Issue } from "../../language/Issue";
-import { IssueKind } from "../../language/IssueKind";
+import { isTleExpression } from "../../language/expressions/isTleExpression";
 import * as Json from "../../language/json/JSON";
-import { ReferenceList } from "../../language/ReferenceList";
-import { ContainsBehavior, Span } from "../../language/Span";
 import { CachedValue } from "../../util/CachedValue";
 import { CaseInsensitiveMap } from "../../util/CaseInsensitiveMap";
+import { Histogram } from "../../util/Histogram";
 import { expectParameterDocumentOrUndefined } from "../../util/expectDocument";
 import { filterByType } from "../../util/filterByType";
 import { filterNotUndefined } from "../../util/filterNotUndefined";
-import { Histogram } from "../../util/Histogram";
 import { nonNullValue } from "../../util/nonNull";
 import { FindReferencesAndErrorsVisitor } from "../../visitors/FindReferencesAndErrorsVisitor";
 import { FunctionCountVisitor } from "../../visitors/FunctionCountVisitor";
@@ -58,6 +58,8 @@ import {
 	LinkedTemplateCodeLens,
 	NestedTemplateCodeLens,
 } from "./ChildTemplateCodeLens";
+import { getParentAndChildCodeLenses } from "./ParentAndChildCodeLenses";
+import { UserFunctionParameterDefinition } from "./UserFunctionParameterDefinition";
 import {
 	ParameterDefinitionCodeLens,
 	SelectParameterFileCodeLens,
@@ -65,7 +67,6 @@ import {
 } from "./deploymentTemplateCodeLenses";
 import { getResourcesInfo } from "./getResourcesInfo";
 import { INotifyTemplateGraphArgs } from "./linkedTemplates/linkedTemplates";
-import { getParentAndChildCodeLenses } from "./ParentAndChildCodeLenses";
 import { isArmSchema } from "./schemas";
 import { DeploymentScopeKind } from "./scopes/DeploymentScopeKind";
 import { IDeploymentSchemaReference } from "./scopes/IDeploymentSchemaReference";
@@ -77,7 +78,6 @@ import {
 	NestedTemplateOuterScope,
 	TopLevelTemplateScope,
 } from "./scopes/templateScopes";
-import { UserFunctionParameterDefinition } from "./UserFunctionParameterDefinition";
 
 export interface IScopedParseResult {
 	parseResult: TLE.TleParseResult;
@@ -106,7 +106,7 @@ const resourceTypesNotAllowedInRGDeployments: string[] = [
 ];
 const resourceTypesNotAllowedInRGDeploymentsLC: string[] =
 	resourceTypesNotAllowedInRGDeployments.map((resType) =>
-		resType.toLowerCase()
+		resType.toLowerCase(),
 	);
 
 /**
@@ -142,7 +142,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	constructor(
 		documentText: string,
 		documentUri: Uri,
-		public readonly documentVersion: number
+		public readonly documentVersion: number,
 	) {
 		super(documentText, documentUri, documentVersion);
 	}
@@ -153,8 +153,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 				new TopLevelTemplateScope(
 					this,
 					this.topLevelValue,
-					`Top-level template scope for ${this.documentUri}`
-				)
+					`Top-level template scope for ${this.documentUri}`,
+				),
 		);
 	}
 
@@ -165,7 +165,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	public get apiProfile(): string | undefined {
 		if (this.topLevelValue) {
 			const apiProfileValue = Json.asStringValue(
-				this.topLevelValue.getPropertyValue(templateKeys.apiProfile)
+				this.topLevelValue.getPropertyValue(templateKeys.apiProfile),
 			);
 			if (apiProfileValue) {
 				return apiProfileValue.unquotedValue;
@@ -188,13 +188,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	> {
 		return this._jsonStringValueToTleParseResultMap.getOrCacheValue(() => {
 			return StringParseAndScopeAssignmentVisitor.createParsedStringMap(
-				this
+				this,
 			);
 		});
 	}
 
 	public getErrorsCore(
-		_associatedParameters: DeploymentDocument | undefined
+		_associatedParameters: DeploymentDocument | undefined,
 	): Issue[] {
 		const errors: Issue[] = [];
 
@@ -220,7 +220,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			const tleUndefinedVariablePropertyVisitor =
 				UndefinedVariablePropertyVisitor.UndefinedVariablePropertyVisitor.visit(
 					tleExpression,
-					expressionScope
+					expressionScope,
 				);
 			for (const error of tleUndefinedVariablePropertyVisitor.errors) {
 				errors.push(error.translate(jsonTokenStartIndex));
@@ -234,8 +234,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			const variablesObject: Json.ObjectValue | undefined =
 				Json.asObjectValue(
 					deploymentTemplateObject.getPropertyValue(
-						templateKeys.variables
-					)
+						templateKeys.variables,
+					),
 				);
 			if (variablesObject) {
 				const referenceInVariablesFinder =
@@ -248,8 +248,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new Issue(
 							referenceSpan,
 							"reference() cannot be invoked inside of a variable definition.",
-							IssueKind.referenceInVar
-						)
+							IssueKind.referenceInVar,
+						),
 					);
 				}
 			}
@@ -270,7 +270,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		return unusedWarnings.concat(
 			inaccessibleScopeMembers,
 			incorrectScopeWarnings,
-			disabledValidationInfoWarnings
+			disabledValidationInfoWarnings,
 		);
 	}
 
@@ -297,7 +297,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						tleParseResult.parseResult.expression,
 						functions,
 						referenceListsMap,
-						issues
+						issues,
 					);
 				}
 			});
@@ -329,8 +329,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new Issue(
 							parameterDefinition.nameValue.span,
 							message,
-							IssueKind.unusedParam
-						)
+							IssueKind.unusedParam,
+						),
 					);
 				}
 			}
@@ -342,8 +342,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new Issue(
 							variableDefinition.nameValue.span,
 							`The variable '${variableDefinition.nameValue.toString()}' is never used.`,
-							IssueKind.unusedVar
-						)
+							IssueKind.unusedVar,
+						),
 					);
 				}
 			}
@@ -356,8 +356,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							new Issue(
 								member.nameValue.span,
 								`The user-defined function '${member.fullName}' is never used.`,
-								IssueKind.unusedUdf
-							)
+								IssueKind.unusedUdf,
+							),
 						);
 					}
 				}
@@ -380,7 +380,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					scope instanceof NestedTemplateInnerScope ||
 					scope instanceof LinkedTemplateScope
 				) {
-					let span: Span =
+					const span: Span =
 						scope.owningDeploymentResource.nameValue?.span ??
 						scope.owningDeploymentResource.span;
 					const kind =
@@ -417,7 +417,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		for (const scope of this.allScopes) {
 			if (scope instanceof NestedTemplateOuterScope) {
 				const parameters = getPropertyValueOfScope(
-					templateKeys.parameters
+					templateKeys.parameters,
 				);
 				// tslint:disable-next-line: strict-boolean-expressions
 				if (!!parameters?.asObjectValue?.properties?.length) {
@@ -425,13 +425,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new Issue(
 							parameters.span,
 							warningMessage,
-							IssueKind.inaccessibleNestedScopeMembers
-						)
+							IssueKind.inaccessibleNestedScopeMembers,
+						),
 					);
 				}
 
 				const variables = getPropertyValueOfScope(
-					templateKeys.variables
+					templateKeys.variables,
 				);
 				// tslint:disable-next-line: strict-boolean-expressions
 				if (!!variables?.asObjectValue?.properties.length) {
@@ -439,13 +439,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new Issue(
 							variables.span,
 							warningMessage,
-							IssueKind.inaccessibleNestedScopeMembers
-						)
+							IssueKind.inaccessibleNestedScopeMembers,
+						),
 					);
 				}
 
 				const namespaces = getPropertyValueOfScope(
-					templateKeys.functions
+					templateKeys.functions,
 				);
 				// tslint:disable-next-line: strict-boolean-expressions
 				if (!!namespaces?.asArrayValue?.elements.length) {
@@ -453,8 +453,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new Issue(
 							namespaces.span,
 							warningMessage,
-							IssueKind.inaccessibleNestedScopeMembers
-						)
+							IssueKind.inaccessibleNestedScopeMembers,
+						),
 					);
 				}
 
@@ -465,13 +465,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new Issue(
 							propertyValues.span,
 							warningMessage,
-							IssueKind.inaccessibleNestedScopeMembers
-						)
+							IssueKind.inaccessibleNestedScopeMembers,
+						),
 					);
 				}
 
 				function getPropertyValueOfScope(
-					propertyName: string
+					propertyName: string,
 				): Json.Value | undefined {
 					return scope.rootObject?.getProperty(propertyName)?.value;
 				}
@@ -503,14 +503,14 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					if (
 						resourceTypeLC &&
 						resourceTypesNotAllowedInRGDeploymentsLC.includes(
-							resourceTypeLC
+							resourceTypeLC,
 						)
 					) {
 						const warningMessage = `This resource type may not available for a deployment scoped to resource group. Are you using the correct schema?`;
 						const warning = new Issue(
 							resource.resourceTypeValue.span,
 							warningMessage,
-							IssueKind.incorrectScopeWarning
+							IssueKind.incorrectScopeWarning,
 						);
 
 						const schemaSpan =
@@ -540,7 +540,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			if (scope.parameterValuesSource) {
 				const scopeErrors = getMissingParameterErrors(
 					scope.parameterValuesSource,
-					scope.parameterDefinitionsSource
+					scope.parameterDefinitionsSource,
 				);
 				errors.push(...scopeErrors);
 			}
@@ -563,11 +563,11 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 				(stringValue: Json.StringValue): void => {
 					const tleParseResult =
 						this.getTLEParseResultFromJsonStringValue(stringValue);
-					let tleFunctionCountVisitor = FunctionCountVisitor.visit(
-						tleParseResult.parseResult.expression
+					const tleFunctionCountVisitor = FunctionCountVisitor.visit(
+						tleParseResult.parseResult.expression,
 					);
 					functionCounts.add(tleFunctionCountVisitor.functionCounts);
-				}
+				},
 			);
 		}
 
@@ -578,7 +578,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	 * Gets info about schema usage, useful for telemetry
 	 */
 	public getResourceUsage(
-		availableResourceTypesAndVersions: CaseInsensitiveMap<string, string[]>
+		availableResourceTypesAndVersions: CaseInsensitiveMap<string, string[]>,
 	): [Histogram, Histogram, Histogram] {
 		const resourceCounts = new Histogram();
 		const invalidResourceCounts = new Histogram();
@@ -592,8 +592,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		// Collect all resources used
 		const resources: Json.ArrayValue | undefined = this.topLevelValue
 			? Json.asArrayValue(
-					this.topLevelValue.getPropertyValue(templateKeys.resources)
-				)
+					this.topLevelValue.getPropertyValue(templateKeys.resources),
+			  )
 			: undefined;
 		if (resources) {
 			traverseResources(resources, undefined);
@@ -613,7 +613,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							apiVersion = match[2];
 							apiVersionsForType =
 								availableResourceTypesAndVersions.get(
-									resourceType
+									resourceType,
 								);
 						} else {
 							resourceType = key;
@@ -639,31 +639,31 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
 		function traverseResources(
 			resourcesObject: Json.ArrayValue,
-			parentKey: string | undefined
+			parentKey: string | undefined,
 		): void {
-			for (let resource of resourcesObject.elements) {
+			for (const resource of resourcesObject.elements) {
 				const resourceObject = Json.asObjectValue(resource);
 				if (resourceObject) {
 					const resourceType = Json.asStringValue(
 						resourceObject.getPropertyValue(
-							templateKeys.resourceType
-						)
+							templateKeys.resourceType,
+						),
 					);
 					if (resourceType) {
 						const apiVersion = Json.asStringValue(
 							resourceObject.getPropertyValue(
-								templateKeys.resourceApiVersion
-							)
+								templateKeys.resourceApiVersion,
+							),
 						);
 						let apiVersionString: string | undefined = apiVersion
 							? apiVersion.unquotedValue.trim().toLowerCase()
 							: undefined;
-						if (!apiVersionString) {
-							apiVersionString = apiProfileString;
-						} else {
+						if (apiVersionString) {
 							if (apiVersionString.startsWith("[")) {
 								apiVersionString = "[expression]";
 							}
+						} else {
+							apiVersionString = apiProfileString;
 						}
 
 						let resourceTypeString = resourceType.unquotedValue
@@ -673,7 +673,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							resourceTypeString = "[expression]";
 						}
 
-						let simpleKey = `${resourceTypeString}@${apiVersionString}`;
+						const simpleKey = `${resourceTypeString}@${apiVersionString}`;
 						const fullKey = parentKey
 							? `${simpleKey}[parent=${parentKey}]`
 							: simpleKey;
@@ -682,8 +682,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						// Check for child resources
 						const childResources = Json.asArrayValue(
 							resourceObject.getPropertyValue(
-								templateKeys.resources
-							)
+								templateKeys.resources,
+							),
 						);
 						if (childResources) {
 							traverseResources(childResources, simpleKey);
@@ -715,32 +715,32 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		const scopes = this.allScopes;
 		const linkedTemplateScopes = filterByType(scopes, LinkedTemplateScope);
 		const templateLinkObjects = filterNotUndefined(
-			linkedTemplateScopes.map((lts) => lts.templateLinkObject)
+			linkedTemplateScopes.map((lts) => lts.templateLinkObject),
 		);
 
 		return {
 			nestedOuterCount: scopes.filter(
 				(s) =>
 					s.scopeKind ===
-					TemplateScopeKind.NestedDeploymentWithOuterScope
+					TemplateScopeKind.NestedDeploymentWithOuterScope,
 			).length,
 			nestedInnerCount: scopes.filter(
 				(s) =>
 					s.scopeKind ===
-					TemplateScopeKind.NestedDeploymentWithInnerScope
+					TemplateScopeKind.NestedDeploymentWithInnerScope,
 			).length,
 			linkedTemplatesCount: linkedTemplateScopes.length,
 			linkedTemplatesUriCount: templateLinkObjects.filter(
 				(tl) =>
 					tl.getPropertyValue(
-						templateKeys.linkedDeploymentTemplateLinkUri
-					)?.asStringValue
+						templateKeys.linkedDeploymentTemplateLinkUri,
+					)?.asStringValue,
 			).length,
 			linkedTemplatesRelativePathCount: templateLinkObjects.filter(
 				(tl) =>
 					tl.getPropertyValue(
-						templateKeys.linkedDeploymentTemplateLinkRelativePath
-					)?.asStringValue
+						templateKeys.linkedDeploymentTemplateLinkRelativePath,
+					)?.asStringValue,
 			).length,
 		};
 	}
@@ -751,27 +751,27 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		documentLineIndex: number,
 		documentColumnIndex: number,
 		associatedParameters: DeploymentDocument | undefined,
-		allowOutOfBounds: boolean = true
+		allowOutOfBounds = true,
 	): TemplatePositionContext {
 		return TemplatePositionContext.fromDocumentLineAndColumnIndexes(
 			this,
 			documentLineIndex,
 			documentColumnIndex,
 			expectParameterDocumentOrUndefined(associatedParameters),
-			allowOutOfBounds
+			allowOutOfBounds,
 		);
 	}
 
 	public getContextFromDocumentCharacterIndex(
 		documentCharacterIndex: number,
 		associatedParameters: DeploymentDocument | undefined,
-		allowOutOfBounds: boolean = true
+		allowOutOfBounds = true,
 	): TemplatePositionContext {
 		return TemplatePositionContext.fromDocumentCharacterIndex(
 			this,
 			documentCharacterIndex,
 			expectParameterDocumentOrUndefined(associatedParameters),
-			allowOutOfBounds
+			allowOutOfBounds,
 		);
 	}
 
@@ -779,7 +779,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	 * Get the TLE parse results from this JSON string.
 	 */
 	public getTLEParseResultFromJsonStringValue(
-		jsonStringValue: Json.StringValue
+		jsonStringValue: Json.StringValue,
 	): IScopedParseResult {
 		const result =
 			this.quotedStringToTleParseResultMap.get(jsonStringValue);
@@ -800,10 +800,10 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	}
 
 	public findReferencesToDefinition(
-		definition: INamedDefinition
+		definition: INamedDefinition,
 	): ReferenceList {
 		const result: ReferenceList = new ReferenceList(
-			definition.definitionKind
+			definition.definitionKind,
 		);
 
 		// Add the definition of whatever's being referenced to the list
@@ -824,9 +824,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	}
 
 	private visitAllReachableStringValues(
-		onStringValue: (stringValue: Json.StringValue) => void
+		onStringValue: (stringValue: Json.StringValue) => void,
 	): void {
-		let value = this.topLevelValue;
+		const value = this.topLevelValue;
 		if (value) {
 			GenericStringVisitor.visit(value, onStringValue);
 		}
@@ -835,14 +835,14 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	public getCodeActions(
 		_associatedDocument: DeploymentDocument | undefined,
 		range: Range | Selection,
-		context: CodeActionContext
+		context: CodeActionContext,
 	): (Command | CodeAction)[] {
 		const actions: (CodeAction | Command)[] = [];
 
 		// Add missing parameter values
 		for (const scope of this.uniqueScopes) {
 			if (scope.parameterValuesSource) {
-				let parentParameterDefinitionsSource:
+				const parentParameterDefinitionsSource:
 					| IParameterDefinitionsSource
 					| undefined =
 					scope.parentWithUniqueParamsVarsAndFunctions
@@ -852,7 +852,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					scope.parameterDefinitionsSource,
 					parentParameterDefinitionsSource,
 					range,
-					context
+					context,
 				);
 				actions.push(...scopeActions);
 			}
@@ -867,35 +867,35 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	// tslint:disable-next-line: no-suspicious-comment
 	// tslint:disable-next-line: cyclomatic-complexity // TODO: Consider refactoring
 	private getExtractVarParamCodeActions(
-		range: Range | Selection
+		range: Range | Selection,
 	): (CodeAction | Command)[] {
-		let shouldAddExtractActions: boolean = false;
-		let pc = this.getContextFromDocumentLineAndColumnIndexes(
+		let shouldAddExtractActions = false;
+		const pc = this.getContextFromDocumentLineAndColumnIndexes(
 			range.start.line,
 			range.start.character,
-			undefined
+			undefined,
 		);
 
 		// We currently only handle single-line strings
 		if (range.start.line === range.end.line) {
 			// Can only call pc.jsonTokenStartIndex if we're inside a JSON token
 			if (pc.jsonToken && pc.jsonTokenStartIndex > 0) {
-				let jsonToken =
+				const jsonToken =
 					pc.document.getJSONValueAtDocumentCharacterIndex(
 						pc.jsonTokenStartIndex - 1,
-						ContainsBehavior.extended
+						ContainsBehavior.extended,
 					);
 				if (
 					(jsonToken instanceof Json.Property ||
 						jsonToken instanceof Json.ArrayValue) &&
 					pc.document.topLevelValue
 				) {
-					let scope = pc.getScope();
+					const scope = pc.getScope();
 					if (!scope.rootObject) {
 						return [];
 					}
-					let resources = scope.rootObject.getPropertyValue(
-						templateKeys.resources
+					const resources = scope.rootObject.getPropertyValue(
+						templateKeys.resources,
 					);
 					// Are we inside the resources object?
 					if (
@@ -904,34 +904,42 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					) {
 						return [];
 					}
-					let jsonValue =
+					const jsonValue =
 						pc.document.getJSONValueAtDocumentCharacterIndex(
 							pc.jsonTokenStartIndex,
-							ContainsBehavior.extended
+							ContainsBehavior.extended,
 						);
 					if (!jsonValue) {
 						return [];
 					}
 					const stringValue = jsonValue.asStringValue;
 					if (stringValue) {
-						if (!range.isEmpty) {
-							let startIndex = this.getDocumentCharacterIndex(
+						if (range.isEmpty) {
+							if (
+								this.isSimpleText(stringValue.quotedValue) &&
+								pc.jsonValue &&
+								jsonValue.span === pc.jsonValue.span
+							) {
+								shouldAddExtractActions = true;
+							}
+						} else {
+							const startIndex = this.getDocumentCharacterIndex(
 								range.start.line,
-								range.start.character
+								range.start.character,
 							);
-							let endIndex = this.getDocumentCharacterIndex(
+							const endIndex = this.getDocumentCharacterIndex(
 								range.end.line,
-								range.end.character
+								range.end.character,
 							);
-							let span: Span = new Span(
+							const span: Span = new Span(
 								startIndex,
-								endIndex - startIndex
+								endIndex - startIndex,
 							);
 							const selectedText =
 								this.getDocumentTextWithSquareBrackets(span);
 							if (
 								this.isParameterOrVariableReference(
-									selectedText
+									selectedText,
 								)
 							) {
 								return [];
@@ -942,31 +950,21 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 								selectedText &&
 								this.equalsWithSqareBrackets(
 									pc.jsonValue.asStringValue?.unquotedValue,
-									selectedText
+									selectedText,
 								)
 							) {
 								shouldAddExtractActions = true;
-							} else {
-								if (
-									isTleExpression(stringValue.unquotedValue)
-								) {
-									shouldAddExtractActions =
-										this.isValidExpression(
-											this.getDocumentTextWithSurroundingCharacters(
-												span,
-												"'",
-												"'"
-											)
-										);
-								}
-							}
-						} else {
-							if (
-								this.isSimpleText(stringValue.quotedValue) &&
-								pc.jsonValue &&
-								jsonValue.span === pc.jsonValue.span
+							} else if (
+								isTleExpression(stringValue.unquotedValue)
 							) {
-								shouldAddExtractActions = true;
+								shouldAddExtractActions =
+									this.isValidExpression(
+										this.getDocumentTextWithSurroundingCharacters(
+											span,
+											"'",
+											"'",
+										),
+									);
 							}
 						}
 					}
@@ -978,11 +976,11 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			return [
 				this.createExtractCommand(
 					"Extract Parameter...",
-					"extractParameter"
+					"extractParameter",
 				),
 				this.createExtractCommand(
 					"Extract Variable...",
-					"extractVariable"
+					"extractVariable",
 				),
 			];
 		}
@@ -991,12 +989,12 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	}
 
 	private getDocumentTextWithSquareBrackets(span: Span): string {
-		let text = this.getDocumentText(span);
+		const text = this.getDocumentText(span);
 		if (text.startsWith("[") && text.endsWith("]")) {
 			return text;
 		}
-		let extendedSpan = span.extendLeft(1).extendRight(1);
-		let extendedText = this.getDocumentText(extendedSpan);
+		const extendedSpan = span.extendLeft(1).extendRight(1);
+		const extendedText = this.getDocumentText(extendedSpan);
 		if (extendedText.startsWith("[") && extendedText.endsWith("]")) {
 			return extendedText;
 		}
@@ -1006,14 +1004,14 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	private getDocumentTextWithSurroundingCharacters(
 		span: Span,
 		start: string,
-		end: string
+		end: string,
 	): string {
-		let text = this.getDocumentText(span);
+		const text = this.getDocumentText(span);
 		if (text.startsWith(start) && text.endsWith(end)) {
 			return text;
 		}
-		let extendedSpan = span.extendLeft(1).extendRight(1);
-		let extendedText = this.getDocumentText(extendedSpan);
+		const extendedSpan = span.extendLeft(1).extendRight(1);
+		const extendedText = this.getDocumentText(extendedSpan);
 		if (extendedText.startsWith(start) && extendedText.endsWith(end)) {
 			return extendedText;
 		}
@@ -1040,7 +1038,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
 	private equalsWithSqareBrackets(
 		text: string | undefined,
-		selectedText: string
+		selectedText: string,
 	): boolean {
 		if (!text) {
 			return false;
@@ -1065,13 +1063,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
 	public getTextAtTleValue(
 		tleValue: TLE.Value,
-		parentStringToken: Json.Token
+		parentStringToken: Json.Token,
 	): string {
 		assert.equal(parentStringToken.type, Json.TokenType.QuotedString);
 		const spanOfValueInsideString = tleValue.getSpan();
 		return this.getDocumentText(
 			spanOfValueInsideString,
-			parentStringToken.span.startIndex
+			parentStringToken.span.startIndex,
 		);
 	}
 
@@ -1082,7 +1080,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	public getCodeLenses(
 		topLevelParameterValuesProvider:
 			| IParameterValuesSourceProvider
-			| undefined
+			| undefined,
 	): ResolvableCodeLens[] {
 		const lenses: ResolvableCodeLens[] = [];
 
@@ -1099,14 +1097,14 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					const parameterValuesSource = scope.parameterValuesSource;
 					paramValuesSourceProvider = parameterValuesSource
 						? new SynchronousParameterValuesSourceProvider(
-								parameterValuesSource
-							)
+								parameterValuesSource,
+						  )
 						: undefined;
 				}
 
 				const codelenses = this.getParameterCodeLenses(
 					scope,
-					paramValuesSourceProvider
+					paramValuesSourceProvider,
 				);
 				lenses.push(...codelenses);
 			}
@@ -1122,7 +1120,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		}
 
 		lenses.push(
-			...this.getChildTemplateCodeLenses(topLevelParameterValuesProvider)
+			...this.getChildTemplateCodeLenses(topLevelParameterValuesProvider),
 		);
 
 		return lenses;
@@ -1132,7 +1130,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		uniqueScope: TemplateScope,
 		parameterValuesSourceProvider:
 			| IParameterValuesSourceProvider
-			| undefined
+			| undefined,
 	): ResolvableCodeLens[] {
 		if (!ext.configuration.get<boolean>(configKeys.codeLensForParameters)) {
 			return [];
@@ -1159,14 +1157,14 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 				// Yes - indicate current parameter file path
 				assert(
 					uniqueScope instanceof TopLevelTemplateScope,
-					"Expecting top-level scope"
+					"Expecting top-level scope",
 				);
 				lenses.push(
 					new ShowCurrentParameterFileCodeLens(
 						uniqueScope,
 						parametersCodeLensSpan,
-						parameterFileUri
-					)
+						parameterFileUri,
+					),
 				);
 			}
 
@@ -1179,8 +1177,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					{
 						fullValidationStatus:
 							this.templateGraph?.fullValidationStatus,
-					}
-				)
+					},
+				),
 			);
 		}
 
@@ -1192,9 +1190,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						new ParameterDefinitionCodeLens(
 							uniqueScope,
 							pd,
-							parameterValuesSourceProvider
-						)
-				)
+							parameterValuesSourceProvider,
+						),
+				),
 			);
 		}
 
@@ -1204,10 +1202,10 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	private getChildTemplateCodeLenses(
 		topLevelParameterValuesProvider:
 			| IParameterValuesSourceProvider
-			| undefined
+			| undefined,
 	): ResolvableCodeLens[] {
 		const lenses: ResolvableCodeLens[] = [];
-		for (let scope of this.allScopes) {
+		for (const scope of this.allScopes) {
 			const owningDeploymentResource = (<Partial<IChildDeploymentScope>>(
 				scope
 			)).owningDeploymentResource;
@@ -1221,19 +1219,19 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 									this.templateGraph?.fullValidationStatus,
 									scope,
 									scope.rootObject.span,
-									topLevelParameterValuesProvider
-								)
+									topLevelParameterValuesProvider,
+								),
 							);
 						}
 						break;
 					case TemplateScopeKind.LinkedDeployment:
 						assert(
 							scope instanceof LinkedTemplateScope,
-							"Expected a LinkedTemplateScope"
+							"Expected a LinkedTemplateScope",
 						);
 						if (owningDeploymentResource) {
 							const templateLinkObject = scope.templateLinkObject;
-							let span = templateLinkObject
+							const span = templateLinkObject
 								? templateLinkObject.span
 								: owningDeploymentResource.span;
 
@@ -1243,8 +1241,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 									scope,
 									span,
 									scope.linkedFileReferences,
-									topLevelParameterValuesProvider
-								)
+									topLevelParameterValuesProvider,
+								),
 							);
 						}
 						break;
@@ -1265,7 +1263,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			const templateLinkObject = scope.templateLinkObject;
 			const relativePathStringValue: Json.StringValue | undefined =
 				templateLinkObject?.getPropertyValue(
-					templateKeys.linkedDeploymentTemplateLinkRelativePath
+					templateKeys.linkedDeploymentTemplateLinkRelativePath,
 				)?.asStringValue;
 			const relativePathValue: string | undefined =
 				relativePathStringValue?.unquotedValue;
@@ -1277,16 +1275,16 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 				const link = new DocumentLink(
 					getVSCodeRangeFromSpan(
 						this,
-						relativePathStringValue.unquotedSpan
-					)
+						relativePathStringValue.unquotedSpan,
+					),
 				);
 				// The target is simply calculated by appending the relative path to the
 				//   folder the template is in (which theoretically should be the same thing)
 				link.target = Uri.file(
 					path.resolve(
 						path.dirname(this.documentUri.fsPath),
-						relativePathValue
-					)
+						relativePathValue,
+					),
 				);
 
 				links.push(link);
@@ -1301,7 +1299,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	 */
 	public get uniqueScopes(): TemplateScope[] {
 		return this.allScopes.filter(
-			(scope) => scope.hasUniqueParamsVarsAndFunctions
+			(scope) => scope.hasUniqueParamsVarsAndFunctions,
 		);
 	}
 
@@ -1312,7 +1310,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	public get uniqueNonExternalScopes(): TemplateScope[] {
 		return this.allScopes.filter(
 			(scope) =>
-				scope.hasUniqueParamsVarsAndFunctions && !scope.isExternal
+				scope.hasUniqueParamsVarsAndFunctions && !scope.isExternal,
 		);
 	}
 
@@ -1321,12 +1319,12 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	 */
 	public get allScopes(): TemplateScope[] {
 		return this._allScopes.getOrCacheValue(() => {
-			let scopes: TemplateScope[] = [this.topLevelScope];
+			const scopes: TemplateScope[] = [this.topLevelScope];
 			traverse(this.topLevelScope);
 			return scopes;
 
 			function traverse(scope: TemplateScope | undefined): void {
-				for (let childScope of scope?.childScopes ?? []) {
+				for (const childScope of scope?.childScopes ?? []) {
 					assert(scopes.indexOf(childScope) < 0, "Already in array");
 					scopes.push(childScope);
 					traverse(childScope);
@@ -1354,7 +1352,7 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 	}
 
 	public static createParsedStringMap(
-		dt: DeploymentTemplateDoc
+		dt: DeploymentTemplateDoc,
 	): Map<Json.StringValue, IScopedParseResult> {
 		const visitor = new StringParseAndScopeAssignmentVisitor(dt);
 		return visitor.createMap();
@@ -1368,11 +1366,11 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 	public visitStringValue(jsonStringValue: Json.StringValue): void {
 		assert(
 			!this._jsonStringValueToTleParseResultMap.has(jsonStringValue),
-			"Already parsed this string"
+			"Already parsed this string",
 		);
 		// Parse the string as a possible TLE expression and cache
-		let tleParseResult: TLE.TleParseResult = TLE.Parser.parse(
-			jsonStringValue.quotedValue
+		const tleParseResult: TLE.TleParseResult = TLE.Parser.parse(
+			jsonStringValue.quotedValue,
 		);
 		this._jsonStringValueToTleParseResultMap.set(jsonStringValue, {
 			parseResult: tleParseResult,
@@ -1383,7 +1381,7 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 	public visitObjectValue(jsonObjectValue: Json.ObjectValue): void {
 		const currentScope = this._currentScope;
 		const newScope = this._uniqueTemplateScopes.find(
-			(scope) => scope.rootObject === jsonObjectValue
+			(scope) => scope.rootObject === jsonObjectValue,
 		);
 		if (newScope) {
 			this._scopeStack.push(this._currentScope);
@@ -1396,7 +1394,7 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 			assert(this._currentScope === newScope);
 			this._currentScope = nonNullValue(
 				this._scopeStack.pop(),
-				"Scopes stack should not be empty"
+				"Scopes stack should not be empty",
 			);
 			assert(this._currentScope === currentScope);
 		}

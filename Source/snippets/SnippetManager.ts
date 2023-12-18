@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fse from "fs-extra";
 import * as path from "path";
+import * as fse from "fs-extra";
 import * as stripJsonComments from "strip-json-comments";
 import { window } from "vscode";
 import {
-	callWithTelemetryAndErrorHandling,
 	IActionContext,
+	callWithTelemetryAndErrorHandling,
 } from "vscode-azureextensionui";
 import { assetsPath, extensionName } from "../../common";
 import { assert } from "../fixed_assert";
@@ -17,9 +17,9 @@ import { Span } from "../language/Span";
 import { CachedPromise } from "../util/CachedPromise";
 import { readUtf8FileWithBom } from "../util/readUtf8FileWithBom";
 import * as Completion from "../vscodeIntegration/Completion";
-import { InsertionContext } from "./InsertionContext";
 import { ISnippet } from "./ISnippet";
 import { ISnippetManager } from "./ISnippetManager";
+import { InsertionContext } from "./InsertionContext";
 import { Context, KnownContexts } from "./KnownContexts";
 import { createResourceSnippetFromFile } from "./resourceSnippetsConversion";
 
@@ -41,13 +41,13 @@ export class SnippetManager implements ISnippetManager {
 
 	public constructor(
 		private readonly _snippetFilePath: string,
-		private readonly _resourceSnippetsFolderPath: string | undefined
+		private readonly _resourceSnippetsFolderPath: string | undefined,
 	) {}
 
 	public static createDefault(): ISnippetManager {
 		return new SnippetManager(
 			path.join(assetsPath, "armsnippets.jsonc"),
-			path.join(assetsPath, "resourceSnippets")
+			path.join(assetsPath, "resourceSnippets"),
 		);
 	}
 
@@ -57,20 +57,20 @@ export class SnippetManager implements ISnippetManager {
 	private async getSnippetMap(): Promise<Map<string, ISnippetInternal>> {
 		return this._snippetMap.getOrCachePromise(async () => {
 			const map = await SnippetManager.readSnippetFile(
-				this._snippetFilePath
+				this._snippetFilePath,
 			);
 
 			if (this._resourceSnippetsFolderPath) {
 				const resourceSnippets =
 					await SnippetManager.readResourceSnippetsFromFolder(
-						this._resourceSnippetsFolderPath
+						this._resourceSnippetsFolderPath,
 					);
 				for (const snippet of resourceSnippets.entries()) {
 					const key = snippet[0];
 					const value = snippet[1];
 					assert(
 						!map.has(key),
-						`Resource snippet ${key} already has an entry in the main snippet file`
+						`Resource snippet ${key} already has an entry in the main snippet file`,
 					);
 					map.set(key, value);
 				}
@@ -81,7 +81,7 @@ export class SnippetManager implements ISnippetManager {
 	}
 
 	private static async readSnippetFile(
-		filePath: string
+		filePath: string,
 	): Promise<Map<string, ISnippetInternal>> {
 		const content: string = await readUtf8FileWithBom(filePath);
 		const preprocessed = stripJsonComments(content);
@@ -91,14 +91,14 @@ export class SnippetManager implements ISnippetManager {
 		const map = new Map<string, ISnippetInternal>();
 
 		for (const name of Object.getOwnPropertyNames(snippets).filter(
-			(n) => !n.startsWith("$")
+			(n) => !n.startsWith("$"),
 		)) {
 			const snippetFromFile = snippets[name];
 			const snippet = convertToInternalSnippet(name, snippetFromFile);
 			validateSnippet(snippet);
 			assert(
 				snippet.context !== KnownContexts.resources,
-				`Resource snippet "${snippet.name}" should be placed in the resourceSnippets folder instead of "${filePath}"`
+				`Resource snippet "${snippet.name}" should be placed in the resourceSnippets folder instead of "${filePath}"`,
 			);
 			map.set(name, snippet);
 		}
@@ -107,29 +107,29 @@ export class SnippetManager implements ISnippetManager {
 	}
 
 	private static async readResourceSnippetsFromFolder(
-		folderPath: string
+		folderPath: string,
 	): Promise<Map<string, ISnippetInternal>> {
 		const map = new Map<string, ISnippetInternal>();
 
 		const snippetFiles = await fse.readdir(folderPath);
 		for (const relativePath of snippetFiles.filter(
-			(f) => f !== "README.jsonc"
+			(f) => f !== "README.jsonc",
 		)) {
 			const snippetName = relativePath.replace(
 				/(.*)\.snippet\.json$/,
-				"$1"
+				"$1",
 			);
 			assert(
 				snippetName !== relativePath,
-				`Resource snippet ${snippetName} should have this filename: ${relativePath}`
+				`Resource snippet ${snippetName} should have this filename: ${relativePath}`,
 			);
 			const content: string = await readUtf8FileWithBom(
-				path.join(folderPath, relativePath)
+				path.join(folderPath, relativePath),
 			);
 			const snippet = createResourceSnippetFromFile(snippetName, content);
 			const internalSnippet = convertToInternalSnippet(
 				snippetName,
-				snippet
+				snippet,
 			);
 			validateSnippet(internalSnippet);
 			map.set(snippetName, internalSnippet);
@@ -142,7 +142,7 @@ export class SnippetManager implements ISnippetManager {
 	 * Retrieve all snippets that support a given context
 	 */
 	public async getSnippets(
-		context: Context | undefined
+		context: Context | undefined,
 	): Promise<ISnippet[]> {
 		const map = await this.getSnippetMap();
 		return Array.from(map.values())
@@ -160,7 +160,7 @@ export class SnippetManager implements ISnippetManager {
 	 */
 	public async getSnippetsAsCompletionItems(
 		insertionContext: InsertionContext,
-		span: Span
+		span: Span,
 	): Promise<Completion.Item[]> {
 		return (
 			(await callWithTelemetryAndErrorHandling(
@@ -176,7 +176,7 @@ export class SnippetManager implements ISnippetManager {
 						if (
 							doesSnippetSupportContext(
 								internalSnippet,
-								insertionContext.context
+								insertionContext.context,
 							)
 						) {
 							const snippet = convertToSnippet(internalSnippet);
@@ -215,13 +215,13 @@ export class SnippetManager implements ISnippetManager {
 									//   in the name or description, e.g. users can type "virtual" and find the "arm-vnet" snippet
 									filterText: `${label} ${name} ${snippet.description}`,
 									additionalEdits: additionalEdits,
-								})
+								}),
 							);
 						}
 					}
 
 					return items;
-				}
+				},
 			)) ?? []
 		);
 	}
@@ -232,7 +232,7 @@ export class SnippetManager implements ISnippetManager {
  */
 function doesSnippetSupportContext(
 	snippet: ISnippetInternal,
-	context: Context | undefined
+	context: Context | undefined,
 ): boolean {
 	if (!context || snippet.context !== context) {
 		return false;
@@ -245,34 +245,32 @@ function validateSnippet(snippet: ISnippetInternal): ISnippetInternal {
 	const context = snippet.context;
 	if (context === undefined) {
 		window.showWarningMessage(
-			`Snippet "${snippet.name}" has no context specified`
+			`Snippet "${snippet.name}" has no context specified`,
 		);
 	}
 
 	const looksLikeResource = snippet.body.some(
-		(line) => !!line.match(/"apiVersion"\s*:/)
+		(line) => !!line.match(/"apiVersion"\s*:/),
 	);
 	const isResource = doesSnippetSupportContext(
 		snippet,
-		KnownContexts.resources
+		KnownContexts.resources,
 	);
 	if (isResource) {
 		if (!looksLikeResource) {
 			window.showWarningMessage(
-				`Snippet "${snippet.name}" is marked with the resources context but doesn't look like a resource`
+				`Snippet "${snippet.name}" is marked with the resources context but doesn't look like a resource`,
 			);
 		}
 		if (!snippet.hasCurlyBraces) {
 			window.showWarningMessage(
-				`Snippet "${snippet.name}" is marked with the resources context but doesn't begin and end with curly braces`
+				`Snippet "${snippet.name}" is marked with the resources context but doesn't begin and end with curly braces`,
 			);
 		}
-	} else {
-		if (looksLikeResource) {
-			window.showWarningMessage(
-				`Snippet "${snippet.name}" looks like a resource but isn't supported in the resources context`
-			);
-		}
+	} else if (looksLikeResource) {
+		window.showWarningMessage(
+			`Snippet "${snippet.name}" looks like a resource but isn't supported in the resources context`,
+		);
 	}
 
 	return snippet;
@@ -280,7 +278,7 @@ function validateSnippet(snippet: ISnippetInternal): ISnippetInternal {
 
 function convertToInternalSnippet(
 	snippetName: string,
-	snippetFromFile: ISnippetDefinitionFromFile
+	snippetFromFile: ISnippetDefinitionFromFile,
 ): ISnippetInternal {
 	const hasCurlyBraces =
 		snippetFromFile.body.length >= 2 &&
@@ -299,7 +297,7 @@ function convertToInternalSnippet(
 }
 
 function convertToSnippet(snippet: ISnippetInternal): ISnippet {
-	let body = snippet.body;
+	const body = snippet.body;
 	const insertText = body.join("\n"); // vscode will change to EOL as appropriate
 	return {
 		name: snippet.name,

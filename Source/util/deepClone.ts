@@ -19,17 +19,17 @@ export function deepClone<T extends {}>(value: T): T {
 	} else if (value instanceof Array) {
 		result = [];
 		// tslint:disable-next-line:forin no-for-in // Grandfathered in
-		for (let index in value) {
+		for (const index in value) {
 			(<unknown[]>result)[index] = deepClone(value[index]);
 		}
 	} else {
 		result = {};
 		// tslint:disable-next-line:no-for-in // Grandfathered in
-		for (let propertyName in value) {
+		for (const propertyName in value) {
 			// tslint:disable-next-line: no-unsafe-any no-any
 			if (value.hasOwnProperty(propertyName)) {
 				(<{ [key: string]: unknown }>result)[propertyName] = deepClone(
-					value[propertyName]
+					value[propertyName],
 				);
 			}
 		}

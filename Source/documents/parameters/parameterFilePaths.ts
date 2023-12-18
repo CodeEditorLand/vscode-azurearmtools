@@ -10,7 +10,7 @@ import { normalizeFilePath } from "../../util/normalizedPaths";
 
 export function getRelativeParameterFilePath(
 	templateUri: Uri,
-	parameterUri: Uri
+	parameterUri: Uri,
 ): string {
 	const templatePath = normalizeFilePath(templateUri);
 	const paramPath = normalizeFilePath(parameterUri);
@@ -20,12 +20,12 @@ export function getRelativeParameterFilePath(
 
 export function resolveParameterFilePath(
 	templatePath: string,
-	parameterPathRelativeToTemplate: string
+	parameterPathRelativeToTemplate: string,
 ): string {
 	assert(path.isAbsolute(templatePath));
 	const resolved = path.resolve(
 		path.dirname(templatePath),
-		parameterPathRelativeToTemplate
+		parameterPathRelativeToTemplate,
 	);
 	return resolved;
 }

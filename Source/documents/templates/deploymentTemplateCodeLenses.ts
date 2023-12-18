@@ -26,7 +26,7 @@ export class ShowCurrentParameterFileCodeLens extends ResolvableCodeLens {
 	public constructor(
 		scope: TopLevelTemplateScope,
 		span: Span,
-		private parameterFileUri: Uri | undefined
+		private parameterFileUri: Uri | undefined,
 	) {
 		super(scope, span);
 	}
@@ -35,7 +35,7 @@ export class ShowCurrentParameterFileCodeLens extends ResolvableCodeLens {
 		if (this.parameterFileUri) {
 			const paramFile = getRelativeParameterFilePath(
 				this.scope.document.documentUri,
-				this.parameterFileUri
+				this.parameterFileUri,
 			);
 			this.command = {
 				title: `Parameter file: "${paramFile}"`,
@@ -63,7 +63,7 @@ export class SelectParameterFileCodeLens extends ResolvableCodeLens {
 		private _options: {
 			isForLinkedOrNestedTemplate?: true;
 			fullValidationStatus: IFullValidationStatus | undefined;
-		}
+		},
 	) {
 		super(scope, span);
 	}
@@ -77,8 +77,8 @@ export class SelectParameterFileCodeLens extends ResolvableCodeLens {
 				?.allParametersHaveDefaults
 				? "Select or create a parameter file..."
 				: this._options?.isForLinkedOrNestedTemplate
-					? `$(warning) Full template validation off. Add parameter file or top-level parameter defaults to enable.`
-					: "Select or create a parameter file to enable full validation...";
+				  ? `$(warning) Full template validation off. Add parameter file or top-level parameter defaults to enable.`
+				  : "Select or create a parameter file to enable full validation...";
 		}
 
 		this.command = {
@@ -101,7 +101,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 	public constructor(
 		scope: TemplateScope,
 		public readonly parameterDefinition: IParameterDefinition,
-		private parameterValuesSourceProvider: IParameterValuesSourceProvider
+		private parameterValuesSourceProvider: IParameterValuesSourceProvider,
 	) {
 		super(scope, parameterDefinition.nameValue.span);
 	}
@@ -115,15 +115,15 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 		} catch (err) {
 			if (this.parameterValuesSourceProvider.parameterFileUri) {
 				if (
-					!(await pathExistsNoThrow(
-						this.parameterValuesSourceProvider.parameterFileUri
-					))
+					await pathExistsNoThrow(
+						this.parameterValuesSourceProvider.parameterFileUri,
+					)
 				) {
-					errorMessage = `$(error) Parameter file not found`;
-				} else {
 					errorMessage = `$(error) Could not open parameter file: ${
 						parseError(err).message
 					}`;
+				} else {
+					errorMessage = `$(error) Parameter file not found`;
 				}
 			} else {
 				errorMessage = parseError(err).message;
@@ -133,7 +133,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 		let title: string | undefined;
 		if (paramsSource && !errorMessage) {
 			const param = paramsSource.getParameterValue(
-				this.parameterDefinition.nameValue.unquotedValue
+				this.parameterDefinition.nameValue.unquotedValue,
 			);
 			const paramValue = param?.value;
 			const paramReference = param?.reference;
@@ -175,15 +175,15 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 		} else if (paramsSource) {
 			// If the parameter doesn't have a value to navigate to, then show the
 			// properties section or top of the file
-			let span: Span =
+			const span: Span =
 				paramsSource.getParameterValue(
-					this.parameterDefinition.nameValue.unquotedValue
+					this.parameterDefinition.nameValue.unquotedValue,
 				)?.value?.span ??
 				paramsSource?.parameterValuesProperty?.nameValue.span ??
 				new Span(0, 0);
 			const range: Range = getVSCodeRangeFromSpan(
 				paramsSource.document,
-				span
+				span,
 			);
 
 			args = {

@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { StringValue } from "../json/JSON";
 import { Span } from "../Span";
+import { StringValue } from "../json/JSON";
 import { isTleExpression } from "./isTleExpression";
 
 /**
@@ -12,7 +12,7 @@ import { isTleExpression } from "./isTleExpression";
  * the square brackets are removed from the span.
  */
 export function getUnquotedSpanWithoutExpressionBraces(
-	stringValue: StringValue
+	stringValue: StringValue,
 ): Span {
 	let span = stringValue.unquotedSpan;
 

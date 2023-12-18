@@ -60,14 +60,11 @@ export enum ContainsBehavior {
 export class Span {
 	public static readonly empty: Span = new Span(0, 0);
 
-	constructor(
-		private _startIndex: number,
-		private _length: number
-	) {}
+	constructor(private _startIndex: number, private _length: number) {}
 
 	public static fromStartAndAfterEnd(
 		startIndex: number,
-		afterEndIndex: number
+		afterEndIndex: number,
 	): Span {
 		return new Span(startIndex, afterEndIndex - startIndex);
 	}
@@ -118,7 +115,7 @@ export class Span {
 	 */
 	public contains(
 		index: number,
-		containsBehavior: ContainsBehavior
+		containsBehavior: ContainsBehavior,
 	): boolean {
 		switch (containsBehavior) {
 			case ContainsBehavior.strict:
@@ -143,10 +140,10 @@ export class Span {
 	public union(rhs: Span | undefined): Span {
 		let result: Span;
 		if (!!rhs) {
-			let minStart = Math.min(this.startIndex, rhs.startIndex);
-			let maxAfterEndIndex = Math.max(
+			const minStart = Math.min(this.startIndex, rhs.startIndex);
+			const maxAfterEndIndex = Math.max(
 				this.afterEndIndex,
-				rhs.afterEndIndex
+				rhs.afterEndIndex,
 			);
 			result = new Span(minStart, maxAfterEndIndex - minStart);
 		} else {
@@ -162,7 +159,7 @@ export class Span {
 
 	public static union(
 		lhs: Span | undefined,
-		rhs: Span | undefined
+		rhs: Span | undefined,
 	): Span | undefined {
 		if (lhs) {
 			return lhs.union(rhs);
@@ -189,8 +186,8 @@ export class Span {
 			// if (lhs.endIndex < rhs.startIndex) {
 			//     return undefined;
 			// }
-			let start = rhs.startIndex;
-			let afterEnd =
+			const start = rhs.startIndex;
+			const afterEnd =
 				lhs.afterEndIndex < rhs.afterEndIndex
 					? lhs.afterEndIndex
 					: rhs.afterEndIndex;
@@ -212,7 +209,7 @@ export class Span {
 
 	public static intersect(
 		lhs: Span | undefined,
-		rhs: Span | undefined
+		rhs: Span | undefined,
 	): Span | undefined {
 		if (lhs) {
 			return lhs.intersect(rhs);

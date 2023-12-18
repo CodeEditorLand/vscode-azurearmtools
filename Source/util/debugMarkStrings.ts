@@ -10,20 +10,20 @@
 export function __debugMarkPositionInString(
 	text: string,
 	position: number,
-	insertTextAtPosition: string = "<CURSOR>",
-	charactersBeforePosition: number = 70,
-	charactersAfterPosition: number = 70
+	insertTextAtPosition = "<CURSOR>",
+	charactersBeforePosition = 70,
+	charactersAfterPosition = 70,
 ): string {
 	if (position >= text.length) {
 		const textAtEnd = `${text.slice(
-			text.length - charactersAfterPosition
+			text.length - charactersAfterPosition,
 		)}<END(${text.length})>`;
 		return `${textAtEnd}...<CURSOR=${position}>`;
 	}
 	const preTextIndex = position - charactersBeforePosition;
 	const preText = `${preTextIndex > 0 ? "..." : ""}${text.slice(
 		preTextIndex >= 0 ? preTextIndex : 0,
-		position
+		position,
 	)}`;
 
 	const postStart = position;
@@ -42,10 +42,10 @@ export function __debugMarkRangeInString(
 	text: string,
 	position: number,
 	length: number,
-	leftMarker: string = "<<",
-	rightMarker: string = ">>",
-	charactersBeforePosition: number = 25,
-	charactersAfterPosition: number = 50
+	leftMarker = "<<",
+	rightMarker = ">>",
+	charactersBeforePosition = 25,
+	charactersAfterPosition = 50,
 ): string {
 	if (position >= text.length) {
 		return __debugMarkPositionInString(
@@ -53,13 +53,13 @@ export function __debugMarkRangeInString(
 			position,
 			leftMarker + rightMarker,
 			charactersBeforePosition,
-			charactersAfterPosition
+			charactersAfterPosition,
 		);
 	}
 	const preTextIndex = position - charactersBeforePosition;
 	const preText = `${preTextIndex > 0 ? "..." : ""}${text.slice(
 		preTextIndex >= 0 ? preTextIndex : 0,
-		position
+		position,
 	)}`;
 
 	const postTextIndex = position + length;
@@ -69,6 +69,6 @@ export function __debugMarkRangeInString(
 
 	return `${preText}${leftMarker}${text.slice(
 		position,
-		position + length
+		position + length,
 	)}${rightMarker}${postText}`;
 }

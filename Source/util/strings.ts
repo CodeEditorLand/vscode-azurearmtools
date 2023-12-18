@@ -61,7 +61,7 @@ export function quote(value: string | undefined | null): string {
 }
 
 export function escape(
-	value: string | undefined | null
+	value: string | undefined | null,
 ): string | undefined | null {
 	let result: string | undefined | null;
 
@@ -113,7 +113,7 @@ export function escapeAndQuote(value: string | undefined | null): string {
  * Get the combined length of the provided values.
  */
 export function getCombinedLength(values: { length(): number }[]): number {
-	let result: number = 0;
+	let result = 0;
 	assert(values);
 	for (const value of values) {
 		result += value.length();
@@ -125,7 +125,7 @@ export function getCombinedLength(values: { length(): number }[]): number {
  * Get the combined text of the provided values.
  */
 export function getCombinedText(values: { toString(): string }[]): string {
-	let result: string = "";
+	let result = "";
 	assert(values);
 	for (const value of values) {
 		result += value.toString();

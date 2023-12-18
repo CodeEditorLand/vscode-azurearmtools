@@ -21,7 +21,7 @@ export class OutputDefinition {
 	// Returns undefined if not a valid type
 	public get validOutputType(): ExpressionType | undefined {
 		return toValidExpressionType(
-			this.outputType && this.outputType.unquotedValue
+			this.outputType && this.outputType.unquotedValue,
 		);
 	}
 

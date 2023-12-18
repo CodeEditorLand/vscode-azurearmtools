@@ -5,8 +5,8 @@
 
 import { Span } from "../language/Span";
 import * as Completion from "../vscodeIntegration/Completion";
-import { InsertionContext } from "./InsertionContext";
 import { ISnippet } from "./ISnippet";
+import { InsertionContext } from "./InsertionContext";
 import { Context } from "./KnownContexts";
 
 /**
@@ -29,6 +29,6 @@ export interface ISnippetManager {
 	 */
 	getSnippetsAsCompletionItems(
 		insertionContext: InsertionContext,
-		span: Span
+		span: Span,
 	): Promise<Completion.Item[]>;
 }
