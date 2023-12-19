@@ -10,32 +10,32 @@ import { ISnippetDefinitionFromFile } from "./SnippetManager";
 
 // Similar to Bicep snippet placeholder format
 const stringSnippetPlaceholderCommentPatternRegex = new RegExp(
-	`\\/\\*\\\${` + // start: /*"{
-		`(?<snippetPlaceholder>(.*?))` +
-		`}\\*\\/` + // end: }"*/
-		`\\s?` + // allow space after placeholder (see above)
-		`(` + // placeholder value, either:
+	"\\/\\*\\${" + // start: /*"{
+		"(?<snippetPlaceholder>(.*?))" +
+		"}\\*\\/" + // end: }"*/
+		"\\s?" + // allow space after placeholder (see above)
+		"(" + // placeholder value, either:
 		// /**/ `'(.*?)'` + // single-quoted value
 		/**/ `"(.*?)"` + // double-quoted value
 		///**/ `|\\w+` + // or word
 		// /**/ `|-\\d+` + // or integer value
 		///**/ `|.*?` + // or any other string of characters
-		`)`,
+		")",
 	"g",
 );
 
 const nonStringSnippetPlaceholderCommentPatternRegex = new RegExp(
-	`\\/\\*\\\${` + // start: /*{
-		`(?<snippetPlaceholder>(.*?))` +
-		`}\\*\\/` + // end: }*/
-		`\\s?` + // allow space after placeholder (see above)
-		`(` + // placeholder value, either:
+	"\\/\\*\\${" + // start: /*{
+		"(?<snippetPlaceholder>(.*?))" +
+		"}\\*\\/" + // end: }*/
+		"\\s?" + // allow space after placeholder (see above)
+		"(" + // placeholder value, either:
 		// /**/ `'(.*?)'` + // single-quoted value
 		///**/ `"(.*?)"` + // double-quoted value
-		/**/ `\\w+` + // word
+		/**/ "\\w+" + // word
 		// /**/ `|-\\d+` + // or integer value
 		///**/ `|.*?` + // or any other string of characters
-		`)`,
+		")",
 	"g",
 );
 

@@ -38,19 +38,21 @@ export class Issue {
 
 		switch (kind) {
 			case IssueKind.cannotValidateLinkedTemplate:
-			case IssueKind.cannotValidateNestedTemplate:
+			case IssueKind.cannotValidateNestedTemplate: {
 				this.severity = IssueSeverity.Information;
 				break;
+			}
 
 			case IssueKind.inaccessibleNestedScopeMembers:
 			case IssueKind.incorrectScopeWarning:
 			case IssueKind.unusedParam:
 			case IssueKind.unusedUdf:
 			case IssueKind.unusedUdfParam:
-			case IssueKind.unusedVar:
+			case IssueKind.unusedVar: {
 				this.severity = IssueSeverity.Warning;
 
 				break;
+			}
 
 			case IssueKind.badArgsCount:
 			case IssueKind.badFuncContext:
@@ -64,9 +66,10 @@ export class Issue {
 			case IssueKind.undefinedUdf:
 			case IssueKind.undefinedVar:
 			case IssueKind.undefinedVarProp:
-			case IssueKind.varInUdf:
+			case IssueKind.varInUdf: {
 				this.severity = IssueSeverity.Error;
 				break;
+			}
 
 			default:
 				assertNever(kind);

@@ -29,8 +29,9 @@ export function nonNullValue<T>(
 	if (isNullOrUndefined(value)) {
 		throw new Error(
 			// tslint:disable-next-line:prefer-template
-			"Internal error: Value should not be null or undefined" +
-				(propertyNameOrMessage ? `: ${propertyNameOrMessage}` : ""),
+			`Internal error: Value should not be null or undefined${
+				propertyNameOrMessage ? `: ${propertyNameOrMessage}` : ""
+			}`,
 		);
 	}
 
@@ -47,8 +48,9 @@ export function nonNullOrEmptyValue(
 	if (!value) {
 		throw new Error(
 			// tslint:disable-next-line:prefer-template
-			"Internal error: Value should not be null, undefined or empty" +
-				(propertyNameOrMessage ? `: ${propertyNameOrMessage}` : ""),
+			`Internal error: Value should not be null, undefined or empty${
+				propertyNameOrMessage ? `: ${propertyNameOrMessage}` : ""
+			}`,
 		);
 	}
 

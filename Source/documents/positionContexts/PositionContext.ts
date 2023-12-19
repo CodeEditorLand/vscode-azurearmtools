@@ -139,7 +139,7 @@ export abstract class PositionContext {
 		if (documentCharacterIndex > this._document.maxCharacterIndex) {
 			assert(
 				allowOutOfBounds,
-				`documentCharacterIndex cannot be greater than the maximum character index`,
+				"documentCharacterIndex cannot be greater than the maximum character index",
 			);
 			documentCharacterIndex = this._document.maxCharacterIndex;
 		}
@@ -224,7 +224,7 @@ export abstract class PositionContext {
 			"The jsonTokenStartIndex can only be requested when the PositionContext is inside a JSONToken.",
 		);
 		// tslint:disable-next-line:no-non-null-assertion no-unnecessary-type-assertion // Asserted
-		return this.jsonToken!.span.startIndex;
+		return this.jsonToken?.span.startIndex;
 	}
 
 	public get emptySpanAtDocumentCharacterIndex(): Span {

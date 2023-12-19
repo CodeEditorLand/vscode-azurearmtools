@@ -29,7 +29,7 @@ export function getParentAndChildCodeLenses(
 	const lenses: ResolvableCodeLens[] = [];
 
 	for (const resource of infos) {
-		if (!!resource.parent) {
+		if (resource.parent) {
 			lenses.push(new ParentCodeLens(scope, resource));
 		}
 		if (resource.children.length > 0) {
@@ -125,13 +125,6 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
  * A code lens that displays the children of a resource
  */
 export class ChildrenCodeLens extends ParentOrChildCodeLens {
-	public constructor(
-		scope: TemplateScope,
-		sourceResource: IJsonResourceInfo,
-	) {
-		super(scope, sourceResource);
-	}
-
 	public async resolve(): Promise<boolean> {
 		let title: string;
 		const children =
@@ -158,13 +151,6 @@ export class ChildrenCodeLens extends ParentOrChildCodeLens {
  * A code lens that displays the parent of a resource
  */
 export class ParentCodeLens extends ParentOrChildCodeLens {
-	public constructor(
-		scope: TemplateScope,
-		sourceResource: IJsonResourceInfo,
-	) {
-		super(scope, sourceResource);
-	}
-
 	public async resolve(): Promise<boolean> {
 		const parent = <IJsonResourceInfo | undefined>(
 			this.sourceResource?.parent

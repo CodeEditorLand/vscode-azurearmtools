@@ -85,7 +85,7 @@ function expressionsAreSame(expr1: string, expr2: string): boolean {
 		return true;
 	}
 
-	if (!isSingleQuoted(expr1) && !isSingleQuoted(expr2)) {
+	if (!(isSingleQuoted(expr1) || isSingleQuoted(expr2))) {
 		// Expressions could contain whitespace, so remove it
 		// CONSIDER: Do we need to be more exact than this?  For instance, could produce false positives when strings inside the expression differ by whitespace.  But probably not worth the extra work.
 		const expr1NoWhitespace = expr1.replace(/\s+/g, "");

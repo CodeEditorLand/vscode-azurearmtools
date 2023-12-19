@@ -420,7 +420,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					templateKeys.parameters,
 				);
 				// tslint:disable-next-line: strict-boolean-expressions
-				if (!!parameters?.asObjectValue?.properties?.length) {
+				if (parameters?.asObjectValue?.properties?.length) {
 					warnings.push(
 						new Issue(
 							parameters.span,
@@ -434,7 +434,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					templateKeys.variables,
 				);
 				// tslint:disable-next-line: strict-boolean-expressions
-				if (!!variables?.asObjectValue?.properties.length) {
+				if (variables?.asObjectValue?.properties.length) {
 					warnings.push(
 						new Issue(
 							variables.span,
@@ -448,7 +448,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					templateKeys.functions,
 				);
 				// tslint:disable-next-line: strict-boolean-expressions
-				if (!!namespaces?.asArrayValue?.elements.length) {
+				if (namespaces?.asArrayValue?.elements.length) {
 					warnings.push(
 						new Issue(
 							namespaces.span,
@@ -460,7 +460,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
 				const propertyValues = scope.parameterValuesProperty;
 				// tslint:disable-next-line: strict-boolean-expressions
-				if (!!propertyValues?.value?.asObjectValue?.properties.length) {
+				if (propertyValues?.value?.asObjectValue?.properties.length) {
 					warnings.push(
 						new Issue(
 							propertyValues.span,
@@ -506,7 +506,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							resourceTypeLC,
 						)
 					) {
-						const warningMessage = `This resource type may not available for a deployment scoped to resource group. Are you using the correct schema?`;
+						const warningMessage =
+							"This resource type may not available for a deployment scoped to resource group. Are you using the correct schema?";
 						const warning = new Issue(
 							resource.resourceTypeValue.span,
 							warningMessage,
@@ -898,10 +899,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						templateKeys.resources,
 					);
 					// Are we inside the resources object?
-					if (
-						!resources ||
-						!resources.span.intersect(jsonToken.span)
-					) {
+					if (!resources?.span.intersect(jsonToken.span)) {
 						return [];
 					}
 					const jsonValue =
@@ -1212,7 +1210,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			if (scope.rootObject || owningDeploymentResource) {
 				switch (scope.scopeKind) {
 					case TemplateScopeKind.NestedDeploymentWithInnerScope:
-					case TemplateScopeKind.NestedDeploymentWithOuterScope:
+					case TemplateScopeKind.NestedDeploymentWithOuterScope: {
 						if (scope.rootObject) {
 							lenses.push(
 								...NestedTemplateCodeLens.create(
@@ -1224,7 +1222,8 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							);
 						}
 						break;
-					case TemplateScopeKind.LinkedDeployment:
+					}
+					case TemplateScopeKind.LinkedDeployment: {
 						assert(
 							scope instanceof LinkedTemplateScope,
 							"Expected a LinkedTemplateScope",
@@ -1246,6 +1245,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							);
 						}
 						break;
+					}
 					default:
 						break;
 				}

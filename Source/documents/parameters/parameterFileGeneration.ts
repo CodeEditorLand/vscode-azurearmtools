@@ -103,22 +103,14 @@ export function createParameterFileContents(
 	const paramsContent = params.map((key, value) => value).join(`,${ext.EOL}`);
 
 	// tslint:disable-next-line: prefer-template
-	let contents =
-		`{` +
-		ext.EOL +
-		`${tab}"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",` +
-		ext.EOL +
-		`${tab}"contentVersion": "1.0.0.0",` +
-		ext.EOL +
-		`${tab}"parameters": {` +
-		ext.EOL;
+	let contents = `{${ext.EOL}${tab}"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",${ext.EOL}${tab}"contentVersion": "1.0.0.0",${ext.EOL}${tab}"parameters": {${ext.EOL}`;
 
 	if (params.size > 0) {
 		contents += indentMultilineString(paramsContent, tabSize * 2) + ext.EOL;
 	}
 
 	// tslint:disable-next-line: prefer-template
-	contents += `${tab}}` + ext.EOL + `}`;
+	contents += `${tab}}${ext.EOL}}`;
 
 	return contents;
 }
@@ -177,13 +169,9 @@ export function createParameterFromTemplateParameter(
 	).trimLeft();
 
 	// tslint:disable-next-line:prefer-template
-	return (
-		`"${parameter.nameValue.unquotedValue}": {` +
-		ext.EOL +
-		`${makeIndent(tabSize)}"value": ${valueIndentedAfterFirstLine}` +
-		ext.EOL +
-		`}`
-	);
+	return `"${parameter.nameValue.unquotedValue}": {${ext.EOL}${makeIndent(
+		tabSize,
+	)}"value": ${valueIndentedAfterFirstLine}${ext.EOL}}`;
 }
 
 function getDefaultValueFromType(
@@ -229,7 +217,7 @@ function createParameters(
 
 	for (const paramDef of scope.parameterDefinitionsSource
 		.parameterDefinitions) {
-		if (!onlyRequiredParameters || !paramDef.defaultValue) {
+		if (!(onlyRequiredParameters && paramDef.defaultValue)) {
 			params.set(
 				paramDef.nameValue.unquotedValue,
 				createParameterFromTemplateParameter(

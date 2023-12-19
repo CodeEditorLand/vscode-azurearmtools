@@ -69,33 +69,40 @@ export function escape(
 		result = "";
 		for (const c of value) {
 			switch (c) {
-				case "\b":
+				case "\b": {
 					result += "\\b";
 					break;
+				}
 
-				case "\f":
+				case "\f": {
 					result += "\\f";
 					break;
+				}
 
-				case "\n":
+				case "\n": {
 					result += "\\n";
 					break;
+				}
 
-				case "\r":
+				case "\r": {
 					result += "\\r";
 					break;
+				}
 
-				case "\t":
+				case "\t": {
 					result += "\\t";
 					break;
+				}
 
-				case "\v":
+				case "\v": {
 					result += "\\v";
 					break;
+				}
 
-				default:
+				default: {
 					result += c;
 					break;
+				}
 			}
 		}
 	} else {

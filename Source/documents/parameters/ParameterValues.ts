@@ -39,7 +39,7 @@ import {
 } from "./parameterFileGeneration";
 
 const EOL: string = ext.EOL;
-const newParameterValueSnippetLabel = `new-parameter-value`;
+const newParameterValueSnippetLabel = "new-parameter-value";
 
 /**
  * Code actions for adding missing parameter values
@@ -330,7 +330,7 @@ export function getCompletionForNewParameter(
 	const detail = "Insert new parameter";
 	const snippet =
 		// tslint:disable-next-line:prefer-template
-		`"\${1:parameter1}": {` + EOL + `\t"value": "\${2:value}"` + EOL + `}`;
+		`"\${1:parameter1}": {${EOL}\t"value": "\${2:value}"${EOL}}`;
 	const documentation = "documentation";
 	const label = newParameterValueSnippetLabel;
 
@@ -530,7 +530,7 @@ export function canAddPropertyValueHere(
 
 	// Check if we're inside a comment
 	if (
-		!!parameterValuesSource.document.jsonParseResult.getCommentTokenAtDocumentIndex(
+		parameterValuesSource.document.jsonParseResult.getCommentTokenAtDocumentIndex(
 			documentIndex,
 			ContainsBehavior.enclosed,
 		)

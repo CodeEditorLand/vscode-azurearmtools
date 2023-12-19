@@ -243,7 +243,7 @@ export class ExtractItem {
 			selection.start.character,
 			undefined,
 		);
-		if (pc.jsonValue && pc.jsonValue.asStringValue) {
+		if (pc.jsonValue?.asStringValue) {
 			const selectedText = editor.document.getText(selection);
 			if (selectedText === pc.jsonValue.asStringValue.unquotedValue) {
 				return false;

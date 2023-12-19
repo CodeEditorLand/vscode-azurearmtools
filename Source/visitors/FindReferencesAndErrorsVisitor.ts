@@ -78,7 +78,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 
 	// tslint:disable-next-line:cyclomatic-complexity
 	public visitFunctionCall(tleFunctionCall: FunctionCallValue): void {
-		if (!tleFunctionCall.nameToken || !tleFunctionCall.name) {
+		if (!(tleFunctionCall.nameToken && tleFunctionCall.name)) {
 			return;
 		}
 
@@ -164,15 +164,17 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 				);
 
 				switch (metadata.lowerCaseName) {
-					case templateKeys.parameters:
+					case templateKeys.parameters: {
 						// ... parameter reference
 						this.addParameterRefOrError(tleFunctionCall);
 						break;
+					}
 
-					case templateKeys.variables:
+					case templateKeys.variables: {
 						// ... variable reference
 						this.addVariableRefOrError(tleFunctionCall);
 						break;
+					}
 
 					default:
 						// Any other built-in function call

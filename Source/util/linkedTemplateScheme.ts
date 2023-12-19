@@ -18,11 +18,12 @@ export function prependLinkedTemplateScheme(uri: Uri): Uri {
 		case documentSchemes.linkedTemplate:
 			return uri;
 
-		default:
+		default: {
 			const newUri = `${documentSchemes.linkedTemplate}:${stringifyUri(
 				uri,
 			)}`;
 			return parseUri(newUri);
+		}
 	}
 }
 

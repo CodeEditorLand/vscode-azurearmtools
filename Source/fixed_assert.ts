@@ -15,13 +15,11 @@ export const breakOnAssert: boolean = /^(true|1)$/i.test(
 
 function fixed_ok(value: unknown, message?: string): void {
 	// tslint:disable-next-line: strict-boolean-expressions
-	if (!!value) {
+	if (value) {
 		return;
 	}
 
 	if (breakOnAssert) {
-		// tslint:disable:no-debugger
-		debugger;
 	}
 
 	if (isWebpack) {

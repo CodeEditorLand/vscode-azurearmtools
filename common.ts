@@ -26,12 +26,12 @@ while (true) {
 		break;
 	}
 	base = path.dirname(base);
-	assert(base != "", "Could not find base project path");
+	assert(base !== "", "Could not find base project path");
 }
 export const assetsPath = base;
 export const basePath = path.join(assetsPath, "..");
 export const iconsPath = path.join(basePath, "icons");
-assert(fs.existsSync(assetsPath), "Assets path does not exist: " + assetsPath);
+assert(fs.existsSync(assetsPath), `Assets path does not exist: ${assetsPath}`);
 
 export const DEFAULT_TESTCASE_TIMEOUT_MS = 5 * 60 * 1000;
 

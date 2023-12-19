@@ -16,8 +16,9 @@ export function wrapError(outerMessage: string, innerError: unknown): Error {
 	// Note: We add a space as well as an EOL because in some vscode scenarios the EOL
 	//   doesn't show up in the UI
 	// tslint:disable-next-line:prefer-template
-	const newMessage =
-		outerMessage + " " + os.EOL + parseError(innerError).message;
+	const newMessage = `${outerMessage} ${os.EOL}${
+		parseError(innerError).message
+	}`;
 
 	if (innerError instanceof Error) {
 		const copy = cloneError(innerError);

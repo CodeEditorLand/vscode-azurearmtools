@@ -57,13 +57,15 @@ export class AzureRMAssets {
 	public static getFunctionMetadataFromName(
 		functionName: string,
 	): BuiltinFunctionMetadata | undefined {
-		return this.getFunctionsMetadata().findbyName(functionName);
+		return AzureRMAssets.getFunctionsMetadata().findbyName(functionName);
 	}
 
 	public static getFunctionMetadataFromPrefix(
 		functionNamePrefix: string,
 	): BuiltinFunctionMetadata[] {
-		return this.getFunctionsMetadata().filterByPrefix(functionNamePrefix);
+		return AzureRMAssets.getFunctionsMetadata().filterByPrefix(
+			functionNamePrefix,
+		);
 	}
 
 	/**
@@ -233,7 +235,7 @@ export class BuiltinFunctionMetadata
 		const result: BuiltinFunctionMetadata[] = [];
 
 		// tslint:disable-next-line: strict-boolean-expressions
-		if (metadataJSON && metadataJSON.functionSignatures) {
+		if (metadataJSON?.functionSignatures) {
 			for (const functionMetadata of metadataJSON.functionSignatures) {
 				// tslint:disable-next-line: strict-boolean-expressions
 				if (functionMetadata) {

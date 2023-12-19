@@ -45,7 +45,7 @@ export class UserFunctionMetadata implements IFunctionMetadata {
 						type: pd.validType,
 					},
 			),
-			func.output && func.output.validOutputType,
+			func.output?.validOutputType,
 			[],
 		);
 	}

@@ -200,97 +200,115 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 
 		if (this.currentCharacter) {
 			switch (this.currentCharacter) {
-				case "{":
+				case "{": {
 					this._currentToken = LeftCurlyBracket;
 					this.nextCharacter();
 					break;
+				}
 
-				case "}":
+				case "}": {
 					this._currentToken = RightCurlyBracket;
 					this.nextCharacter();
 					break;
+				}
 
-				case "[":
+				case "[": {
 					this._currentToken = LeftSquareBracket;
 					this.nextCharacter();
 					break;
+				}
 
-				case "]":
+				case "]": {
 					this._currentToken = RightSquareBracket;
 					this.nextCharacter();
 					break;
+				}
 
-				case "(":
+				case "(": {
 					this._currentToken = LeftParenthesis;
 					this.nextCharacter();
 					break;
+				}
 
-				case ")":
+				case ")": {
 					this._currentToken = RightParenthesis;
 					this.nextCharacter();
 					break;
+				}
 
-				case "_":
+				case "_": {
 					this._currentToken = Underscore;
 					this.nextCharacter();
 					break;
+				}
 
-				case ".":
+				case ".": {
 					this._currentToken = Period;
 					this.nextCharacter();
 					break;
+				}
 
-				case "-":
+				case "-": {
 					this._currentToken = Dash;
 					this.nextCharacter();
 					break;
+				}
 
-				case "+":
+				case "+": {
 					this._currentToken = Plus;
 					this.nextCharacter();
 					break;
+				}
 
-				case ",":
+				case ",": {
 					this._currentToken = Comma;
 					this.nextCharacter();
 					break;
+				}
 
-				case ":":
+				case ":": {
 					this._currentToken = Colon;
 					this.nextCharacter();
 					break;
+				}
 
-				case `'`:
+				case `'`: {
 					this._currentToken = SingleQuote;
 					this.nextCharacter();
 					break;
+				}
 
-				case `"`:
+				case `"`: {
 					this._currentToken = DoubleQuote;
 					this.nextCharacter();
 					break;
+				}
 
-				case "\\":
+				case "\\": {
 					this._currentToken = Backslash;
 					this.nextCharacter();
 					break;
+				}
 
-				case "/":
+				case "/": {
 					this._currentToken = ForwardSlash;
 					this.nextCharacter();
 					break;
+				}
 
-				case "*":
+				case "*": {
 					this._currentToken = Asterisk;
 					this.nextCharacter();
 					break;
+				}
 
-				case "\n":
+				case "\n": {
 					this._currentToken = NewLine;
 					this.nextCharacter();
 					break;
+				}
 
-				case "\r":
+				case "\r": {
 					this.nextCharacter();
 					// tslint:disable-next-line: strict-boolean-expressions // false positive - nextCharacter modifies this.currentCharacter from "\r" value
 					if (
@@ -303,18 +321,21 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 						this._currentToken = CarriageReturn;
 					}
 					break;
+				}
 
-				case " ":
+				case " ": {
 					this._currentToken = Space;
 					this.nextCharacter();
 					break;
+				}
 
-				case "\t":
+				case "\t": {
 					this._currentToken = Tab;
 					this.nextCharacter();
 					break;
+				}
 
-				default:
+				default: {
 					if (isLetter(this.currentCharacter)) {
 						this._currentToken = Letters(this.readWhile(isLetter));
 					} else if (isDigit(this.currentCharacter)) {
@@ -326,6 +347,7 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 						this.nextCharacter();
 					}
 					break;
+				}
 			}
 		} else {
 			this._currentToken = undefined;

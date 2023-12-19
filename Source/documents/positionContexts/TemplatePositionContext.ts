@@ -182,8 +182,7 @@ export class TemplatePositionContext extends PositionContext {
 				TLE.asFunctionCallValue(tleInfo.tleValue);
 			if (tleFuncCall) {
 				if (
-					tleFuncCall.namespaceToken &&
-					tleFuncCall.namespaceToken.span.contains(
+					tleFuncCall.namespaceToken?.span.contains(
 						tleCharacterIndex,
 						ContainsBehavior.strict,
 					)
@@ -380,7 +379,7 @@ export class TemplatePositionContext extends PositionContext {
 
 			if (considerDefinitionItself) {
 				const definition = this.getDefinitionAtSite();
-				if (definition && definition.nameValue) {
+				if (definition?.nameValue) {
 					return {
 						referenceKind: ReferenceSiteKind.definition,
 						definition: definition,
@@ -665,7 +664,7 @@ export class TemplatePositionContext extends PositionContext {
 			const tleValue: TLE.Value | undefined = tleInfo.tleValue;
 			const scope: TemplateScope = tleInfo.scope;
 
-			if (!tleValue || !tleValue.contains(tleInfo.tleCharacterIndex)) {
+			if (!tleValue?.contains(tleInfo.tleCharacterIndex)) {
 				// No TLE value here. For instance, expression is empty, or before/after/on the square brackets
 				if (
 					TemplatePositionContext.isInsideSquareBrackets(
@@ -1013,8 +1012,7 @@ export class TemplatePositionContext extends PositionContext {
 		let completeUserFunctions: boolean;
 
 		if (
-			tleValue.nameToken &&
-			tleValue.nameToken.span.contains(
+			tleValue.nameToken?.span.contains(
 				tleCharacterIndex,
 				ContainsBehavior.extended,
 			)
@@ -1341,8 +1339,7 @@ export class TemplatePositionContext extends PositionContext {
 	}
 
 	public getSignatureHelp(): TLE.FunctionSignatureHelp | undefined {
-		const tleValue: TLE.Value | undefined =
-			this.tleInfo && this.tleInfo.tleValue;
+		const tleValue: TLE.Value | undefined = this.tleInfo?.tleValue;
 		if (this.tleInfo && tleValue) {
 			let functionToHelpWith: TLE.FunctionCallValue | undefined =
 				TLE.asFunctionCallValue(tleValue);
@@ -1350,7 +1347,7 @@ export class TemplatePositionContext extends PositionContext {
 				functionToHelpWith = TLE.asFunctionCallValue(tleValue.parent);
 			}
 
-			if (functionToHelpWith && functionToHelpWith.name) {
+			if (functionToHelpWith?.name) {
 				let functionMetadata: IFunctionMetadata | undefined;
 
 				if (functionToHelpWith.namespaceToken) {
@@ -1652,8 +1649,7 @@ export class TemplatePositionContext extends PositionContext {
 					);
 					includeRightParenthesisInCompletion = true;
 				} else if (
-					functionValue &&
-					functionValue.rightParenthesisToken &&
+					functionValue?.rightParenthesisToken &&
 					functionValue.argumentExpressions.length === 1
 				) {
 					// The parameters or variables function includes a right parenthesis already

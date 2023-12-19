@@ -56,12 +56,14 @@ export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
 		};
 
 		switch (scope.scopeKind) {
-			case TemplateScopeKind.NestedDeploymentWithInnerScope:
+			case TemplateScopeKind.NestedDeploymentWithInnerScope: {
 				title = "Nested template with inner scope";
 				break;
-			case TemplateScopeKind.NestedDeploymentWithOuterScope:
+			}
+			case TemplateScopeKind.NestedDeploymentWithOuterScope: {
 				title = "Nested template with outer scope";
 				break;
+			}
 			default:
 				assert.fail("Unexpected nested code lens type");
 		}
@@ -177,8 +179,10 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 				friendlyPath = path.relative(templateFolder, linkedUri.fsPath);
 				fullPath = linkedUri.fsPath;
 				if (
-					!path.isAbsolute(friendlyPath) &&
-					!friendlyPath.startsWith(".")
+					!(
+						path.isAbsolute(friendlyPath) ||
+						friendlyPath.startsWith(".")
+					)
 				) {
 					friendlyPath = `.${ext.pathSeparator}${friendlyPath}`;
 				}

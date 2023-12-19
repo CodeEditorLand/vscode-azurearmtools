@@ -60,8 +60,7 @@ class ReferenceInVariableDefinitionTLEVisitor extends TLE.TleVisitor {
 		functionValue: TLE.FunctionCallValue | undefined,
 	): void {
 		if (
-			functionValue &&
-			functionValue.nameToken &&
+			functionValue?.nameToken &&
 			functionValue.doesNameMatch("", "reference")
 		) {
 			this._referenceSpans.push(functionValue.nameToken.span);

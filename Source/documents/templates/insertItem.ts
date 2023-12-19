@@ -148,7 +148,7 @@ export class InsertItem {
 			return;
 		}
 		switch (sectionType) {
-			case TemplateSectionType.Functions:
+			case TemplateSectionType.Functions: {
 				await this.insertFunction(
 					template.topLevelValue,
 					textEditor,
@@ -158,7 +158,8 @@ export class InsertItem {
 					"Please type the output of the function.",
 				);
 				break;
-			case TemplateSectionType.Outputs:
+			}
+			case TemplateSectionType.Outputs: {
 				await this.insertOutput(
 					template.topLevelValue,
 					textEditor,
@@ -168,7 +169,8 @@ export class InsertItem {
 					"Please type the value of the output.",
 				);
 				break;
-			case TemplateSectionType.Parameters:
+			}
+			case TemplateSectionType.Parameters: {
 				await this.insertParameter(
 					template.topLevelValue,
 					textEditor,
@@ -178,7 +180,8 @@ export class InsertItem {
 					"Done inserting parameter.",
 				);
 				break;
-			case TemplateSectionType.Resources:
+			}
+			case TemplateSectionType.Resources: {
 				await this.insertResource(
 					template.topLevelValue,
 					textEditor,
@@ -188,7 +191,8 @@ export class InsertItem {
 					"Press TAB to move between the tab stops.",
 				);
 				break;
-			case TemplateSectionType.Variables:
+			}
+			case TemplateSectionType.Variables: {
 				await this.insertVariable(
 					template.topLevelValue,
 					textEditor,
@@ -198,6 +202,7 @@ export class InsertItem {
 					"Please type the value of the variable.",
 				);
 				break;
+			}
 			case TemplateSectionType.TopLevel:
 				assert.fail("Unknown insert item type!");
 			default:
@@ -318,16 +323,17 @@ export class InsertItem {
 		context: IActionContext,
 	): string | number | boolean | unknown | {} | [] {
 		switch (parameterType) {
-			case "int":
+			case "int": {
 				const intValue = Number(defaultValue);
-				if (isNaN(intValue)) {
+				if (Number.isNaN(intValue)) {
 					this.throwExpectedError(
 						"Please enter a valid integer value",
 						context,
 					);
 				}
 				return intValue;
-			case "array":
+			}
+			case "array": {
 				try {
 					return JSON.parse(defaultValue);
 				} catch (error) {
@@ -337,8 +343,9 @@ export class InsertItem {
 					);
 				}
 				break;
+			}
 			case "object":
-			case "secureobject":
+			case "secureobject": {
 				try {
 					return JSON.parse(defaultValue);
 				} catch (error) {
@@ -348,7 +355,8 @@ export class InsertItem {
 					);
 				}
 				break;
-			case "bool":
+			}
+			case "bool": {
 				switch (defaultValue) {
 					case "true":
 						return true;
@@ -361,6 +369,7 @@ export class InsertItem {
 						);
 				}
 				break;
+			}
 			case "string":
 			case "securestring":
 				return defaultValue;
@@ -455,7 +464,7 @@ export class InsertItem {
 		);
 		// tslint:disable-next-line: no-non-null-assertion // Will always match at least empty string
 		const templatePartInitialWhitespace: string =
-			templatePartStartLine.text.match(/^\s*/)![0];
+			templatePartStartLine.text.match(/^\s*/)?.[0];
 		let spacesPerTab = Math.max(1, Number(textEditor.options.tabSize) ?? 1);
 		const templatePartIndentColumn = templatePartInitialWhitespace.replace(
 			/\t/g,
@@ -474,7 +483,7 @@ export class InsertItem {
 					.afterEndIndex;
 
 		const endTabs = "\t".repeat(textIndentLevel - 1);
-		const endText = isFirstItem ? `\r\n${endTabs}` : ``;
+		const endText = isFirstItem ? `\r\n${endTabs}` : "";
 
 		const text =
 			typeof data === "object"
@@ -680,7 +689,7 @@ export class InsertItem {
 			if (resources.elements.length > 0) {
 				const lastIndex = resources.elements.length - 1;
 				index = resources.elements[lastIndex].span.afterEndIndex;
-				prepend = `,\r\n\t\t`;
+				prepend = ",\r\n\t\t";
 			}
 		} else {
 			if (!templateTopLevel) {

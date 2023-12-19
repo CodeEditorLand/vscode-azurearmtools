@@ -151,7 +151,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 				.map((mu) => `* ${mu}`)
 				.join(os.EOL)}`;
 		} else {
-			description = `No members`;
+			description = "No members";
 		}
 
 		return {

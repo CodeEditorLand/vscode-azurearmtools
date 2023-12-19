@@ -210,7 +210,7 @@ function buildTLEGrammar(): void {
 
 	// Remove preprocess section from the output grammar file
 	const outputGrammarAsObject = <IGrammar>JSON.parse(grammar);
-	delete outputGrammarAsObject.preprocess;
+	outputGrammarAsObject.preprocess = undefined;
 	grammar = JSON.stringify(outputGrammarAsObject, null, 4);
 
 	fse.writeFileSync(tleGrammarBuiltPath, grammar);
@@ -338,7 +338,7 @@ async function getLanguageServer(): Promise<void> {
 		);
 	} else {
 		console.warn(
-			`Language server not available, skipping packaging of language server binaries.`,
+			"Language server not available, skipping packaging of language server binaries.",
 		);
 	}
 }
@@ -405,7 +405,7 @@ async function packageVsix(): Promise<void> {
 
 		if (languageServerPackagingPath) {
 			console.warn(
-				`========== WARNING ==========: Packaging language server from local path instead of NuGet location`,
+				"========== WARNING ==========: Packaging language server from local path instead of NuGet location",
 			);
 			languageServerSourcePath = languageServerPackagingPath;
 			licenseSourcePath = path.join(
@@ -452,7 +452,7 @@ async function packageVsix(): Promise<void> {
 	// ... modify package.json to point to language server license
 	packageContents.license = `SEE LICENSE IN ${expectedLicenseFileName}`;
 	// ... remove vscode:prepublish script from package, since everything's already built
-	delete packageContents.scripts["vscode:prepublish"];
+	packageContents.scripts["vscode:prepublish"] = undefined;
 	fse.writeFileSync(
 		path.join(stagingFolder, "package.json"),
 		JSON.stringify(packageContents, null, 2),

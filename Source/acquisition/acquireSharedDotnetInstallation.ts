@@ -59,7 +59,8 @@ export async function acquireSharedDotnetInstallation(
 			}
 
 			if (message) {
-				const linkMessage = `This extension requires .NET Core for full functionality, but we were unable to download and install a local copy for the extension. If this error persists, please see https://aka.ms/vscode-armtools-dotnet for troubleshooting tips.`;
+				const linkMessage =
+					"This extension requires .NET Core for full functionality, but we were unable to download and install a local copy for the extension. If this error persists, please see https://aka.ms/vscode-armtools-dotnet for troubleshooting tips.";
 				const err = wrapError(linkMessage, `Details: ${message}`);
 				ext.outputChannel.appendLog(parseError(err).message);
 				ext.outputChannel.appendLog(

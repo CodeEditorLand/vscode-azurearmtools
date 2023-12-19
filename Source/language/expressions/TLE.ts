@@ -371,10 +371,10 @@ export class ArrayAccessValue extends ParentValue {
 
 	public toString(): string {
 		let result = `${this._source.toString()}[`;
-		if (!!this._indexValue) {
+		if (this._indexValue) {
 			result += this._indexValue.toString();
 		}
-		if (!!this._rightSquareBracketToken) {
+		if (this._rightSquareBracketToken) {
 			result += "]";
 		}
 		return result;
@@ -416,7 +416,7 @@ export class ArrayAccessValue extends ParentValue {
 		result += indexExpression;
 
 		// Closing "]"
-		if (!!this._rightSquareBracketToken) {
+		if (this._rightSquareBracketToken) {
 			result += "]";
 		}
 
@@ -473,10 +473,7 @@ export class FunctionCallValue extends ParentValue {
 	 */
 	public get namespace(): string | undefined {
 		// tslint:disable-next-line: strict-boolean-expressions
-		return (
-			(this._namespaceToken && this._namespaceToken.stringValue) ||
-			undefined
-		);
+		return this._namespaceToken?.stringValue || undefined;
 	}
 
 	/**
@@ -484,7 +481,7 @@ export class FunctionCallValue extends ParentValue {
 	 */
 	public get name(): string | undefined {
 		// tslint:disable-next-line: strict-boolean-expressions
-		return (this._nameToken && this._nameToken.stringValue) || undefined;
+		return this._nameToken?.stringValue || undefined;
 	}
 
 	/**
@@ -516,12 +513,9 @@ export class FunctionCallValue extends ParentValue {
 	public get fullNameSpan(): Span {
 		const result: Span | undefined = Span.union(
 			// tslint:disable-next-line: strict-boolean-expressions
-			Span.union(
-				this._namespaceToken && this._namespaceToken.span,
-				this.periodToken && this.periodToken.span,
-			),
+			Span.union(this._namespaceToken?.span, this.periodToken?.span),
 			// tslint:disable-next-line: strict-boolean-expressions
-			this._nameToken && this._nameToken.span,
+			this._nameToken?.span,
 		);
 
 		assert(
@@ -546,7 +540,7 @@ export class FunctionCallValue extends ParentValue {
 		// tslint:disable-next-line: strict-boolean-expressions
 		namespaceName = namespaceName || "";
 
-		if (!this.nameToken || !name) {
+		if (!(this.nameToken && name)) {
 			return false;
 		}
 
@@ -595,7 +589,7 @@ export class FunctionCallValue extends ParentValue {
 					--i
 				) {
 					const arg = this._argumentExpressions[i];
-					if (!!arg) {
+					if (arg) {
 						result = result.union(arg.getSpan());
 						break;
 					}
@@ -653,7 +647,7 @@ export class FunctionCallValue extends ParentValue {
 					);
 
 				case "variables":
-				case "parameters":
+				case "parameters": {
 					// Use ${name} format for variables/parameters call
 					if (this.argumentExpressions.length === 1) {
 						const arg1 = this.argumentExpressions[0];
@@ -662,6 +656,7 @@ export class FunctionCallValue extends ParentValue {
 						}
 					}
 					break;
+				}
 			}
 		}
 
@@ -681,7 +676,7 @@ export class FunctionCallValue extends ParentValue {
 		let result = this.fullName;
 
 		// Left paren
-		if (!!this._leftParenthesisToken) {
+		if (this._leftParenthesisToken) {
 			result += multiline
 				? `(\n${" ".repeat(currentIndent + tabSize)}`
 				: "(";
@@ -703,8 +698,8 @@ export class FunctionCallValue extends ParentValue {
 		}
 
 		// Right paren
-		if (!!this._rightParenthesisToken) {
-			result += `)`;
+		if (this._rightParenthesisToken) {
+			result += ")";
 		}
 
 		return result;
@@ -713,13 +708,13 @@ export class FunctionCallValue extends ParentValue {
 	private getStringFromArguments(expressionStrings: string[]): string {
 		let result = this.fullName;
 
-		if (!!this._leftParenthesisToken) {
+		if (this._leftParenthesisToken) {
 			result += "(";
 		}
 
 		result += expressionStrings.join(", ");
 
-		if (!!this._rightParenthesisToken) {
+		if (this._rightParenthesisToken) {
 			result += ")";
 		}
 
@@ -836,7 +831,7 @@ export class PropertyAccess extends ParentValue {
 
 		let propertyAccessSource: PropertyAccess | undefined =
 			asPropertyAccessValue(this._source);
-		while (propertyAccessSource && propertyAccessSource.nameToken) {
+		while (propertyAccessSource?.nameToken) {
 			result.push(propertyAccessSource.nameToken.stringValue);
 			propertyAccessSource = asPropertyAccessValue(
 				propertyAccessSource.source,
@@ -856,7 +851,7 @@ export class PropertyAccess extends ParentValue {
 				asPropertyAccessValue(currentSource);
 			assert(propertyAccess);
 			// tslint:disable-next-line:no-non-null-assertion // Asserted
-			currentSource = propertyAccess!.source;
+			currentSource = propertyAccess?.source;
 		}
 		return asFunctionCallValue(currentSource);
 	}
@@ -872,7 +867,7 @@ export class PropertyAccess extends ParentValue {
 	public getSpan(): Span {
 		let result = this._source.getSpan();
 
-		if (!!this._nameToken) {
+		if (this._nameToken) {
 			result = result.union(this._nameToken.span);
 		} else {
 			result = result.union(this._periodToken.span);
@@ -894,7 +889,7 @@ export class PropertyAccess extends ParentValue {
 
 	public toString(): string {
 		let result = `${this._source.toString()}.`;
-		if (!!this._nameToken) {
+		if (this._nameToken) {
 			result += this._nameToken.stringValue;
 		}
 		return result;
@@ -905,7 +900,7 @@ export class PropertyAccess extends ParentValue {
 		currentIndent: number,
 	): string {
 		let result = `${this._source.formatCore(options, currentIndent)}.`;
-		if (!!this._nameToken) {
+		if (this._nameToken) {
 			result += this._nameToken.stringValue;
 		}
 		return result;
@@ -1016,9 +1011,9 @@ export class BraceHighlighter {
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted above
 		highlightCharacterIndexes.push(
-			tleParseResult.leftSquareBracketToken!.span.startIndex,
+			tleParseResult.leftSquareBracketToken?.span.startIndex,
 		);
-		if (!!tleParseResult.rightSquareBracketToken) {
+		if (tleParseResult.rightSquareBracketToken) {
 			highlightCharacterIndexes.push(
 				tleParseResult.rightSquareBracketToken.span.startIndex,
 			);
@@ -1034,9 +1029,9 @@ export class BraceHighlighter {
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted
 		highlightCharacterIndexes.push(
-			tleFunction.leftParenthesisToken!.span.startIndex,
+			tleFunction.leftParenthesisToken?.span.startIndex,
 		);
-		if (!!tleFunction.rightParenthesisToken) {
+		if (tleFunction.rightParenthesisToken) {
 			highlightCharacterIndexes.push(
 				tleFunction.rightParenthesisToken.span.startIndex,
 			);
@@ -1053,7 +1048,7 @@ export class BraceHighlighter {
 		highlightCharacterIndexes.push(
 			tleArrayAccess.leftSquareBracketToken.span.startIndex,
 		);
-		if (!!tleArrayAccess.rightSquareBracketToken) {
+		if (tleArrayAccess.rightSquareBracketToken) {
 			highlightCharacterIndexes.push(
 				tleArrayAccess.rightSquareBracketToken.span.startIndex,
 			);
@@ -1209,7 +1204,7 @@ export class Parser {
 					}
 				}
 
-				if (!!rightSquareBracketToken) {
+				if (rightSquareBracketToken) {
 					while (<Token | undefined>tokenizer.current) {
 						errors.push(
 							new Issue(
@@ -1232,7 +1227,7 @@ export class Parser {
 
 				if (!expression) {
 					let errorSpan: Span = leftSquareBracketToken.span;
-					if (!!rightSquareBracketToken) {
+					if (rightSquareBracketToken) {
 						errorSpan = errorSpan.union(
 							rightSquareBracketToken.span,
 						);
@@ -1398,7 +1393,7 @@ export class Parser {
 		// tslint:disable-next-line:no-non-null-assertion // Asserted
 		assert.deepEqual(
 			TokenType.Literal,
-			tokenizer.current!.getType(),
+			tokenizer.current?.getType(),
 			"tokenizer's current token must be a literal.",
 		);
 		assert(errors);
@@ -1561,7 +1556,7 @@ export class Parser {
 					),
 				);
 			}
-		} else if (!!leftParenthesisToken) {
+		} else if (leftParenthesisToken) {
 			errors.push(
 				new Issue(
 					leftParenthesisToken.span,
@@ -1574,13 +1569,14 @@ export class Parser {
 		// tslint:disable-next-line: strict-boolean-expressions
 		if (tokenizer.current) {
 			switch (tokenizer.current.getType()) {
-				case TokenType.RightParenthesis:
+				case TokenType.RightParenthesis: {
 					rightParenthesisToken = tokenizer.current;
 					tokenizer.next();
 					break;
+				}
 
-				case TokenType.RightSquareBracket:
-					if (!!leftParenthesisToken) {
+				case TokenType.RightSquareBracket: {
+					if (leftParenthesisToken) {
 						errors.push(
 							new Issue(
 								tokenizer.current.span,
@@ -1590,6 +1586,7 @@ export class Parser {
 						);
 					}
 					break;
+				}
 			}
 		}
 
@@ -1610,13 +1607,11 @@ export class Parser {
 		function getFullNameSpan(): Span {
 			if (nameToken) {
 				// tslint:disable-next-line: strict-boolean-expressions
-				return nameToken.span.union(
-					namespaceToken && namespaceToken.span,
-				);
+				return nameToken.span.union(namespaceToken?.span);
 			} else {
 				assert(namespaceToken);
 				// tslint:disable-next-line: no-non-null-assertion
-				return namespaceToken!.span;
+				return namespaceToken?.span;
 			}
 		}
 	}
@@ -1682,16 +1677,13 @@ export class TleParseResult {
 		let result: Value | undefined;
 
 		let current: Value | undefined = this._expression;
-		if (current && current.contains(characterIndex)) {
+		if (current?.contains(characterIndex)) {
 			while (!result) {
 				const currentValue: Value = current;
 				if (currentValue instanceof FunctionCallValue) {
 					assert(currentValue.argumentExpressions);
 					for (const argumentExpression of currentValue.argumentExpressions) {
-						if (
-							argumentExpression &&
-							argumentExpression.contains(characterIndex)
-						) {
+						if (argumentExpression?.contains(characterIndex)) {
 							current = argumentExpression;
 							break;
 						}
@@ -1706,8 +1698,7 @@ export class TleParseResult {
 					if (currentValue.source.contains(characterIndex)) {
 						current = currentValue.source;
 					} else if (
-						currentValue.indexValue &&
-						currentValue.indexValue.contains(characterIndex)
+						currentValue.indexValue?.contains(characterIndex)
 					) {
 						current = currentValue.indexValue;
 					} else {
@@ -1802,53 +1793,59 @@ export class Tokenizer {
 		const currentBasicToken = this.currentBasicToken;
 		if (currentBasicToken) {
 			switch (currentBasicToken.getType()) {
-				case basic.TokenType.LeftParenthesis:
+				case basic.TokenType.LeftParenthesis: {
 					this._current = Token.createLeftParenthesis(
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.RightParenthesis:
+				case basic.TokenType.RightParenthesis: {
 					this._current = Token.createRightParenthesis(
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.LeftSquareBracket:
+				case basic.TokenType.LeftSquareBracket: {
 					this._current = Token.createLeftSquareBracket(
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.RightSquareBracket:
+				case basic.TokenType.RightSquareBracket: {
 					this._current = Token.createRightSquareBracket(
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.Comma:
+				case basic.TokenType.Comma: {
 					this._current = Token.createComma(
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.Period:
+				case basic.TokenType.Period: {
 					this._current = Token.createPeriod(
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
 					break;
+				}
 
 				case basic.TokenType.Space:
 				case basic.TokenType.Tab:
 				case basic.TokenType.CarriageReturn:
 				case basic.TokenType.NewLine:
-				case basic.TokenType.CarriageReturnNewLine:
+				case basic.TokenType.CarriageReturnNewLine: {
 					this._current = Token.createWhitespace(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
@@ -1856,8 +1853,9 @@ export class Tokenizer {
 						),
 					);
 					break;
+				}
 
-				case basic.TokenType.DoubleQuote:
+				case basic.TokenType.DoubleQuote: {
 					this._current = Token.createQuotedString(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
@@ -1865,8 +1863,9 @@ export class Tokenizer {
 						),
 					);
 					break;
+				}
 
-				case basic.TokenType.SingleQuote:
+				case basic.TokenType.SingleQuote: {
 					this._current = Token.createQuotedString(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
@@ -1874,9 +1873,10 @@ export class Tokenizer {
 						),
 					);
 					break;
+				}
 
 				case basic.TokenType.Dash:
-				case basic.TokenType.Digits:
+				case basic.TokenType.Digits: {
 					this._current = Token.createNumber(
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(
@@ -1884,8 +1884,9 @@ export class Tokenizer {
 						),
 					);
 					break;
+				}
 
-				default:
+				default: {
 					const literalTokens: basic.Token[] = [currentBasicToken];
 					this.nextBasicToken();
 
@@ -1907,6 +1908,7 @@ export class Tokenizer {
 						Utilities.getCombinedText(literalTokens),
 					);
 					break;
+				}
 			}
 		}
 
@@ -2060,7 +2062,7 @@ export function readQuotedTLEString(
 ): basic.Token[] {
 	assert(iterator.current());
 	// tslint:disable-next-line:no-non-null-assertion // Asserted
-	assert(iterator.current()!.getType() === basic.TokenType.SingleQuote);
+	assert(iterator.current()?.getType() === basic.TokenType.SingleQuote);
 	// tslint:disable-next-line:no-non-null-assertion // Asserted
 	const quotedStringTokens: basic.Token[] = [iterator.current()!];
 	iterator.moveNext();

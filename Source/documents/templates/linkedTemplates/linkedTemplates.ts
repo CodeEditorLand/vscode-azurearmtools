@@ -75,11 +75,7 @@ type OpenLinkedFileResult =
 	| { document: TextDocument; loadError?: Errorish }
 	| { document?: TextDocument; loadError: Errorish };
 
-class LinkedTemplatePathNotFoundError extends Error {
-	public constructor(message: string) {
-		super(message);
-	}
-}
+class LinkedTemplatePathNotFoundError extends Error {}
 
 /**
  * Handles a request from the language server to open a linked template

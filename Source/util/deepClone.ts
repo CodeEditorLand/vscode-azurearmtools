@@ -16,7 +16,7 @@ export function deepClone<T extends {}>(value: T): T {
 		typeof value === "string"
 	) {
 		result = value;
-	} else if (value instanceof Array) {
+	} else if (Array.isArray(value)) {
 		result = [];
 		// tslint:disable-next-line:forin no-for-in // Grandfathered in
 		for (const index in value) {

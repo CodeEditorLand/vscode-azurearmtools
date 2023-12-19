@@ -1108,8 +1108,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				}
 
 				if (
-					!treatAsDeploymentTemplate &&
-					!treatAsDeploymentParameters
+					!(treatAsDeploymentTemplate || treatAsDeploymentParameters)
 				) {
 					// If the document is not a deployment file, then we need
 					// to remove it from our deployment file cache. It doesn't
@@ -1271,7 +1270,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				return s;
 			}
 
-			return !!s ? "other" : "";
+			return s ? "other" : "";
 		}
 	}
 
@@ -1528,7 +1527,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						response.title;
 
 					switch (response.title) {
-						case yes.title:
+						case yes.title: {
 							await this.replaceSchema(
 								document.uri,
 								deploymentTemplate,
@@ -1538,18 +1537,21 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 							actionContext.telemetry.properties.replacedSchema =
 								"true";
 							return;
+						}
 						case notNow.title:
 							return;
-						case neverForThisFile.title:
+						case neverForThisFile.title: {
 							dontAskFiles.push(documentPath);
 							await ext.context.globalState.update(
 								globalStateKeys.dontAskAboutSchemaFiles,
 								dontAskFiles,
 							);
 							break;
-						default:
+						}
+						default: {
 							assert("queryUseNewerSchema: Unexpected response");
 							break;
+						}
 					}
 				},
 			).catch((err) => {
@@ -1914,7 +1916,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						const state = ext.languageServerState;
 						switch (state) {
 							case LanguageServerState.Failed:
-							case LanguageServerState.Stopped:
+							case LanguageServerState.Stopped: {
 								statusBarText =
 									state === LanguageServerState.Failed
 										? "$(error) ARM language server failed to start."
@@ -1924,6 +1926,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 								this._paramsStatusBarItem.color = undefined;
 								this._paramsStatusBarItem.show();
 								return;
+							}
 
 							case LanguageServerState.LoadingSchemas:
 							case LanguageServerState.NotStarted:
@@ -1968,7 +1971,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 								templateFileHasParamFile;
 							isWarning = !fullValidationOn;
 							statusBarText = isWarning
-								? `$(warning) WARNING: Full template validation off. Add param file or top-level param defaults to enable.`
+								? "$(warning) WARNING: Full template validation off. Add param file or top-level param defaults to enable."
 								: statusBarText;
 
 							this._paramsStatusBarItem.command =
@@ -2660,7 +2663,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					);
 
 					const refInfo = pc.getReferenceSiteInfo(true);
-					if (refInfo && refInfo.definition.nameValue) {
+					if (refInfo?.definition.nameValue) {
 						properties.definitionType =
 							refInfo.definition.definitionKind;
 

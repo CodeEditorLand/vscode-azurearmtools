@@ -71,13 +71,13 @@ export class SelectParameterFileCodeLens extends ResolvableCodeLens {
 	public async resolve(): Promise<boolean> {
 		let title: string;
 		if (this.parameterFileUri) {
-			title = `Change...`;
+			title = "Change...";
 		} else {
 			title = this._options.fullValidationStatus
 				?.allParametersHaveDefaults
 				? "Select or create a parameter file..."
 				: this._options?.isForLinkedOrNestedTemplate
-				  ? `$(warning) Full template validation off. Add parameter file or top-level parameter defaults to enable.`
+				  ? "$(warning) Full template validation off. Add parameter file or top-level parameter defaults to enable."
 				  : "Select or create a parameter file to enable full validation...";
 		}
 
@@ -123,7 +123,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 						parseError(err).message
 					}`;
 				} else {
-					errorMessage = `$(error) Parameter file not found`;
+					errorMessage = "$(error) Parameter file not found";
 				}
 			} else {
 				errorMessage = parseError(err).message;
@@ -140,7 +140,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 			const givenValueAsString = paramValue?.toFullFriendlyString();
 			const hasDefaultValue = !!this.parameterDefinition.defaultValue;
 
-			if (!!paramReference) {
+			if (paramReference) {
 				title = "Value: (KeyVault reference)";
 			} else if (givenValueAsString !== undefined) {
 				title = `Value: ${givenValueAsString}`;
@@ -158,7 +158,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 
 		if (title.length > this._maxCharactersInValue) {
 			// tslint:disable-next-line: prefer-template
-			title = title.slice(0, this._maxCharactersInValue) + "...";
+			title = `${title.slice(0, this._maxCharactersInValue)}...`;
 		}
 
 		let args: IGotoParameterValueArgs;

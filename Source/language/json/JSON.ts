@@ -287,11 +287,12 @@ export function readWhitespace(iterator: Iterator<basic.Token>): basic.Token[] {
 			case basic.TokenType.Tab:
 			case basic.TokenType.CarriageReturn:
 			case basic.TokenType.NewLine:
-			case basic.TokenType.CarriageReturnNewLine:
+			case basic.TokenType.CarriageReturnNewLine: {
 				whitespaceTokens.push(current);
 				iterator.moveNext();
 				current = iterator.current();
 				break;
+			}
 
 			default:
 				return whitespaceTokens;
@@ -467,7 +468,7 @@ export class Tokenizer {
 		this._current = undefined;
 		if (this.currentBasicToken()) {
 			switch (this.currentBasicTokenType()) {
-				case basic.TokenType.LeftCurlyBracket:
+				case basic.TokenType.LeftCurlyBracket: {
 					assert.deepStrictEqual(
 						this.currentBasicTokenType(),
 						basic.TokenType.LeftCurlyBracket,
@@ -477,51 +478,58 @@ export class Tokenizer {
 					);
 					this.moveNextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.RightCurlyBracket:
+				case basic.TokenType.RightCurlyBracket: {
 					this._current = RightCurlyBracket(
 						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.LeftSquareBracket:
+				case basic.TokenType.LeftSquareBracket: {
 					this._current = LeftSquareBracket(
 						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.RightSquareBracket:
+				case basic.TokenType.RightSquareBracket: {
 					this._current = RightSquareBracket(
 						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.Comma:
+				case basic.TokenType.Comma: {
 					this._current = Comma(this._currentTokenStartIndex);
 					this.moveNextBasicToken();
 					break;
+				}
 
-				case basic.TokenType.Colon:
+				case basic.TokenType.Colon: {
 					this._current = Colon(this._currentTokenStartIndex);
 					this.moveNextBasicToken();
 					break;
+				}
 
 				case basic.TokenType.Dash:
-				case basic.TokenType.Digits:
+				case basic.TokenType.Digits: {
 					this._current = Number(
 						this._currentTokenStartIndex,
 						readNumber(this.asBasicTokenIterator()),
 					);
 					break;
+				}
 
-				case basic.TokenType.ForwardSlash:
+				case basic.TokenType.ForwardSlash: {
 					this.moveNextBasicToken();
 					if (this.currentBasicToken()) {
 						switch (this.currentBasicTokenType()) {
-							case basic.TokenType.ForwardSlash:
+							case basic.TokenType.ForwardSlash: {
 								const lineCommentBasicTokens: basic.Token[] = [
 									basic.ForwardSlash,
 									basic.ForwardSlash,
@@ -544,8 +552,9 @@ export class Tokenizer {
 								);
 								this._commentsCount++;
 								break;
+							}
 
-							case basic.TokenType.Asterisk:
+							case basic.TokenType.Asterisk: {
 								const blockCommentBasicTokens: basic.Token[] = [
 									basic.ForwardSlash,
 									basic.Asterisk,
@@ -586,13 +595,15 @@ export class Tokenizer {
 								);
 								this._commentsCount++;
 								break;
+							}
 
-							default:
+							default: {
 								this._current = Literal(
 									this._currentTokenStartIndex,
 									[basic.ForwardSlash],
 								);
 								break;
+							}
 						}
 					} else {
 						this._current = Literal(this._currentTokenStartIndex, [
@@ -600,31 +611,34 @@ export class Tokenizer {
 						]);
 					}
 					break;
+				}
 
 				case basic.TokenType.Space:
 				case basic.TokenType.Tab:
 				case basic.TokenType.CarriageReturn:
 				case basic.TokenType.NewLine:
-				case basic.TokenType.CarriageReturnNewLine:
+				case basic.TokenType.CarriageReturnNewLine: {
 					this._current = Whitespace(
 						this._currentTokenStartIndex,
 						readWhitespace(this.asBasicTokenIterator()),
 					);
 					break;
+				}
 
 				case basic.TokenType.SingleQuote:
-				case basic.TokenType.DoubleQuote:
+				case basic.TokenType.DoubleQuote: {
 					this._current = QuotedString(
 						this._currentTokenStartIndex,
 						readQuotedString(this.asBasicTokenIterator()),
 					);
 					break;
+				}
 
-				case basic.TokenType.Letters:
+				case basic.TokenType.Letters: {
 					// tslint:disable-next-line: no-non-null-assertion // Validated by if
-					switch (this.currentBasicToken()!.toString()) {
+					switch (this.currentBasicToken()?.toString()) {
 						case "true":
-						case "false":
+						case "false": {
 							// tslint:disable-next-line: no-non-null-assertion // Validated by if
 							this._current = Boolean(
 								this._currentTokenStartIndex,
@@ -632,13 +646,15 @@ export class Tokenizer {
 							);
 							this.moveNextBasicToken();
 							break;
+						}
 
-						case "null":
+						case "null": {
 							this._current = Null(this._currentTokenStartIndex);
 							this.moveNextBasicToken();
 							break;
+						}
 
-						default:
+						default: {
 							// tslint:disable-next-line: no-non-null-assertion // Validated by if
 							const literalTokens: basic.Token[] = [
 								this.currentBasicToken()!,
@@ -662,10 +678,12 @@ export class Tokenizer {
 								literalTokens,
 							);
 							break;
+						}
 					}
 					break;
+				}
 
-				default:
+				default: {
 					// tslint:disable-next-line: no-non-null-assertion // Validated by if
 					this._current = Unrecognized(
 						this._currentTokenStartIndex,
@@ -673,6 +691,7 @@ export class Tokenizer {
 					);
 					this.moveNextBasicToken();
 					break;
+				}
 			}
 		}
 
@@ -893,18 +912,14 @@ export class ObjectValue extends Value {
 
 	public toFullFriendlyString(): string {
 		// tslint:disable-next-line: prefer-template
-		return (
-			"{" +
-			this.properties
-				.map(
-					(pv) =>
-						`"${pv.nameValue.toString()}": ${Value.toFullFriendlyString(
-							pv.value,
-						)}`,
-				)
-				.join(", ") +
-			"}"
-		);
+		return `{${this.properties
+			.map(
+				(pv) =>
+					`"${pv.nameValue.toString()}": ${Value.toFullFriendlyString(
+						pv.value,
+					)}`,
+			)
+			.join(", ")}}`;
 	}
 }
 
@@ -948,11 +963,9 @@ export class Property extends Value {
 
 	public toFullFriendlyString(): string {
 		// tslint:disable-next-line: prefer-template
-		return (
-			this._name.quotedValue +
-			": " +
-			Value.toFullFriendlyString(this.value)
-		);
+		return `${this._name.quotedValue}: ${Value.toFullFriendlyString(
+			this.value,
+		)}`;
 	}
 }
 
@@ -1000,11 +1013,9 @@ export class ArrayValue extends Value {
 
 	public toFullFriendlyString(): string {
 		// tslint:disable-next-line: prefer-template
-		return (
-			"[" +
-			this.elements.map((e) => e.toFullFriendlyString()).join(", ") +
-			"]"
-		);
+		return `[${this.elements
+			.map((e) => e.toFullFriendlyString())
+			.join(", ")}]`;
 	}
 }
 
@@ -1122,10 +1133,6 @@ export class NumberValue extends Value {
  * A JSON null value.
  */
 export class NullValue extends Value {
-	constructor(span: Span) {
-		super(span);
-	}
-
 	public get valueKind(): ValueKind {
 		return ValueKind.NullValue;
 	}
@@ -1410,11 +1417,12 @@ export class ParseResult {
 						"ContainsBehavior.extended not implemented here (somewhat unambiguous and not clear it's useful)",
 					);
 
-				case ContainsBehavior.enclosed:
+				case ContainsBehavior.enclosed: {
 					if (token.span.startIndex === characterIndex) {
 						return undefined;
 					}
 					return token;
+				}
 
 				default:
 					assertNever(containsBehavior);
@@ -1513,10 +1521,7 @@ export class ParseResult {
 
 		// Find the Value at the given character index by starting at the outside and finding the innermost
 		//   child that contains the point.
-		if (
-			this.value &&
-			this.value.span.contains(characterIndex, containsBehavior)
-		) {
+		if (this.value?.span.contains(characterIndex, containsBehavior)) {
 			let current: Value = this.value;
 
 			while (!result) {
@@ -1533,8 +1538,7 @@ export class ParseResult {
 					) {
 						current = currentValue.nameValue;
 					} else if (
-						currentValue.value &&
-						currentValue.value.span.contains(
+						currentValue.value?.span.contains(
 							characterIndex,
 							containsBehavior,
 						)
@@ -1623,42 +1627,48 @@ function parseValue(
 
 	if (tokenizer.current) {
 		switch (tokenizer.current.type) {
-			case TokenType.QuotedString:
+			case TokenType.QuotedString: {
 				value = new StringValue(
 					tokenizer.current.span,
 					tokenizer.current.toString(),
 				);
 				next(tokenizer, tokens, commentTokens);
 				break;
+			}
 
-			case TokenType.Number:
+			case TokenType.Number: {
 				value = new NumberValue(
 					tokenizer.current.span,
 					tokenizer.current.toString(),
 				);
 				next(tokenizer, tokens, commentTokens);
 				break;
+			}
 
-			case TokenType.Boolean:
+			case TokenType.Boolean: {
 				value = new BooleanValue(
 					tokenizer.current.span,
 					tokenizer.current.toString() === "true",
 				);
 				next(tokenizer, tokens, commentTokens);
 				break;
+			}
 
-			case TokenType.LeftCurlyBracket:
+			case TokenType.LeftCurlyBracket: {
 				value = parseObject(tokenizer, tokens, commentTokens);
 				break;
+			}
 
-			case TokenType.LeftSquareBracket:
+			case TokenType.LeftSquareBracket: {
 				value = parseArray(tokenizer, tokens, commentTokens);
 				break;
+			}
 
-			case TokenType.Null:
+			case TokenType.Null: {
 				value = new NullValue(tokenizer.current.span);
 				next(tokenizer, tokens, commentTokens);
 				break;
+			}
 		}
 	}
 

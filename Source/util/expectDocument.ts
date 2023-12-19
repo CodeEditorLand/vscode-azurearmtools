@@ -24,11 +24,11 @@ export function expectTemplateDocument(
 	assert(!!associatedDocument, "Could not find associated template file");
 	assert(
 		!(associatedDocument instanceof DeploymentParametersDoc),
-		`Expected associated document to be a template file, but it appears to be a parameter file`,
+		"Expected associated document to be a template file, but it appears to be a parameter file",
 	);
 	assert(
 		associatedDocument instanceof DeploymentTemplateDoc,
-		`Expected associated document to be a template file`,
+		"Expected associated document to be a template file",
 	);
 	return associatedDocument;
 }
@@ -49,11 +49,11 @@ export function expectParameterDocument(
 	assert(!!associatedDocument, "Could not find associated parameter file");
 	assert(
 		!(associatedDocument instanceof DeploymentTemplateDoc),
-		`Expected associated document to be a parameter file, but it appears to be a template file`,
+		"Expected associated document to be a parameter file, but it appears to be a template file",
 	);
 	assert(
 		associatedDocument instanceof DeploymentParametersDoc,
-		`Expected associated document to be a parameter file`,
+		"Expected associated document to be a parameter file",
 	);
 	return associatedDocument;
 }

@@ -31,15 +31,18 @@ export function toVsCodeCompletionItem(
 
 	let sortPriorityPrefix: string;
 	switch (item.priority) {
-		case Completion.CompletionPriority.low:
+		case Completion.CompletionPriority.low: {
 			sortPriorityPrefix = `${String.fromCharCode(255)}-`;
 			break;
-		case Completion.CompletionPriority.high:
+		}
+		case Completion.CompletionPriority.high: {
 			sortPriorityPrefix = `${String.fromCharCode(1)}-`;
 			break;
-		case Completion.CompletionPriority.normal:
+		}
+		case Completion.CompletionPriority.normal: {
 			sortPriorityPrefix = "";
 			break;
+		}
 		default:
 			assertNever(item.priority);
 	}
@@ -82,12 +85,12 @@ export function toVsCodeCompletionItem(
 	assert(vscodeItem.range, "Completion item doesn't have a range");
 	// tslint:disable-next-line: no-non-null-assertion
 	assert(
-		vscodeItem.range!.contains(cursorPosition),
+		vscodeItem.range?.contains(cursorPosition),
 		"Completion item range doesn't include cursor",
 	);
 	// tslint:disable-next-line: no-non-null-assertion
 	assert(
-		vscodeItem.range!.isSingleLine,
+		vscodeItem.range?.isSingleLine,
 		"Completion item range must be a single line",
 	);
 

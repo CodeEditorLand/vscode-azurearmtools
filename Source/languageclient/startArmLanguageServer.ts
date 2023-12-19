@@ -502,7 +502,7 @@ function sanitizeTelemetryData(
 	properties: { [key: string]: string | undefined },
 ): boolean {
 	switch (fullEventName) {
-		case "langserver/VS/WebTools/Languages/JSON/UnrecognizedResourceApiVersion":
+		case "langserver/VS/WebTools/Languages/JSON/UnrecognizedResourceApiVersion": {
 			if (
 				!/^[0-9]{4}-[0-9]{2}-[0-9]{2}(-(alpha|beta|preview)+)?$/i.test(
 					properties["vS.WebTools.Languages.JSON.apiVersion"] ?? "",
@@ -523,6 +523,7 @@ function sanitizeTelemetryData(
 				?.replace("/", "@")
 				.toLowerCase();
 			return true;
+		}
 
 		default:
 			return true;
@@ -546,9 +547,7 @@ async function getDotNetPath(): Promise<string | undefined> {
 				!!overriddenDotNetExePath
 			) {
 				ext.outputChannel.appendLine(
-					`WARNING: ${configPrefix}.${configKeys.dotnetExePath} is set. ` +
-						`This overrides the automatic download and usage of the dotnet runtime and should only be used to work around dotnet installation issues. ` +
-						`If you encounter problems, please try clearing this setting.`,
+					`WARNING: ${configPrefix}.${configKeys.dotnetExePath} is set. This overrides the automatic download and usage of the dotnet runtime and should only be used to work around dotnet installation issues. If you encounter problems, please try clearing this setting.`,
 				);
 				ext.outputChannel.appendLine("");
 				if (!(await isFile(overriddenDotNetExePath))) {
@@ -588,8 +587,7 @@ async function getDotNetPath(): Promise<string | undefined> {
 						/dotnet[\\/]([^\\/]+)[\\/]/,
 					);
 					// tslint:disable-next-line: strict-boolean-expressions
-					const actualVersion =
-						(versionMatch && versionMatch[1]) || "unknown";
+					const actualVersion = versionMatch?.[1] || "unknown";
 					actionContext.telemetry.properties.dotnetVersionInstalled =
 						actualVersion;
 				} catch (error) {
@@ -633,8 +631,10 @@ function findLanguageServer(): string {
 						languageServerDllName,
 					);
 					if (
-						!fse.existsSync(serverFolderPath) ||
-						!fse.existsSync(fullPath)
+						!(
+							fse.existsSync(serverFolderPath) &&
+							fse.existsSync(fullPath)
+						)
 					) {
 						throw new Error(
 							`Cannot find the ${languageServerName} at ${fullPath}. Only template string expression functionality will be available.`,
@@ -731,7 +731,7 @@ function showLoadingSchemasProgress(): void {
 			.withProgress(
 				{
 					location: ProgressLocation.Notification,
-					title: `Loading ARM schemas`,
+					title: "Loading ARM schemas",
 				},
 				async () =>
 					delayWhileSync(
@@ -763,9 +763,10 @@ export async function waitForLanguageServerAvailable(): Promise<void> {
 			throw new Error(msg);
 		}
 
-		case LanguageServerState.NotStarted:
+		case LanguageServerState.NotStarted: {
 			startArmLanguageServerInBackground();
 			break;
+		}
 
 		case LanguageServerState.Running:
 			return;
@@ -789,15 +790,17 @@ export async function waitForLanguageServerAvailable(): Promise<void> {
 
 			case LanguageServerState.NotStarted:
 			case LanguageServerState.Starting:
-			case LanguageServerState.LoadingSchemas:
+			case LanguageServerState.LoadingSchemas: {
 				await delay(100);
 				break;
-			case LanguageServerState.Running:
+			}
+			case LanguageServerState.Running: {
 				await delay(1000); // Give vscode time to notice the new formatter available (I don't know of a way to detect this)
 
 				ext.outputChannel.appendLine("Language server is ready.");
 				assert(ext.languageServerClient);
 				return;
+			}
 
 			case LanguageServerState.Stopped: {
 				const msg = "Language server has stopped";

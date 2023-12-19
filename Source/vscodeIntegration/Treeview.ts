@@ -472,12 +472,10 @@ export class JsonOutlineProvider
 			elementInfo.current.level === 1
 				? elementInfo.current
 				: elementInfo.root;
-		const keyNode =
-			this.tree &&
-			this.tree.getValueAtCharacterIndex(
-				element.key.start,
-				ContainsBehavior.strict,
-			);
+		const keyNode = this.tree?.getValueAtCharacterIndex(
+			element.key.start,
+			ContainsBehavior.strict,
+		);
 		if (keyNode instanceof Json.StringValue) {
 			return `${keyNode.unquotedValue}@${elementInfo.current.level}`;
 		}
@@ -485,12 +483,10 @@ export class JsonOutlineProvider
 	}
 
 	private getTreeNodeLabel(elementInfo: IElementInfo): string {
-		const keyNode =
-			this.tree &&
-			this.tree.getValueAtCharacterIndex(
-				elementInfo.current.key.start,
-				ContainsBehavior.strict,
-			);
+		const keyNode = this.tree?.getValueAtCharacterIndex(
+			elementInfo.current.key.start,
+			ContainsBehavior.strict,
+		);
 
 		// Key is an object (e.g. a resource object)
 		if (keyNode instanceof Json.ObjectValue) {
@@ -529,12 +525,10 @@ export class JsonOutlineProvider
 			return toFriendlyString(keyNode);
 		} else if (elementInfo.current.value.start !== undefined) {
 			// For other value types, display key and value since they won't be expandable
-			const valueNode =
-				this.tree &&
-				this.tree.getValueAtCharacterIndex(
-					elementInfo.current.value.start,
-					ContainsBehavior.strict,
-				);
+			const valueNode = this.tree?.getValueAtCharacterIndex(
+				elementInfo.current.value.start,
+				ContainsBehavior.strict,
+			);
 
 			return `${
 				keyNode instanceof Json.StringValue
@@ -551,7 +545,7 @@ export class JsonOutlineProvider
 		keyNode: Json.ObjectValue,
 	): string | undefined {
 		// tslint:disable-next-line:one-variable-per-declaration
-		for (var i = 0, l = keyNode.properties.length; i < l; i++) {
+		for (let i = 0, l = keyNode.properties.length; i < l; i++) {
 			const props = keyNode.properties[i];
 			// If element is found
 			if (
@@ -737,7 +731,7 @@ export class JsonOutlineProvider
 			) {
 				// tslint:disable-next-line:one-variable-per-declaration
 				for (
-					var i = 0, il = keyOrResourceNode.properties.length;
+					let i = 0, il = keyOrResourceNode.properties.length;
 					i < il;
 					i++
 				) {
@@ -803,7 +797,7 @@ export class JsonOutlineProvider
 	private updateTreeState(): void {
 		const activeEditor: vscode.TextEditor | undefined =
 			vscode.window.activeTextEditor;
-		const document: vscode.TextDocument | undefined = !!activeEditor
+		const document: vscode.TextDocument | undefined = activeEditor
 			? activeEditor.document
 			: undefined;
 		this.parseTree(document);

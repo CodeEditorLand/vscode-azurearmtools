@@ -139,7 +139,7 @@ export class Span {
 
 	public union(rhs: Span | undefined): Span {
 		let result: Span;
-		if (!!rhs) {
+		if (rhs) {
 			const minStart = Math.min(this.startIndex, rhs.startIndex);
 			const maxAfterEndIndex = Math.max(
 				this.afterEndIndex,
@@ -176,7 +176,7 @@ export class Span {
 	 */
 
 	public intersect(rhs: Span | undefined): Span | undefined {
-		if (!!rhs) {
+		if (rhs) {
 			// tslint:disable-next-line:no-this-assignment
 			let lhs: Span = this;
 			if (rhs.startIndex < this.startIndex) {

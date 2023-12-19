@@ -90,42 +90,48 @@ export async function sortTemplate(
 		return;
 	}
 	switch (sectionType) {
-		case TemplateSectionType.Functions:
+		case TemplateSectionType.Functions: {
 			await showSortingResultMessage(
 				() => sortFunctions(template, textEditor),
 				"Functions",
 			);
 			break;
-		case TemplateSectionType.Outputs:
+		}
+		case TemplateSectionType.Outputs: {
 			await showSortingResultMessage(
 				() => sortOutputs(template, textEditor),
 				"Outputs",
 			);
 			break;
-		case TemplateSectionType.Parameters:
+		}
+		case TemplateSectionType.Parameters: {
 			await showSortingResultMessage(
 				() => sortParameters(template, textEditor),
 				"Parameters",
 			);
 			break;
-		case TemplateSectionType.Resources:
+		}
+		case TemplateSectionType.Resources: {
 			await showSortingResultMessage(
 				() => sortResources(template, textEditor),
 				"Resources",
 			);
 			break;
-		case TemplateSectionType.Variables:
+		}
+		case TemplateSectionType.Variables: {
 			await showSortingResultMessage(
 				() => sortVariables(template, textEditor),
 				"Variables",
 			);
 			break;
-		case TemplateSectionType.TopLevel:
+		}
+		case TemplateSectionType.TopLevel: {
 			await showSortingResultMessage(
 				() => sortTopLevel(template, textEditor),
 				"Top-level items",
 			);
 			break;
+		}
 		default:
 			assertNever(sectionType);
 	}
@@ -536,7 +542,7 @@ function arraysEqual<T>(a: T[], b: T[]): boolean {
 		return true;
 	}
 	// tslint:disable-next-line: strict-boolean-expressions
-	if (!a || !b) {
+	if (!(a && b)) {
 		return false;
 	}
 	if (a.length !== b.length) {

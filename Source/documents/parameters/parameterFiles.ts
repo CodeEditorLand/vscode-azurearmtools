@@ -67,12 +67,11 @@ export async function selectParameterFile(
 	}
 
 	if (
-		!editor ||
-		!sourceUri ||
+		!(editor && sourceUri) ||
 		editor.document.uri.fsPath !== sourceUri.fsPath
 	) {
 		await ext.ui.showWarningMessage(
-			`Please open an Azure Resource Manager template file before trying to associate or create a parameter file.`,
+			"Please open an Azure Resource Manager template file before trying to associate or create a parameter file.",
 		);
 		return;
 	}
@@ -223,7 +222,7 @@ export async function openTemplateFile(
 				await workspace.openTextDocument(templateUri);
 			await window.showTextDocument(doc);
 		} else {
-			const remove: MessageItem = { title: `Unlink` };
+			const remove: MessageItem = { title: "Unlink" };
 			const response: MessageItem = await ext.ui.showWarningMessage(
 				`Could not find associated template file "${templateUri.fsPath}".  Unlink this association?`,
 				remove,
@@ -311,7 +310,7 @@ async function createParameterFileQuickPickList(
 	// Add None at top, New/Browse/Open Current at bottom
 	const none: IAzureQuickPickItem<IPossibleParameterFile | undefined> = {
 		label: "$(circle-slash) None",
-		description: !!currentParamUri ? undefined : currentMessage,
+		description: currentParamUri ? undefined : currentMessage,
 		data: undefined,
 	};
 	const browse: IAzureQuickPickItem<IPossibleParameterFile | undefined> = {
@@ -604,7 +603,7 @@ export function considerQueryingForParameterFileInBackground(
 			actionContext.telemetry.properties.response = response.title;
 
 			switch (response.title) {
-				case ignore.title:
+				case ignore.title: {
 					// We won't ask again
 					await neverAskAgain(templateUri, actionContext);
 
@@ -612,17 +611,20 @@ export function considerQueryingForParameterFileInBackground(
 					// Don't wait for an answer
 					window.showInformationMessage(howToMessage);
 					break;
-				case select.title:
+				}
+				case select.title: {
 					await commands.executeCommand(
 						"azurerm-vscode-tools.selectParameterFile",
 						templateUri,
 					);
 					break;
-				default:
+				}
+				default: {
 					assert(
 						"considerQueryingForParameterFile: Unexpected response",
 					);
 					break;
+				}
 			}
 		},
 	).catch((err) => {

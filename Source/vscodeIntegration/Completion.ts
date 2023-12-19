@@ -186,7 +186,7 @@ export class Item {
 			insertText,
 			span,
 			kind: CompletionKind.tleParameter,
-			detail: `(parameter)`, // CONSIDER: Add type, default value, etc. from property definition
+			detail: "(parameter)", // CONSIDER: Add type, default value, etc. from property definition
 			documentation: parameter.description,
 		});
 	}
@@ -216,7 +216,7 @@ export class Item {
 			insertText,
 			span,
 			kind: CompletionKind.tleVariable,
-			detail: `(variable)`,
+			detail: "(variable)",
 		});
 	}
 
