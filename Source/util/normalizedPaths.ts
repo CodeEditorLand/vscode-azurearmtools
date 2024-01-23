@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as path from "path";
+import * as path from "node:path";
 import { Uri } from "vscode";
 import { documentSchemes, isWin32 } from "../../common";
 import { stringifyUri } from "./uri";

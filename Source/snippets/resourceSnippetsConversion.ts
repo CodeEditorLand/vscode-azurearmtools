@@ -6,7 +6,7 @@
 import { parseError } from "vscode-azureextensionui";
 import { assert } from "../fixed_assert";
 import { KnownContexts } from "./KnownContexts";
-import { ISnippetDefinitionFromFile } from "./SnippetManager";
+import type { ISnippetDefinitionFromFile } from "./SnippetManager";
 
 // Similar to Bicep snippet placeholder format
 const stringSnippetPlaceholderCommentPatternRegex = new RegExp(

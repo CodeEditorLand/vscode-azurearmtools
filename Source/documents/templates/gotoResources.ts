@@ -4,8 +4,8 @@
 // ---------------------------------------------------------------------------------------------
 
 import * as vscode from "vscode";
-import { IActionContext } from "vscode-azureextensionui";
-import { IGotoResourcesArgs } from "../../vscodeIntegration/commandArguments";
+import type { IActionContext } from "vscode-azureextensionui";
+import type { IGotoResourcesArgs } from "../../vscodeIntegration/commandArguments";
 
 /**
  * Navigates to the given resource, if only one, else peeks the resources in the editor

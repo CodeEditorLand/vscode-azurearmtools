@@ -4,8 +4,8 @@
 
 import { assert } from "../fixed_assert";
 import { nonNullValue } from "../util/nonNull";
-import { DefinitionKind } from "./INamedDefinition";
-import { IReference } from "./IReference";
+import type { DefinitionKind } from "./INamedDefinition";
+import type { IReference } from "./IReference";
 
 /**
  * A list of references that have been found.

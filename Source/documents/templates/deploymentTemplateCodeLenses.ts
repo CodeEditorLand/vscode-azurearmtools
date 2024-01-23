@@ -4,20 +4,20 @@
 
 // tslint:disable: max-classes-per-file
 
-import { Range, Uri } from "vscode";
+import type { Range, Uri } from "vscode";
 import { parseError } from "vscode-azureextensionui";
 import { Span } from "../../language/Span";
 import { pathExistsNoThrow } from "../../util/pathExistsNoThrow";
-import { IGotoParameterValueArgs } from "../../vscodeIntegration/commandArguments";
+import type { IGotoParameterValueArgs } from "../../vscodeIntegration/commandArguments";
 import { getVSCodeRangeFromSpan } from "../../vscodeIntegration/vscodePosition";
 import { ResolvableCodeLens } from "../DeploymentDocument";
-import { IParameterDefinition } from "../parameters/IParameterDefinition";
-import { IParameterValuesSource } from "../parameters/IParameterValuesSource";
-import { IParameterValuesSourceProvider } from "../parameters/IParameterValuesSourceProvider";
+import type { IParameterDefinition } from "../parameters/IParameterDefinition";
+import type { IParameterValuesSource } from "../parameters/IParameterValuesSource";
+import type { IParameterValuesSourceProvider } from "../parameters/IParameterValuesSourceProvider";
 import { getRelativeParameterFilePath } from "../parameters/parameterFilePaths";
-import { IFullValidationStatus } from "./linkedTemplates/linkedTemplates";
-import { TemplateScope } from "./scopes/TemplateScope";
-import { TopLevelTemplateScope } from "./scopes/templateScopes";
+import type { IFullValidationStatus } from "./linkedTemplates/linkedTemplates";
+import type { TemplateScope } from "./scopes/TemplateScope";
+import type { TopLevelTemplateScope } from "./scopes/templateScopes";
 
 /**
  * A code lens to indicate the current parameter file and to open it

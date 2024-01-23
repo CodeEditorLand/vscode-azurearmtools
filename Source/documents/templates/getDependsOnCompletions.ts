@@ -6,15 +6,15 @@
 import { MarkdownString } from "vscode";
 import { templateKeys } from "../../../common";
 import { assert } from "../../fixed_assert";
-import { ContainsBehavior, Span } from "../../language/Span";
+import { ContainsBehavior, type Span } from "../../language/Span";
 import { getFriendlyExpressionFromTleExpression } from "../../language/expressions/friendlyExpressions";
 import { isTleExpression } from "../../language/expressions/isTleExpression";
 import * as Json from "../../language/json/JSON";
 import * as Completion from "../../vscodeIntegration/Completion";
-import { TemplatePositionContext } from "../positionContexts/TemplatePositionContext";
+import type { TemplatePositionContext } from "../positionContexts/TemplatePositionContext";
 import {
-	IJsonResourceInfo,
-	IResourceInfo,
+	type IJsonResourceInfo,
+	type IResourceInfo,
 	getResourcesInfo,
 	jsonStringToTleExpression,
 } from "./getResourcesInfo";

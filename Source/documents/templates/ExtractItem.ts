@@ -5,13 +5,13 @@
 
 import * as vscode from "vscode";
 import {
-	IActionContext,
-	IAzureUserInput,
+	type IActionContext,
+	type IAzureUserInput,
 	UserCancelledError,
 } from "vscode-azureextensionui";
 import { isTleExpression } from "../../language/expressions/isTleExpression";
-import { ObjectValue } from "../../language/json/JSON";
-import { DeploymentTemplateDoc } from "./DeploymentTemplateDoc";
+import type { ObjectValue } from "../../language/json/JSON";
+import type { DeploymentTemplateDoc } from "./DeploymentTemplateDoc";
 import { InsertItem } from "./insertItem";
 
 export class ExtractItem {

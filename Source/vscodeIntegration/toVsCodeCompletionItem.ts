@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { IActionContext } from "vscode-azureextensionui";
-import { IJsonDocument } from "../documents/templates/IJsonDocument";
+import type { IActionContext } from "vscode-azureextensionui";
+import type { IJsonDocument } from "../documents/templates/IJsonDocument";
 import { assert } from "../fixed_assert";
 import { assertNever } from "../util/assertNever";
 import * as Completion from "./Completion";

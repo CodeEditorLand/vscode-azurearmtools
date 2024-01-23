@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { Location, Range, Uri } from "vscode";
-import { IParameterDefinitionsSource } from "../documents/parameters/IParameterDefinitionsSource";
-import { IParameterValuesSource } from "../documents/parameters/IParameterValuesSource";
+import type { Location, Range, Uri } from "vscode";
+import type { IParameterDefinitionsSource } from "../documents/parameters/IParameterDefinitionsSource";
+import type { IParameterValuesSource } from "../documents/parameters/IParameterValuesSource";
 
 export interface IGotoParameterValueArgs {
 	inParameterFile?: {

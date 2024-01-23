@@ -3,11 +3,11 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { IProvideOpenedDocuments } from "../../../IProvideOpenedDocuments";
+import type { IProvideOpenedDocuments } from "../../../IProvideOpenedDocuments";
 import { parseUri } from "../../../util/uri";
-import { IParameterDefinition } from "../../parameters/IParameterDefinition";
-import { DeploymentTemplateDoc } from "../DeploymentTemplateDoc";
-import { ILinkedTemplateReference } from "./ILinkedTemplateReference";
+import type { IParameterDefinition } from "../../parameters/IParameterDefinition";
+import type { DeploymentTemplateDoc } from "../DeploymentTemplateDoc";
+import type { ILinkedTemplateReference } from "./ILinkedTemplateReference";
 
 export function getParameterDefinitionsFromLinkedTemplate(
 	linkedTemplate: ILinkedTemplateReference,

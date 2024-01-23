@@ -4,9 +4,9 @@
 
 import { assert } from "../fixed_assert";
 import {
-	FunctionCallValue,
+	type FunctionCallValue,
 	TleVisitor,
-	Value,
+	type Value,
 } from "../language/expressions/TLE";
 import { Histogram } from "../util/Histogram";
 

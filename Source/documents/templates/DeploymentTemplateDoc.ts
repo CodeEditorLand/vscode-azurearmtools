@@ -4,36 +4,36 @@
 
 // tslint:disable: max-classes-per-file // Private classes are related to DeploymentTemplate implementation
 
-import * as assert from "assert";
-import * as path from "path";
+import * as assert from "node:assert";
+import * as path from "node:path";
 import {
 	CodeAction,
-	CodeActionContext,
+	type CodeActionContext,
 	CodeActionKind,
-	Command,
+	type Command,
 	DocumentLink,
-	Range,
-	Selection,
+	type Range,
+	type Selection,
 	Uri,
 } from "vscode";
-import { IActionContext } from "vscode-azureextensionui";
+import type { IActionContext } from "vscode-azureextensionui";
 import { configKeys, templateKeys } from "../../../common";
 import { TemplateScopeKind } from "../../../extension.bundle";
 import { ext } from "../../extensionVariables";
-import { INamedDefinition } from "../../language/INamedDefinition";
+import type { INamedDefinition } from "../../language/INamedDefinition";
 import { Issue } from "../../language/Issue";
 import { IssueKind } from "../../language/IssueKind";
 import { ReferenceList } from "../../language/ReferenceList";
 import { ContainsBehavior, Span } from "../../language/Span";
 import {
 	AzureRMAssets,
-	FunctionsMetadata,
+	type FunctionsMetadata,
 } from "../../language/expressions/AzureRMAssets";
 import * as TLE from "../../language/expressions/TLE";
 import { isTleExpression } from "../../language/expressions/isTleExpression";
 import * as Json from "../../language/json/JSON";
 import { CachedValue } from "../../util/CachedValue";
-import { CaseInsensitiveMap } from "../../util/CaseInsensitiveMap";
+import type { CaseInsensitiveMap } from "../../util/CaseInsensitiveMap";
 import { Histogram } from "../../util/Histogram";
 import { expectParameterDocumentOrUndefined } from "../../util/expectDocument";
 import { filterByType } from "../../util/filterByType";
@@ -45,9 +45,12 @@ import { GenericStringVisitor } from "../../visitors/GenericStringVisitor";
 import { ReferenceInVariableDefinitionsVisitor } from "../../visitors/ReferenceInVariableDefinitionsVisitor";
 import * as UndefinedVariablePropertyVisitor from "../../visitors/UndefinedVariablePropertyVisitor";
 import { getVSCodeRangeFromSpan } from "../../vscodeIntegration/vscodePosition";
-import { DeploymentDocument, ResolvableCodeLens } from "../DeploymentDocument";
-import { IParameterDefinitionsSource } from "../parameters/IParameterDefinitionsSource";
-import { IParameterValuesSourceProvider } from "../parameters/IParameterValuesSourceProvider";
+import {
+	DeploymentDocument,
+	type ResolvableCodeLens,
+} from "../DeploymentDocument";
+import type { IParameterDefinitionsSource } from "../parameters/IParameterDefinitionsSource";
+import type { IParameterValuesSourceProvider } from "../parameters/IParameterValuesSourceProvider";
 import {
 	getMissingParameterErrors,
 	getParameterValuesCodeActions,
@@ -66,13 +69,13 @@ import {
 	ShowCurrentParameterFileCodeLens,
 } from "./deploymentTemplateCodeLenses";
 import { getResourcesInfo } from "./getResourcesInfo";
-import { INotifyTemplateGraphArgs } from "./linkedTemplates/linkedTemplates";
+import type { INotifyTemplateGraphArgs } from "./linkedTemplates/linkedTemplates";
 import { isArmSchema } from "./schemas";
 import { DeploymentScopeKind } from "./scopes/DeploymentScopeKind";
-import { IDeploymentSchemaReference } from "./scopes/IDeploymentSchemaReference";
-import { TemplateScope } from "./scopes/TemplateScope";
+import type { IDeploymentSchemaReference } from "./scopes/IDeploymentSchemaReference";
+import type { TemplateScope } from "./scopes/TemplateScope";
 import {
-	IChildDeploymentScope,
+	type IChildDeploymentScope,
 	LinkedTemplateScope,
 	NestedTemplateInnerScope,
 	NestedTemplateOuterScope,

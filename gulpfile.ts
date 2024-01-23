@@ -5,13 +5,13 @@
 
 // tslint:disable:no-unsafe-any no-console prefer-template no-implicit-dependencies export-name
 
-import * as assert from "assert";
-import * as cp from "child_process";
-import * as os from "os";
-import * as path from "path";
+import * as assert from "node:assert";
+import * as cp from "node:child_process";
+import * as os from "node:os";
+import * as path from "node:path";
+import * as process from "node:process";
 import * as fse from "fs-extra";
 import * as gulp from "gulp";
-import * as process from "process";
 import * as recursiveReadDir from "recursive-readdir";
 import * as shelljs from "shelljs";
 import { gulp_webpack } from "vscode-azureextensiondev";
@@ -518,14 +518,12 @@ async function verifyTestsReferenceOnlyExtensionBundle(
 				for (const match of matches) {
 					if (!match.includes(".shared.ts")) {
 						errors.push(
-							os.EOL +
-								`${path.relative(
-									__dirname,
-									file,
-								)}: error: Test code may not import from the src folder, it should import from '../extension.bundle'${
-									os.EOL
-								}` +
-								`  Error is here: ===> ${match}${os.EOL}`,
+							`${os.EOL}${path.relative(
+								__dirname,
+								file,
+							)}: error: Test code may not import from the src folder, it should import from '../extension.bundle'${
+								os.EOL
+							}  Error is here: ===> ${match}${os.EOL}`,
 						);
 						console.error(match);
 					}

@@ -8,7 +8,7 @@
 
 // tslint:disable:no-increment-decrement
 
-import * as path from "path";
+import * as path from "node:path";
 import * as vscode from "vscode";
 import { armTemplateLanguageId, iconsPath, templateKeys } from "../../common";
 import { getResourceInfo } from "../documents/templates/getResourcesInfo";

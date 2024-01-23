@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { ConfigurationTarget, workspace } from "vscode";
+import { type ConfigurationTarget, workspace } from "vscode";
 
 export interface IConfiguration {
 	// tslint:disable-next-line:no-reserved-keywords

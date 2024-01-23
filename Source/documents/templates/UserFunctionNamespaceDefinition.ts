@@ -2,21 +2,21 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as os from "os";
+import * as os from "node:os";
 import { templateKeys } from "../../../common";
 import { assert } from "../../fixed_assert";
 import {
 	DefinitionKind,
-	INamedDefinition,
+	type INamedDefinition,
 } from "../../language/INamedDefinition";
-import { Span } from "../../language/Span";
+import type { Span } from "../../language/Span";
 import * as Json from "../../language/json/JSON";
 import { CachedValue } from "../../util/CachedValue";
-import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
+import type { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
 import { getUserFunctionUsage } from "../../vscodeIntegration/signatureFormatting";
-import { IJsonDocument } from "./IJsonDocument";
+import type { IJsonDocument } from "./IJsonDocument";
 import { UserFunctionDefinition } from "./UserFunctionDefinition";
-import { TemplateScope } from "./scopes/TemplateScope";
+import type { TemplateScope } from "./scopes/TemplateScope";
 
 export function isUserNamespaceDefinition(
 	definition: INamedDefinition,

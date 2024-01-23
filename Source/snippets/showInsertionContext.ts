@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { PositionContext } from "../documents/positionContexts/PositionContext";
+import type { PositionContext } from "../documents/positionContexts/PositionContext";
 import { ext } from "../extensionVariables";
 
 export function showInsertionContext(pc: PositionContext): void {

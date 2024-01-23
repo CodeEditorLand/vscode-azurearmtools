@@ -3,24 +3,24 @@
 // ----------------------------------------------------------------------------
 
 import { assert } from "../../fixed_assert";
-import { INamedDefinition } from "../../language/INamedDefinition";
+import type { INamedDefinition } from "../../language/INamedDefinition";
 import { LineColPos } from "../../language/LineColPos";
-import { ReferenceList } from "../../language/ReferenceList";
+import type { ReferenceList } from "../../language/ReferenceList";
 import { ContainsBehavior, Span } from "../../language/Span";
-import { FunctionSignatureHelp } from "../../language/expressions/TLE";
+import type { FunctionSignatureHelp } from "../../language/expressions/TLE";
 import * as Json from "../../language/json/JSON";
-import { InsertionContext } from "../../snippets/InsertionContext";
+import type { InsertionContext } from "../../snippets/InsertionContext";
 import { KnownContexts } from "../../snippets/KnownContexts";
 import { CachedValue } from "../../util/CachedValue";
 import { InitializeBeforeUse } from "../../util/InitializeBeforeUse";
 import { __debugMarkPositionInString } from "../../util/debugMarkStrings";
 import { nonNullValue } from "../../util/nonNull";
-import * as Completion from "../../vscodeIntegration/Completion";
-import { IHoverInfo } from "../../vscodeIntegration/IHoverInfo";
+import type * as Completion from "../../vscodeIntegration/Completion";
+import type { IHoverInfo } from "../../vscodeIntegration/IHoverInfo";
 import { UsageInfoHoverInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
-import { DeploymentDocument } from "../DeploymentDocument";
-import { IJsonDocument } from "../templates/IJsonDocument";
-import { TemplateScope } from "../templates/scopes/TemplateScope";
+import type { DeploymentDocument } from "../DeploymentDocument";
+import type { IJsonDocument } from "../templates/IJsonDocument";
+import type { TemplateScope } from "../templates/scopes/TemplateScope";
 
 export enum ReferenceSiteKind {
 	definition = "definition",

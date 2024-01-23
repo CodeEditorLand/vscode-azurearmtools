@@ -6,13 +6,13 @@ import { templateKeys } from "../../../common";
 import { assert } from "../../fixed_assert";
 import {
 	DefinitionKind,
-	INamedDefinition,
+	type INamedDefinition,
 } from "../../language/INamedDefinition";
-import { Span } from "../../language/Span";
+import type { Span } from "../../language/Span";
 import * as Json from "../../language/json/JSON";
 import { CachedValue } from "../../util/CachedValue";
 import { mapJsonObjectValue } from "../../util/mapJsonObjectValue";
-import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
+import type { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
 
 /**
  * This represents the definition of a top-level parameter in a deployment template.

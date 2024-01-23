@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { Uri } from "vscode";
+import type { Uri } from "vscode";
 import { documentSchemes } from "../../common";
 import { parseUri, stringifyUri } from "./uri";
 

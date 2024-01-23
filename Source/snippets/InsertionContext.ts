@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { Json } from "../../extension.bundle";
-import { Span } from "../language/Span";
-import { Context } from "./KnownContexts";
+import type { Json } from "../../extension.bundle";
+import type { Span } from "../language/Span";
+import type { Context } from "./KnownContexts";
 
 /**
  * Describes information about what could be inserted at this location (i.e., the type of snippets which are appropriate to insert here,

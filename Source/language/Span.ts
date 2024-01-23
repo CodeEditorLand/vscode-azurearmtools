@@ -60,7 +60,10 @@ export enum ContainsBehavior {
 export class Span {
 	public static readonly empty: Span = new Span(0, 0);
 
-	constructor(private _startIndex: number, private _length: number) {}
+	constructor(
+		private _startIndex: number,
+		private _length: number,
+	) {}
 
 	public static fromStartAndAfterEnd(
 		startIndex: number,

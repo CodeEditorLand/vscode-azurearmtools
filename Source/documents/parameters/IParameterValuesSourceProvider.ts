@@ -2,8 +2,8 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { Uri } from "vscode";
-import { IParameterValuesSource } from "./IParameterValuesSource";
+import type { Uri } from "vscode";
+import type { IParameterValuesSource } from "./IParameterValuesSource";
 
 /**
  * Represents parameter values for a deployment. This could be from a parameter file or parameter values for

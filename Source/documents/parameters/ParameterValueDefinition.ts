@@ -5,11 +5,11 @@
 import { assert } from "../../fixed_assert";
 import {
 	DefinitionKind,
-	INamedDefinition,
+	type INamedDefinition,
 } from "../../language/INamedDefinition";
-import { Span } from "../../language/Span";
+import type { Span } from "../../language/Span";
 import * as Json from "../../language/json/JSON";
-import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
+import type { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
 
 export function isParameterValueDefinition(
 	definition: INamedDefinition,

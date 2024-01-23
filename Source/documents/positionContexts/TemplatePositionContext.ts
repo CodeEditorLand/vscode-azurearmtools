@@ -5,51 +5,51 @@
 import { templateKeys } from "../../../common";
 import { ext } from "../../extensionVariables";
 import { assert } from "../../fixed_assert";
-import { INamedDefinition } from "../../language/INamedDefinition";
-import { ReferenceList } from "../../language/ReferenceList";
+import type { INamedDefinition } from "../../language/INamedDefinition";
+import type { ReferenceList } from "../../language/ReferenceList";
 import { ContainsBehavior, Span } from "../../language/Span";
 import {
 	AzureRMAssets,
-	BuiltinFunctionMetadata,
+	type BuiltinFunctionMetadata,
 } from "../../language/expressions/AzureRMAssets";
 import * as TLE from "../../language/expressions/TLE";
 import { isTleExpression } from "../../language/expressions/isTleExpression";
 import * as Json from "../../language/json/JSON";
-import { InsertionContext } from "../../snippets/InsertionContext";
+import type { InsertionContext } from "../../snippets/InsertionContext";
 import { KnownContexts } from "../../snippets/KnownContexts";
 import { CachedValue } from "../../util/CachedValue";
 import * as Completion from "../../vscodeIntegration/Completion";
 import { FormattedExpressionHoverInfo } from "../../vscodeIntegration/FormattedExpressionHoverInfo";
 import { FormattedStringHoverInfo } from "../../vscodeIntegration/FormattedStringHoverInfo";
-import { IHoverInfo } from "../../vscodeIntegration/IHoverInfo";
-import { DeploymentDocument } from "../DeploymentDocument";
+import type { IHoverInfo } from "../../vscodeIntegration/IHoverInfo";
+import type { DeploymentDocument } from "../DeploymentDocument";
 import { DeploymentParametersDoc } from "../parameters/DeploymentParametersDoc";
-import { IParameterDefinition } from "../parameters/IParameterDefinition";
-import { IParameterValuesSource } from "../parameters/IParameterValuesSource";
+import type { IParameterDefinition } from "../parameters/IParameterDefinition";
+import type { IParameterValuesSource } from "../parameters/IParameterValuesSource";
 import {
 	findReferencesToDefinitionInParameterValues,
 	getPropertyValueCompletionItems,
 	getReferenceSiteInfoForParameterValue,
 } from "../parameters/ParameterValues";
-import { DeploymentTemplateDoc } from "../templates/DeploymentTemplateDoc";
-import {
+import type { DeploymentTemplateDoc } from "../templates/DeploymentTemplateDoc";
+import type {
 	IFunctionMetadata,
 	IFunctionParameterMetadata,
 } from "../templates/IFunctionMetadata";
-import { UserFunctionDefinition } from "../templates/UserFunctionDefinition";
+import type { UserFunctionDefinition } from "../templates/UserFunctionDefinition";
 import { UserFunctionMetadata } from "../templates/UserFunctionMetadata";
-import { UserFunctionNamespaceDefinition } from "../templates/UserFunctionNamespaceDefinition";
-import { IVariableDefinition } from "../templates/VariableDefinition";
+import type { UserFunctionNamespaceDefinition } from "../templates/UserFunctionNamespaceDefinition";
+import type { IVariableDefinition } from "../templates/VariableDefinition";
 import { getDependsOnCompletions } from "../templates/getDependsOnCompletions";
 import { getResourceIdCompletions } from "../templates/getResourceIdCompletions";
-import { TemplateScope } from "../templates/scopes/TemplateScope";
+import type { TemplateScope } from "../templates/scopes/TemplateScope";
 import {
 	TopLevelTemplateScope,
 	isDeploymentResource,
 } from "../templates/scopes/templateScopes";
 import {
-	ICompletionItemsResult,
-	IReferenceSite,
+	type ICompletionItemsResult,
+	type IReferenceSite,
 	PositionContext,
 	ReferenceSiteKind,
 } from "./PositionContext";

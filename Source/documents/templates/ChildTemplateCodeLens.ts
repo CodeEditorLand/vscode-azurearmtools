@@ -4,24 +4,24 @@
 
 // tslint:disable: max-classes-per-file
 
-import * as path from "path";
-import { Uri } from "vscode";
+import * as path from "node:path";
+import type { Uri } from "vscode";
 import { parseError } from "vscode-azureextensionui";
 import { documentSchemes } from "../../../common";
 import { ext } from "../../extensionVariables";
 import { assert } from "../../fixed_assert";
-import { Span } from "../../language/Span";
+import type { Span } from "../../language/Span";
 import { LanguageServerState } from "../../languageclient/startArmLanguageServer";
 import { assertNever } from "../../util/assertNever";
 import { parseUri } from "../../util/uri";
 import { ResolvableCodeLens } from "../DeploymentDocument";
-import { IParameterValuesSourceProvider } from "../parameters/IParameterValuesSourceProvider";
+import type { IParameterValuesSourceProvider } from "../parameters/IParameterValuesSourceProvider";
 import { SelectParameterFileCodeLens } from "./deploymentTemplateCodeLenses";
-import { ILinkedTemplateReference } from "./linkedTemplates/ILinkedTemplateReference";
+import type { ILinkedTemplateReference } from "./linkedTemplates/ILinkedTemplateReference";
 import { LinkedFileLoadState } from "./linkedTemplates/LinkedFileLoadState";
-import { IFullValidationStatus } from "./linkedTemplates/linkedTemplates";
-import { TemplateScope, TemplateScopeKind } from "./scopes/TemplateScope";
-import { LinkedTemplateScope } from "./scopes/templateScopes";
+import type { IFullValidationStatus } from "./linkedTemplates/linkedTemplates";
+import { type TemplateScope, TemplateScopeKind } from "./scopes/TemplateScope";
+import type { LinkedTemplateScope } from "./scopes/templateScopes";
 
 //const fullValidationOffMsg = "($(warning)full validation off)";
 

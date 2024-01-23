@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Span } from "../language/Span";
-import * as Completion from "../vscodeIntegration/Completion";
-import { ISnippet } from "./ISnippet";
-import { InsertionContext } from "./InsertionContext";
-import { Context } from "./KnownContexts";
+import type { Span } from "../language/Span";
+import type * as Completion from "../vscodeIntegration/Completion";
+import type { ISnippet } from "./ISnippet";
+import type { InsertionContext } from "./InsertionContext";
+import type { Context } from "./KnownContexts";
 
 /**
  * Manages snippets and creates completion items for them.  We do this rather

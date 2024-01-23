@@ -5,7 +5,7 @@
 
 import { commands } from "vscode";
 import {
-	IActionContext,
+	type IActionContext,
 	callWithTelemetryAndErrorHandling,
 	parseError,
 } from "vscode-azureextensionui";

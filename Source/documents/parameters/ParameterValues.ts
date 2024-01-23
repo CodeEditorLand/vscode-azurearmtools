@@ -2,37 +2,41 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as assert from "assert";
+import * as assert from "node:assert";
 import {
 	CodeAction,
-	CodeActionContext,
+	type CodeActionContext,
 	CodeActionKind,
-	Range,
-	Selection,
-	TextEditor,
+	type Range,
+	type Selection,
+	type TextEditor,
 } from "vscode";
-import { Command } from "vscode-languageclient";
-import { Completion, INamedDefinition, Json } from "../../../extension.bundle";
+import type { Command } from "vscode-languageclient";
+import {
+	Completion,
+	type INamedDefinition,
+	Json,
+} from "../../../extension.bundle";
 import { ext } from "../../extensionVariables";
 import { Issue } from "../../language/Issue";
 import { IssueKind } from "../../language/IssueKind";
 import { ReferenceList } from "../../language/ReferenceList";
 import { ContainsBehavior, Span } from "../../language/Span";
 import { indentMultilineString } from "../../util/multilineStrings";
-import { IAddMissingParametersArgs } from "../../vscodeIntegration/commandArguments";
+import type { IAddMissingParametersArgs } from "../../vscodeIntegration/commandArguments";
 import {
 	getVSCodePositionFromPosition,
 	getVSCodeRangeFromSpan,
 } from "../../vscodeIntegration/vscodePosition";
 import {
-	IReferenceSite,
+	type IReferenceSite,
 	ReferenceSiteKind,
 } from "../positionContexts/PositionContext";
-import { IJsonDocument } from "../templates/IJsonDocument";
-import { TemplateScope } from "../templates/scopes/TemplateScope";
-import { IParameterDefinition } from "./IParameterDefinition";
-import { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
-import { IParameterValuesSource } from "./IParameterValuesSource";
+import type { IJsonDocument } from "../templates/IJsonDocument";
+import type { TemplateScope } from "../templates/scopes/TemplateScope";
+import type { IParameterDefinition } from "./IParameterDefinition";
+import type { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
+import type { IParameterValuesSource } from "./IParameterValuesSource";
 import {
 	createParameterFromTemplateParameter,
 	defaultTabSize,

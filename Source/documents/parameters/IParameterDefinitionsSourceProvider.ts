@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
+import type { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
 /**
  * Provides a parameterDefinitionsSource
  */

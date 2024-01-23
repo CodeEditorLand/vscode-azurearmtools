@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as assert from "assert";
+import * as assert from "node:assert";
 
 export class Duration {
 	private _milliseconds: number;

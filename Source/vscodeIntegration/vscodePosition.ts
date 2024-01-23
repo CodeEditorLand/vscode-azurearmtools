@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { IDocument } from "../documents/templates/IDocument";
+import type { IDocument } from "../documents/templates/IDocument";
 import { assert } from "../fixed_assert";
-import { LineColPos } from "../language/LineColPos";
-import { Span } from "../language/Span";
+import type { LineColPos } from "../language/LineColPos";
+import type { Span } from "../language/Span";
 
 export function getVSCodeRangeFromSpan(
 	deploymentDocument: IDocument,

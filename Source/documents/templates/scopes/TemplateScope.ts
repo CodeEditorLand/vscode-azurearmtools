@@ -3,20 +3,20 @@
 // ----------------------------------------------------------------------------
 
 import { templateKeys } from "../../../../common";
-import { Json, strings } from "../../../../extension.bundle";
+import { type Json, strings } from "../../../../extension.bundle";
 import { assert } from "../../../fixed_assert";
 import * as TLE from "../../../language/expressions/TLE";
 import { CachedValue } from "../../../util/CachedValue";
-import { IParameterDefinition } from "../../parameters/IParameterDefinition";
-import { IParameterDefinitionsSource } from "../../parameters/IParameterDefinitionsSource";
-import { IParameterDefinitionsSourceProvider } from "../../parameters/IParameterDefinitionsSourceProvider";
-import { IParameterValuesSource } from "../../parameters/IParameterValuesSource";
-import { IJsonDocument } from "../IJsonDocument";
-import { IResource } from "../IResource";
-import { UserFunctionDefinition } from "../UserFunctionDefinition";
-import { UserFunctionNamespaceDefinition } from "../UserFunctionNamespaceDefinition";
-import { IVariableDefinition } from "../VariableDefinition";
-import { IDeploymentSchemaReference } from "./IDeploymentSchemaReference";
+import type { IParameterDefinition } from "../../parameters/IParameterDefinition";
+import type { IParameterDefinitionsSource } from "../../parameters/IParameterDefinitionsSource";
+import type { IParameterDefinitionsSourceProvider } from "../../parameters/IParameterDefinitionsSourceProvider";
+import type { IParameterValuesSource } from "../../parameters/IParameterValuesSource";
+import type { IJsonDocument } from "../IJsonDocument";
+import type { IResource } from "../IResource";
+import type { UserFunctionDefinition } from "../UserFunctionDefinition";
+import type { UserFunctionNamespaceDefinition } from "../UserFunctionNamespaceDefinition";
+import type { IVariableDefinition } from "../VariableDefinition";
+import type { IDeploymentSchemaReference } from "./IDeploymentSchemaReference";
 
 export enum TemplateScopeKind {
 	Empty = "Empty",

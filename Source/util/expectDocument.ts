@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import * as assert from "assert";
-import { DeploymentDocument } from "../documents/DeploymentDocument";
+import * as assert from "node:assert";
+import type { DeploymentDocument } from "../documents/DeploymentDocument";
 import { DeploymentParametersDoc } from "../documents/parameters/DeploymentParametersDoc";
 import { DeploymentTemplateDoc } from "../documents/templates/DeploymentTemplateDoc";
 

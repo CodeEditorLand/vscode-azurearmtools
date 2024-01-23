@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { LineColPos } from "../../language/LineColPos";
-import { Span } from "../../language/Span";
-import { IDocumentLocation } from "./IDocumentLocation";
+import type { LineColPos } from "../../language/LineColPos";
+import type { Span } from "../../language/Span";
+import type { IDocumentLocation } from "./IDocumentLocation";
 
 /**
  * Represents a document with a URL location, contents and indexing by position

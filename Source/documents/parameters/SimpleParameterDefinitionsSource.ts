@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { IParameterDefinition } from "./IParameterDefinition";
-import { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
+import type { IParameterDefinition } from "./IParameterDefinition";
+import type { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
 
 export class SimpleParameterDefinitionsSource
 	implements IParameterDefinitionsSource

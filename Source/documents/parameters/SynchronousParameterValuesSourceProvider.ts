@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { Uri } from "vscode";
-import { IParameterValuesSource } from "./IParameterValuesSource";
-import { IParameterValuesSourceProvider } from "./IParameterValuesSourceProvider";
+import type { Uri } from "vscode";
+import type { IParameterValuesSource } from "./IParameterValuesSource";
+import type { IParameterValuesSourceProvider } from "./IParameterValuesSourceProvider";
 
 /**
  * Represents a parameter values source provider that is known at construction time.  For instance, a nested

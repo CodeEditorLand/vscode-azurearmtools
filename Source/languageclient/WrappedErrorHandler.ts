@@ -3,14 +3,18 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as os from "os";
+import * as os from "node:os";
 import {
-	IActionContext,
+	type IActionContext,
 	callWithTelemetryAndErrorHandlingSync,
 	parseError,
 } from "vscode-azureextensionui";
-import { Message } from "vscode-jsonrpc";
-import { CloseAction, ErrorAction, ErrorHandler } from "vscode-languageclient";
+import type { Message } from "vscode-jsonrpc";
+import type {
+	CloseAction,
+	ErrorAction,
+	ErrorHandler,
+} from "vscode-languageclient";
 import { languageServerName } from "../../common";
 
 const languageServerErrorTelemId = "Language Server Error";

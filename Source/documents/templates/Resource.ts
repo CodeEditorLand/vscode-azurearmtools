@@ -3,11 +3,11 @@
 // ----------------------------------------------------------------------------
 
 import { templateKeys } from "../../../common";
-import { Span } from "../../language/Span";
-import * as Json from "../../language/json/JSON";
+import type { Span } from "../../language/Span";
+import type * as Json from "../../language/json/JSON";
 import { CachedValue } from "../../util/CachedValue";
-import { IResource } from "./IResource";
-import { TemplateScope } from "./scopes/TemplateScope";
+import type { IResource } from "./IResource";
+import type { TemplateScope } from "./scopes/TemplateScope";
 import { getChildTemplateForResourceObject } from "./scopes/templateScopes";
 
 /**

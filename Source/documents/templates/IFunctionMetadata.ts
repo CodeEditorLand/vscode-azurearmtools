@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { ExpressionType } from "./ExpressionType";
+import type { ExpressionType } from "./ExpressionType";
 
 export enum FunctionBehaviors {
 	usesResourceIdCompletions = "usesResourceIdCompletions",

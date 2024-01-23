@@ -8,11 +8,11 @@ import { configKeys } from "../../../common";
 import { ext } from "../../extensionVariables";
 import { assert } from "../../fixed_assert";
 import { Span } from "../../language/Span";
-import { IGotoResourcesArgs } from "../../vscodeIntegration/commandArguments";
+import type { IGotoResourcesArgs } from "../../vscodeIntegration/commandArguments";
 import { getVSCodeRangeFromSpan } from "../../vscodeIntegration/vscodePosition";
 import { ResolvableCodeLens } from "../DeploymentDocument";
-import { IJsonResourceInfo } from "./getResourcesInfo";
-import { TemplateScope } from "./scopes/TemplateScope";
+import type { IJsonResourceInfo } from "./getResourcesInfo";
+import type { TemplateScope } from "./scopes/TemplateScope";
 
 export function getParentAndChildCodeLenses(
 	scope: TemplateScope,

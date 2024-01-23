@@ -5,15 +5,15 @@
 
 import * as vscode from "vscode";
 import { templateKeys } from "../../../common";
-import { Span } from "../../language/Span";
+import type { Span } from "../../language/Span";
 import * as Json from "../../language/json/JSON";
 import { assertNever } from "../../util/assertNever";
-import { IParameterDefinition } from "../parameters/IParameterDefinition";
-import { DeploymentTemplateDoc } from "./DeploymentTemplateDoc";
+import type { IParameterDefinition } from "../parameters/IParameterDefinition";
+import type { DeploymentTemplateDoc } from "./DeploymentTemplateDoc";
 import { TemplateSectionType } from "./TemplateSectionType";
-import { UserFunctionDefinition } from "./UserFunctionDefinition";
-import { UserFunctionNamespaceDefinition } from "./UserFunctionNamespaceDefinition";
-import { IVariableDefinition } from "./VariableDefinition";
+import type { UserFunctionDefinition } from "./UserFunctionDefinition";
+import type { UserFunctionNamespaceDefinition } from "./UserFunctionNamespaceDefinition";
+import type { IVariableDefinition } from "./VariableDefinition";
 
 // A map of [token starting index] to [span of all comments before that token]
 type CommentsMap = Map<number, Span>;

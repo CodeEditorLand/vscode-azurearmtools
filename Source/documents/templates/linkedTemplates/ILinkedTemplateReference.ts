@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { LinkedFileLoadState } from "./LinkedFileLoadState";
+import type { LinkedFileLoadState } from "./LinkedFileLoadState";
 
 export interface ILinkedTemplateReference {
 	id: string; // Guid

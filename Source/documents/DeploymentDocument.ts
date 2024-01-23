@@ -3,18 +3,18 @@
 // ----------------------------------------------------------------------------
 
 import {
-	CodeAction,
-	CodeActionContext,
+	type CodeAction,
+	type CodeActionContext,
 	CodeLens,
-	Command,
+	type Command,
 	Position,
 	Range,
-	Selection,
-	Uri,
+	type Selection,
+	type Uri,
 } from "vscode";
-import { INamedDefinition } from "../language/INamedDefinition";
-import { Issue } from "../language/Issue";
-import { ReferenceList } from "../language/ReferenceList";
+import type { INamedDefinition } from "../language/INamedDefinition";
+import type { Issue } from "../language/Issue";
+import type { ReferenceList } from "../language/ReferenceList";
 import { Span } from "../language/Span";
 import {
 	__debugMarkPositionInString,
@@ -22,9 +22,9 @@ import {
 } from "../util/debugMarkStrings";
 import { getVSCodeRangeFromSpan } from "../vscodeIntegration/vscodePosition";
 import { JsonDocument } from "./JsonDocument";
-import { IParameterValuesSourceProvider } from "./parameters/IParameterValuesSourceProvider";
-import { PositionContext } from "./positionContexts/PositionContext";
-import { TemplateScope } from "./templates/scopes/TemplateScope";
+import type { IParameterValuesSourceProvider } from "./parameters/IParameterValuesSourceProvider";
+import type { PositionContext } from "./positionContexts/PositionContext";
+import type { TemplateScope } from "./templates/scopes/TemplateScope";
 
 /**
  * Represents a deployment-related JSON file

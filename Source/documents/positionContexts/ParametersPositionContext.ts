@@ -2,17 +2,17 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { ReferenceList } from "../../language/ReferenceList";
-import * as TLE from "../../language/expressions/TLE";
-import { DeploymentParametersDoc } from "../parameters/DeploymentParametersDoc";
+import type { ReferenceList } from "../../language/ReferenceList";
+import type * as TLE from "../../language/expressions/TLE";
+import type { DeploymentParametersDoc } from "../parameters/DeploymentParametersDoc";
 import {
 	getPropertyValueCompletionItems,
 	getReferenceSiteInfoForParameterValue,
 } from "../parameters/ParameterValues";
-import { DeploymentTemplateDoc } from "../templates/DeploymentTemplateDoc";
+import type { DeploymentTemplateDoc } from "../templates/DeploymentTemplateDoc";
 import {
-	ICompletionItemsResult,
-	IReferenceSite,
+	type ICompletionItemsResult,
+	type IReferenceSite,
 	PositionContext,
 } from "./PositionContext";
 

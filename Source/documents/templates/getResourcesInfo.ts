@@ -10,7 +10,7 @@ import { getFriendlyExpressionFromTleExpression } from "../../language/expressio
 import * as Json from "../../language/json/JSON";
 import { isSingleQuoted, removeSingleQuotes } from "../../util/strings";
 import { areDecoupledChildAndParent } from "./areDecoupledChildAndParent";
-import { TemplateScope } from "./scopes/TemplateScope";
+import type { TemplateScope } from "./scopes/TemplateScope";
 
 /**
  * Get useful info about each resource in the template in a flat list, including the ability to understand full resource names and types in the
@@ -291,11 +291,10 @@ function concatExpressionsWithSeparator(
 				lastCoalescedExpression &&
 				isSingleQuoted(lastCoalescedExpression)
 			) {
-				coalescedExpressions[
-					coalescedExpressions.length - 1
-				] = `'${removeSingleQuotes(
-					lastCoalescedExpression,
-				)}${removeSingleQuotes(expression)}'`;
+				coalescedExpressions[coalescedExpressions.length - 1] =
+					`'${removeSingleQuotes(
+						lastCoalescedExpression,
+					)}${removeSingleQuotes(expression)}'`;
 			} else {
 				coalescedExpressions.push(expression);
 			}

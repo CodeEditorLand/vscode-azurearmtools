@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as Json from "../../language/json/JSON";
-import { IJsonDocument } from "../templates/IJsonDocument";
-import { ParameterValueDefinition } from "./ParameterValueDefinition";
+import type * as Json from "../../language/json/JSON";
+import type { IJsonDocument } from "../templates/IJsonDocument";
+import type { ParameterValueDefinition } from "./ParameterValueDefinition";
 
 /**
  * Represents a "parameters" JSON object that provides values for a set of parameter definitions.

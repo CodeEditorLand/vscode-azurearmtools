@@ -2,19 +2,25 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as path from "path";
+import * as path from "node:path";
 import * as fse from "fs-extra";
-import { Diagnostic, TextDocument, Uri, window, workspace } from "vscode";
+import {
+	type Diagnostic,
+	type TextDocument,
+	type Uri,
+	window,
+	workspace,
+} from "vscode";
 import {
 	DialogResponses,
-	IActionContext,
-	TelemetryProperties,
+	type IActionContext,
+	type TelemetryProperties,
 	callWithTelemetryAndErrorHandling,
 	parseError,
 } from "vscode-azureextensionui";
 import { armTemplateLanguageId, documentSchemes } from "../../../../common";
-import { Errorish } from "../../../Errorish";
-import { IProvideOpenedDocuments } from "../../../IProvideOpenedDocuments";
+import type { Errorish } from "../../../Errorish";
+import type { IProvideOpenedDocuments } from "../../../IProvideOpenedDocuments";
 import { ext } from "../../../extensionVariables";
 import { assert } from "../../../fixed_assert";
 import { ContainsBehavior } from "../../../language/Span";
@@ -30,7 +36,7 @@ import { parseUri, stringifyUri } from "../../../util/uri";
 import { DeploymentTemplateDoc } from "../../templates/DeploymentTemplateDoc";
 import { LinkedTemplateScope } from "../../templates/scopes/templateScopes";
 import { setLangIdToArm } from "../../templates/supported";
-import { ILinkedTemplateReference } from "./ILinkedTemplateReference";
+import type { ILinkedTemplateReference } from "./ILinkedTemplateReference";
 
 /**
  * Inputs for RequestOpenLinkedFile request sent from language server

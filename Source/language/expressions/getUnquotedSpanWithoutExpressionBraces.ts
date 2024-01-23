@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { Span } from "../Span";
-import { StringValue } from "../json/JSON";
+import type { Span } from "../Span";
+import type { StringValue } from "../json/JSON";
 import { isTleExpression } from "./isTleExpression";
 
 /**

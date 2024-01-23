@@ -2,13 +2,13 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { IParameterDefinition } from "../documents/parameters/IParameterDefinition";
+import type { IParameterDefinition } from "../documents/parameters/IParameterDefinition";
 import {
-	ExpressionType,
+	type ExpressionType,
 	toValidExpressionType,
 } from "../documents/templates/ExpressionType";
-import { UserFunctionDefinition } from "../documents/templates/UserFunctionDefinition";
-import { UserFunctionParameterDefinition } from "../documents/templates/UserFunctionParameterDefinition";
+import type { UserFunctionDefinition } from "../documents/templates/UserFunctionDefinition";
+import type { UserFunctionParameterDefinition } from "../documents/templates/UserFunctionParameterDefinition";
 
 export function getUserFunctionUsage(
 	func: UserFunctionDefinition,

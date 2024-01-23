@@ -2,12 +2,12 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as path from "path";
-import { isNullOrUndefined } from "util";
+import * as path from "node:path";
+import { isNullOrUndefined } from "node:util";
 import { ConfigurationTarget, Uri } from "vscode";
 import { configKeys } from "../../../common";
 import { normalizeFilePath } from "../../util/normalizedPaths";
-import { IConfiguration } from "../../vscodeIntegration/Configuration";
+import type { IConfiguration } from "../../vscodeIntegration/Configuration";
 import {
 	getRelativeParameterFilePath,
 	resolveParameterFilePath,

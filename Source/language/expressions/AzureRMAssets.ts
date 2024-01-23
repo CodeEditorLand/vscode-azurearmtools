@@ -2,19 +2,19 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as path from "path";
+import * as path from "node:path";
 import * as fse from "fs-extra";
 import { assetsPath } from "../../../common";
-import { ExpressionType } from "../../documents/templates/ExpressionType";
-import {
+import type { ExpressionType } from "../../documents/templates/ExpressionType";
+import type {
 	FunctionBehaviors,
 	IFunctionMetadata,
 	IFunctionParameterMetadata,
 } from "../../documents/templates/IFunctionMetadata";
 import { assert } from "../../fixed_assert";
-import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
-import { DefinitionKind, INamedDefinition } from "../INamedDefinition";
-import { StringValue } from "../json/JSON";
+import type { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
+import { DefinitionKind, type INamedDefinition } from "../INamedDefinition";
+import type { StringValue } from "../json/JSON";
 
 export function isBuiltinFunctionDefinition(
 	definition: INamedDefinition,

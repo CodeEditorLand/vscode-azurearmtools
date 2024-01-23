@@ -5,7 +5,7 @@
 
 import { callWithTelemetryAndErrorHandlingSync } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
-import { CaseInsensitiveMap } from "../util/CaseInsensitiveMap";
+import type { CaseInsensitiveMap } from "../util/CaseInsensitiveMap";
 import { getAvailableResourceTypesAndVersionsNoThrow } from "./getAvailableResourceTypesAndVersionsNoThrow";
 
 export async function showAvailableResourceTypesAndVersions(

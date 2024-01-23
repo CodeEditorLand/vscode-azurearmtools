@@ -4,12 +4,12 @@
 
 import { assert } from "../../fixed_assert";
 import { DefinitionKind } from "../../language/INamedDefinition";
-import { Span } from "../../language/Span";
+import type { Span } from "../../language/Span";
 import * as Json from "../../language/json/JSON";
-import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
-import { IParameterDefinition } from "../parameters/IParameterDefinition";
-import { ExpressionType, toValidExpressionType } from "./ExpressionType";
-import { IJsonDocument } from "./IJsonDocument";
+import type { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
+import type { IParameterDefinition } from "../parameters/IParameterDefinition";
+import { type ExpressionType, toValidExpressionType } from "./ExpressionType";
+import type { IJsonDocument } from "./IJsonDocument";
 
 /**
  * This class represents the definition of a parameter in a user-defined function

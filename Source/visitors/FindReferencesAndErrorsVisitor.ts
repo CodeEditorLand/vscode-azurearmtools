@@ -3,24 +3,24 @@
 // ----------------------------------------------------------------------------
 
 import { templateKeys } from "../../common";
-import { TLE } from "../../extension.bundle";
-import { UserFunctionDefinition } from "../documents/templates/UserFunctionDefinition";
-import { UserFunctionNamespaceDefinition } from "../documents/templates/UserFunctionNamespaceDefinition";
-import { TemplateScope } from "../documents/templates/scopes/TemplateScope";
-import { INamedDefinition } from "../language/INamedDefinition";
+import type { TLE } from "../../extension.bundle";
+import type { UserFunctionDefinition } from "../documents/templates/UserFunctionDefinition";
+import type { UserFunctionNamespaceDefinition } from "../documents/templates/UserFunctionNamespaceDefinition";
+import type { TemplateScope } from "../documents/templates/scopes/TemplateScope";
+import type { INamedDefinition } from "../language/INamedDefinition";
 import { Issue } from "../language/Issue";
 import { IssueKind } from "../language/IssueKind";
 import * as Reference from "../language/ReferenceList";
-import { Span } from "../language/Span";
-import {
+import type { Span } from "../language/Span";
+import type {
 	BuiltinFunctionMetadata,
 	FunctionsMetadata,
 } from "../language/expressions/AzureRMAssets";
 import {
-	FunctionCallValue,
+	type FunctionCallValue,
 	StringValue,
 	TleVisitor,
-	Value,
+	type Value,
 } from "../language/expressions/TLE";
 import {
 	UnrecognizedBuiltinFunctionIssue,

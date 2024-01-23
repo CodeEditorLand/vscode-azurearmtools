@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { IParameterDefinition } from "./IParameterDefinition";
+import type { IParameterDefinition } from "./IParameterDefinition";
 
 /**
  * Represents a "parameters" JSON object that defines a set of parameter names

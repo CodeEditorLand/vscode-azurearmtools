@@ -2,8 +2,8 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { IUsageInfo } from "../vscodeIntegration/UsageInfoHoverInfo";
-import * as Json from "./json/JSON";
+import type { IUsageInfo } from "../vscodeIntegration/UsageInfoHoverInfo";
+import type * as Json from "./json/JSON";
 
 export enum DefinitionKind {
 	Parameter = "Parameter",

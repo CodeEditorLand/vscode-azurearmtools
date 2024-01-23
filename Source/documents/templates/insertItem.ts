@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as assert from "assert";
+import * as assert from "node:assert";
 import * as vscode from "vscode";
 // tslint:disable-next-line:no-duplicate-imports
 import { commands } from "vscode";
-import {
+import type {
 	IActionContext,
 	IAzureQuickPickItem,
 	IAzureUserInput,
 } from "vscode-azureextensionui";
 import { Json, templateKeys } from "../../../extension.bundle";
 import { ext } from "../../extensionVariables";
-import { ObjectValue } from "../../language/json/JSON";
-import { ISnippet } from "../../snippets/ISnippet";
+import type { ObjectValue } from "../../language/json/JSON";
+import type { ISnippet } from "../../snippets/ISnippet";
 import { KnownContexts } from "../../snippets/KnownContexts";
 import { assertNever } from "../../util/assertNever";
-import { DeploymentTemplateDoc } from "./DeploymentTemplateDoc";
+import type { DeploymentTemplateDoc } from "./DeploymentTemplateDoc";
 import { TemplateSectionType } from "./TemplateSectionType";
 
 const insertCursorText = "[]";

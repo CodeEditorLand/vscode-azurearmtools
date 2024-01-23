@@ -3,8 +3,11 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CancellationToken } from "vscode";
-import { IActionContext, UserCancelledError } from "vscode-azureextensionui";
+import type { CancellationToken } from "vscode";
+import {
+	type IActionContext,
+	UserCancelledError,
+} from "vscode-azureextensionui";
 import { CancellationTokenSource } from "vscode-jsonrpc";
 
 export class Cancellation {

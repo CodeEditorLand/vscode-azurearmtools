@@ -5,7 +5,7 @@
 
 import { assert } from "../../fixed_assert";
 import { isSingleQuoted } from "../../util/strings";
-import { IResourceInfo } from "./getResourcesInfo";
+import type { IResourceInfo } from "./getResourcesInfo";
 
 /**
  * Determines if two top-level resources are in a parent/child relationship

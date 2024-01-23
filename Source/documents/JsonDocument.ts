@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { Position, Range, Uri } from "vscode";
-import { LineColPos } from "../language/LineColPos";
-import { ContainsBehavior, Span } from "../language/Span";
+import { Position, Range, type Uri } from "vscode";
+import type { LineColPos } from "../language/LineColPos";
+import { type ContainsBehavior, Span } from "../language/Span";
 import * as Json from "../language/json/JSON";
 import { CachedValue } from "../util/CachedValue";
 import {
@@ -12,7 +12,7 @@ import {
 	__debugMarkRangeInString,
 } from "../util/debugMarkStrings";
 import { nonNullValue } from "../util/nonNull";
-import { IJsonDocument } from "./templates/IJsonDocument";
+import type { IJsonDocument } from "./templates/IJsonDocument";
 
 /**
  * Represents any JSON document
@@ -33,7 +33,10 @@ export abstract class JsonDocument implements IJsonDocument {
 	 * @param _documentText The string text of the document
 	 * @param _documentUri The location of the document
 	 */
-	constructor(private _documentText: string, private _documentUri: Uri) {
+	constructor(
+		private _documentText: string,
+		private _documentUri: Uri,
+	) {
 		nonNullValue(_documentUri, "_documentUri");
 
 		this._jsonParseResult = Json.parse(_documentText);

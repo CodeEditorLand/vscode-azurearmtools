@@ -2,9 +2,15 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as path from "path";
-import { Position, Range, TextDocument, languages, workspace } from "vscode";
-import { IActionContext } from "vscode-azureextensionui";
+import * as path from "node:path";
+import {
+	Position,
+	Range,
+	type TextDocument,
+	languages,
+	workspace,
+} from "vscode";
+import type { IActionContext } from "vscode-azureextensionui";
 import {
 	armTemplateLanguageId,
 	configKeys,

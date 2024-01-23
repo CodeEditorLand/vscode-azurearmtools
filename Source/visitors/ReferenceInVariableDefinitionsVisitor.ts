@@ -2,12 +2,12 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import {
+import type {
 	DeploymentTemplateDoc,
 	IScopedParseResult,
 } from "../documents/templates/DeploymentTemplateDoc";
 import { assert } from "../fixed_assert";
-import { Span } from "../language/Span";
+import type { Span } from "../language/Span";
 import * as TLE from "../language/expressions/TLE";
 import * as Json from "../language/json/JSON";
 

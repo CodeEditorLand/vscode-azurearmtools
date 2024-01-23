@@ -2,10 +2,13 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as path from "path";
+import * as path from "node:path";
 import * as fse from "fs-extra";
-import { QuickPickItem, Uri, window } from "vscode";
-import { IActionContext, UserCancelledError } from "vscode-azureextensionui";
+import { type QuickPickItem, Uri, window } from "vscode";
+import {
+	type IActionContext,
+	UserCancelledError,
+} from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { isTleExpression } from "../../language/expressions/isTleExpression";
 import * as Json from "../../language/json/JSON";
@@ -15,10 +18,10 @@ import {
 	indentMultilineString,
 	unindentMultilineString,
 } from "../../util/multilineStrings";
-import { ExpressionType } from "../templates/ExpressionType";
-import { TemplateScope } from "../templates/scopes/TemplateScope";
-import { IParameterDefinition } from "./IParameterDefinition";
-import { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
+import type { ExpressionType } from "../templates/ExpressionType";
+import type { TemplateScope } from "../templates/scopes/TemplateScope";
+import type { IParameterDefinition } from "./IParameterDefinition";
+import type { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
 
 export const defaultTabSize: number = 4;
 

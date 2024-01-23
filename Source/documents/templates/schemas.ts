@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { ISchemaInfo } from "./ISchemaInfo";
+import type { ISchemaInfo } from "./ISchemaInfo";
 import { DeploymentScopeKind } from "./scopes/DeploymentScopeKind";
 
 const schemaInfos: ISchemaInfo[] = [

@@ -3,24 +3,24 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from "path";
+import * as path from "node:path";
 import * as fse from "fs-extra";
 import * as stripJsonComments from "strip-json-comments";
 import { window } from "vscode";
 import {
-	IActionContext,
+	type IActionContext,
 	callWithTelemetryAndErrorHandling,
 } from "vscode-azureextensionui";
 import { assetsPath, extensionName } from "../../common";
 import { assert } from "../fixed_assert";
-import { Span } from "../language/Span";
+import type { Span } from "../language/Span";
 import { CachedPromise } from "../util/CachedPromise";
 import { readUtf8FileWithBom } from "../util/readUtf8FileWithBom";
 import * as Completion from "../vscodeIntegration/Completion";
-import { ISnippet } from "./ISnippet";
-import { ISnippetManager } from "./ISnippetManager";
-import { InsertionContext } from "./InsertionContext";
-import { Context, KnownContexts } from "./KnownContexts";
+import type { ISnippet } from "./ISnippet";
+import type { ISnippetManager } from "./ISnippetManager";
+import type { InsertionContext } from "./InsertionContext";
+import { type Context, KnownContexts } from "./KnownContexts";
 import { createResourceSnippetFromFile } from "./resourceSnippetsConversion";
 
 export interface ISnippetDefinitionFromFile {

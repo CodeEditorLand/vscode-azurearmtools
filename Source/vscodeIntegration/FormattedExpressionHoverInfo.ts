@@ -4,10 +4,10 @@
 // ---------------------------------------------------------------------------------------------
 
 import { MarkdownString } from "vscode";
-import { Span } from "../language/Span";
-import * as TLE from "../language/expressions/TLE";
+import type { Span } from "../language/Span";
+import type * as TLE from "../language/expressions/TLE";
 import { indentMultilineString } from "../util/multilineStrings";
-import { IHoverInfo } from "./IHoverInfo";
+import type { IHoverInfo } from "./IHoverInfo";
 
 /**
  * A hover that shows an expression formatted in an easy-to-read, multi-line manner

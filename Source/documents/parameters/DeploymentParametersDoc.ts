@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import {
+import type {
 	CodeAction,
 	CodeActionContext,
 	Command,
@@ -11,8 +11,8 @@ import {
 	Uri,
 } from "vscode";
 import { templateKeys } from "../../../common";
-import { INamedDefinition } from "../../language/INamedDefinition";
-import { Issue } from "../../language/Issue";
+import type { INamedDefinition } from "../../language/INamedDefinition";
+import type { Issue } from "../../language/Issue";
 import { ReferenceList } from "../../language/ReferenceList";
 import * as Json from "../../language/json/JSON";
 import { CachedValue } from "../../util/CachedValue";
@@ -20,11 +20,14 @@ import {
 	expectTemplateDocument,
 	expectTemplateDocumentOrUndefined,
 } from "../../util/expectDocument";
-import { DeploymentDocument, ResolvableCodeLens } from "../DeploymentDocument";
+import {
+	DeploymentDocument,
+	type ResolvableCodeLens,
+} from "../DeploymentDocument";
 import { ParametersPositionContext } from "../positionContexts/ParametersPositionContext";
 import { isParametersSchema } from "../templates/schemas";
-import { IParameterValuesSource } from "./IParameterValuesSource";
-import { IParameterValuesSourceProvider } from "./IParameterValuesSourceProvider";
+import type { IParameterValuesSource } from "./IParameterValuesSource";
+import type { IParameterValuesSourceProvider } from "./IParameterValuesSourceProvider";
 import { ParameterValueDefinition } from "./ParameterValueDefinition";
 import {
 	getMissingParameterErrors,

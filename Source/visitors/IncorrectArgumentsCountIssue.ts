@@ -4,7 +4,7 @@
 
 import { Issue } from "../language/Issue";
 import { IssueKind } from "../language/IssueKind";
-import { Span } from "../language/Span";
+import type { Span } from "../language/Span";
 
 /**
  * An issue that was detected while parsing a deployment template.

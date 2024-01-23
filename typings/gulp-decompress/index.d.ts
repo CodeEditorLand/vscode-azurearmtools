@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 declare module "gulp-decompress" {
-	import * as decompress from "decompress";
-	import { Transform } from "stream";
+	import type * as decompress from "decompress";
+	import type { Transform } from "node:stream";
 
 	function gulp_decompress(opts: decompress.DecompressOptions): Transform;
 

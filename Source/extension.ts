@@ -5,13 +5,13 @@
 // tslint:disable:promise-function-async max-line-length // Grandfathered in
 
 // CONSIDER: Refactor this file
-import * as path from "path";
+import * as path from "node:path";
 import * as vscode from "vscode";
 import {
 	AzureUserInput,
-	IActionContext,
-	ITelemetryContext,
-	TelemetryProperties,
+	type IActionContext,
+	type ITelemetryContext,
+	type TelemetryProperties,
 	callWithTelemetryAndErrorHandling,
 	callWithTelemetryAndErrorHandlingSync,
 	createAzExtOutputChannel,
@@ -31,18 +31,18 @@ import {
 } from "../common";
 import { delay } from "../test/support/delay";
 import { writeToLog } from "../test/support/testLog";
-import { IProvideOpenedDocuments } from "./IProvideOpenedDocuments";
+import type { IProvideOpenedDocuments } from "./IProvideOpenedDocuments";
 import { TimedMessage } from "./TimedMessage";
 import {
-	DeploymentDocument,
+	type DeploymentDocument,
 	ResolvableCodeLens,
 } from "./documents/DeploymentDocument";
 import { UnsupportedJsonDocument } from "./documents/UnsupportedJsonDocument";
 import { DeploymentFileMapping } from "./documents/parameters/DeploymentFileMapping";
 import { DeploymentParametersDoc } from "./documents/parameters/DeploymentParametersDoc";
-import { IParameterDefinitionsSource } from "./documents/parameters/IParameterDefinitionsSource";
-import { IParameterValuesSource } from "./documents/parameters/IParameterValuesSource";
-import { IParameterValuesSourceProvider } from "./documents/parameters/IParameterValuesSourceProvider";
+import type { IParameterDefinitionsSource } from "./documents/parameters/IParameterDefinitionsSource";
+import type { IParameterValuesSource } from "./documents/parameters/IParameterValuesSource";
+import type { IParameterValuesSourceProvider } from "./documents/parameters/IParameterValuesSourceProvider";
 import { addMissingParameters } from "./documents/parameters/ParameterValues";
 import { defaultTabSize } from "./documents/parameters/parameterFileGeneration";
 import {
@@ -52,14 +52,14 @@ import {
 	openTemplateFile,
 	selectParameterFile,
 } from "./documents/parameters/parameterFiles";
-import {
+import type {
 	IReferenceSite,
 	PositionContext,
 } from "./documents/positionContexts/PositionContext";
 import { TemplatePositionContext } from "./documents/positionContexts/TemplatePositionContext";
 import { DeploymentTemplateDoc } from "./documents/templates/DeploymentTemplateDoc";
 import { ExtractItem } from "./documents/templates/ExtractItem";
-import { IJsonDocument } from "./documents/templates/IJsonDocument";
+import type { IJsonDocument } from "./documents/templates/IJsonDocument";
 import { TemplateSectionType } from "./documents/templates/TemplateSectionType";
 import { getNormalizedDocumentKey } from "./documents/templates/getNormalizedDocumentKey";
 import { gotoResources } from "./documents/templates/gotoResources";
@@ -68,12 +68,15 @@ import {
 	getItemTypeQuickPicks,
 } from "./documents/templates/insertItem";
 import {
-	INotifyTemplateGraphArgs,
+	type INotifyTemplateGraphArgs,
 	assignTemplateGraphToDeploymentTemplate,
 	openLinkedTemplateFileCommand,
 	tryLoadNonLocalLinkedFile,
 } from "./documents/templates/linkedTemplates/linkedTemplates";
-import { allSchemas, getPreferredSchema } from "./documents/templates/schemas";
+import {
+	type allSchemas,
+	getPreferredSchema,
+} from "./documents/templates/schemas";
 import {
 	getQuickPickItems,
 	sortTemplate,
@@ -87,11 +90,11 @@ import {
 } from "./documents/templates/supported";
 import { ext } from "./extensionVariables";
 import { assert } from "./fixed_assert";
-import { Issue, IssueSeverity } from "./language/Issue";
-import { ReferenceList } from "./language/ReferenceList";
+import { type Issue, IssueSeverity } from "./language/Issue";
+import type { ReferenceList } from "./language/ReferenceList";
 import { Span } from "./language/Span";
 import * as TLE from "./language/expressions/TLE";
-import * as Json from "./language/json/JSON";
+import type * as Json from "./language/json/JSON";
 import { getAvailableResourceTypesAndVersionsNoThrow } from "./languageclient/getAvailableResourceTypesAndVersionsNoThrow";
 import { showAvailableResourceTypesAndVersions } from "./languageclient/showAvailableResourceTypesAndVersions";
 import {
@@ -100,7 +103,7 @@ import {
 	startArmLanguageServerInBackground,
 	waitForLanguageServerAvailable,
 } from "./languageclient/startArmLanguageServer";
-import { InsertionContext } from "./snippets/InsertionContext";
+import type { InsertionContext } from "./snippets/InsertionContext";
 import { KnownContexts } from "./snippets/KnownContexts";
 import { SnippetManager } from "./snippets/SnippetManager";
 import { showInsertionContext } from "./snippets/showInsertionContext";
@@ -118,12 +121,12 @@ import { Cancellation } from "./util/throwOnCancel";
 import { parseUri } from "./util/uri";
 import { IncorrectArgumentsCountIssue } from "./visitors/IncorrectArgumentsCountIssue";
 import { UnrecognizedBuiltinFunctionIssue } from "./visitors/UnrecognizedFunctionIssues";
-import { Item } from "./vscodeIntegration/Completion";
+import type { Item } from "./vscodeIntegration/Completion";
 import { ConsoleOutputChannelWrapper } from "./vscodeIntegration/ConsoleOutputChannelWrapper";
-import { IHoverInfo } from "./vscodeIntegration/IHoverInfo";
+import type { IHoverInfo } from "./vscodeIntegration/IHoverInfo";
 import { RenameCodeActionProvider } from "./vscodeIntegration/RenameCodeActionProvider";
 import { JsonOutlineProvider } from "./vscodeIntegration/Treeview";
-import {
+import type {
 	IAddMissingParametersArgs,
 	IGotoParameterValueArgs,
 	IGotoResourcesArgs,

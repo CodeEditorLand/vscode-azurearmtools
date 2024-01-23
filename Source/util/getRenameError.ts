@@ -3,7 +3,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { IReferenceSite } from "../documents/positionContexts/PositionContext";
+import type { IReferenceSite } from "../documents/positionContexts/PositionContext";
 import { DefinitionKind } from "../language/INamedDefinition";
 
 /**

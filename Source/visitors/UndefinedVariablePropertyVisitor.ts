@@ -2,15 +2,15 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { IVariableDefinition } from "../documents/templates/VariableDefinition";
-import { TemplateScope } from "../documents/templates/scopes/TemplateScope";
+import type { IVariableDefinition } from "../documents/templates/VariableDefinition";
+import type { TemplateScope } from "../documents/templates/scopes/TemplateScope";
 import { Issue } from "../language/Issue";
 import { IssueKind } from "../language/IssueKind";
 import {
-	FunctionCallValue,
-	PropertyAccess,
+	type FunctionCallValue,
+	type PropertyAccess,
 	TleVisitor,
-	Value,
+	type Value,
 } from "../language/expressions/TLE";
 import * as Json from "../language/json/JSON";
 

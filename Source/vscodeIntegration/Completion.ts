@@ -2,13 +2,13 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as vscode from "vscode";
-import { IParameterDefinition } from "../documents/parameters/IParameterDefinition";
-import { IFunctionMetadata } from "../documents/templates/IFunctionMetadata";
-import { UserFunctionNamespaceDefinition } from "../documents/templates/UserFunctionNamespaceDefinition";
-import { IVariableDefinition } from "../documents/templates/VariableDefinition";
+import type * as vscode from "vscode";
+import type { IParameterDefinition } from "../documents/parameters/IParameterDefinition";
+import type { IFunctionMetadata } from "../documents/templates/IFunctionMetadata";
+import type { UserFunctionNamespaceDefinition } from "../documents/templates/UserFunctionNamespaceDefinition";
+import type { IVariableDefinition } from "../documents/templates/VariableDefinition";
 import { assert } from "../fixed_assert";
-import { Span } from "../language/Span";
+import type { Span } from "../language/Span";
 
 export enum CompletionPriority {
 	normal = "normal",

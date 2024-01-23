@@ -2,12 +2,12 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as assert from "assert";
-import * as path from "path";
+import * as assert from "node:assert";
+import * as path from "node:path";
 import * as fse from "fs-extra";
 import {
-	MessageItem,
-	TextDocument,
+	type MessageItem,
+	type TextDocument,
 	Uri,
 	commands,
 	window,
@@ -15,8 +15,8 @@ import {
 } from "vscode";
 import {
 	DialogResponses,
-	IActionContext,
-	IAzureQuickPickItem,
+	type IActionContext,
+	type IAzureQuickPickItem,
 	UserCancelledError,
 	callWithTelemetryAndErrorHandling,
 } from "vscode-azureextensionui";
@@ -32,7 +32,7 @@ import { normalizeFilePath } from "../../util/normalizedPaths";
 import { pathExistsNoThrow } from "../../util/pathExistsNoThrow";
 import { DeploymentTemplateDoc } from "../templates/DeploymentTemplateDoc";
 import { containsParametersSchema } from "../templates/schemas";
-import { DeploymentFileMapping } from "./DeploymentFileMapping";
+import type { DeploymentFileMapping } from "./DeploymentFileMapping";
 import { queryCreateParameterFile } from "./parameterFileGeneration";
 import { getRelativeParameterFilePath } from "./parameterFilePaths";
 

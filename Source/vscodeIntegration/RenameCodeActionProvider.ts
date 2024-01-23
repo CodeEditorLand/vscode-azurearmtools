@@ -4,8 +4,8 @@
 // ---------------------------------------------------------------------------------------------
 
 import * as vscode from "vscode";
-import { PositionContext } from "../documents/positionContexts/PositionContext";
-import { TemplatePositionContext } from "../documents/positionContexts/TemplatePositionContext";
+import type { PositionContext } from "../documents/positionContexts/PositionContext";
+import type { TemplatePositionContext } from "../documents/positionContexts/TemplatePositionContext";
 import { getRenameError } from "../util/getRenameError";
 
 const command = "editor.action.rename";

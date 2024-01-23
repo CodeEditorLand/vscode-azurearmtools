@@ -4,7 +4,7 @@
 
 import { assert } from "../../fixed_assert";
 import * as Json from "../../language/json/JSON";
-import { ExpressionType, toValidExpressionType } from "./ExpressionType";
+import { type ExpressionType, toValidExpressionType } from "./ExpressionType";
 
 /**
  * This class represents the definition of a user-defined output in a deployment template.

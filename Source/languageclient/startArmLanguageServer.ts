@@ -3,36 +3,36 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as os from "os";
-import * as path from "path";
+import * as os from "node:os";
+import * as path from "node:path";
 import * as fse from "fs-extra";
 import {
-	CancellationToken,
-	CompletionContext,
-	CompletionItem,
+	type CancellationToken,
+	type CompletionContext,
+	type CompletionItem,
 	CompletionList,
-	Diagnostic,
-	Event,
+	type Diagnostic,
+	type Event,
 	EventEmitter,
-	Position,
+	type Position,
 	ProgressLocation,
-	TextDocument,
-	Uri,
+	type TextDocument,
+	type Uri,
 	window,
 	workspace,
 } from "vscode";
 import {
-	IActionContext,
-	ITelemetryContext,
+	type IActionContext,
+	type ITelemetryContext,
 	callWithTelemetryAndErrorHandling,
 	callWithTelemetryAndErrorHandlingSync,
 	parseError,
 } from "vscode-azureextensionui";
 import {
 	LanguageClient,
-	LanguageClientOptions,
+	type LanguageClientOptions,
 	RevealOutputChannelOn,
-	ServerOptions,
+	type ServerOptions,
 } from "vscode-languageclient/node";
 import {
 	armTemplateLanguageId,
@@ -49,8 +49,8 @@ import {
 import { delay } from "../../test/support/delay";
 import { acquireSharedDotnetInstallation } from "../acquisition/acquireSharedDotnetInstallation";
 import {
-	INotifyTemplateGraphArgs,
-	IRequestOpenLinkedFileArgs,
+	type INotifyTemplateGraphArgs,
+	type IRequestOpenLinkedFileArgs,
 	convertDiagnosticUrisToLinkedTemplateSchema,
 	onRequestOpenLinkedFile,
 } from "../documents/templates/linkedTemplates/linkedTemplates";

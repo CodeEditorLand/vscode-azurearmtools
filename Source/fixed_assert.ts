@@ -6,7 +6,7 @@
 
 // tslint:disable:variable-name
 
-import * as orig_assert from "assert";
+import * as orig_assert from "node:assert";
 import { isWebpack } from "../common";
 
 export const breakOnAssert: boolean = /^(true|1)$/i.test(

@@ -2,11 +2,11 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { INamedDefinition } from "../../language/INamedDefinition";
-import { Span } from "../../language/Span";
-import * as Json from "../../language/json/JSON";
-import { ExpressionType } from "../templates/ExpressionType";
-import { IJsonDocument } from "../templates/IJsonDocument";
+import type { INamedDefinition } from "../../language/INamedDefinition";
+import type { Span } from "../../language/Span";
+import type * as Json from "../../language/json/JSON";
+import type { ExpressionType } from "../templates/ExpressionType";
+import type { IJsonDocument } from "../templates/IJsonDocument";
 
 /**
  * This class represents the definition of any kind of parameter in a deployment template.

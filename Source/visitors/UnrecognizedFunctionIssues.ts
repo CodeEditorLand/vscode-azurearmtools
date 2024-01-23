@@ -4,10 +4,13 @@
 
 import { Issue } from "../language/Issue";
 import { IssueKind } from "../language/IssueKind";
-import { Span } from "../language/Span";
+import type { Span } from "../language/Span";
 
 export class UnrecognizedBuiltinFunctionIssue extends Issue {
-	constructor(span: Span, private _functionName: string) {
+	constructor(
+		span: Span,
+		private _functionName: string,
+	) {
 		super(
 			span,
 			`Unrecognized function name '${_functionName}'.`,
@@ -28,7 +31,10 @@ export class UnrecognizedBuiltinFunctionIssue extends Issue {
 }
 
 export class UnrecognizedUserNamespaceIssue extends Issue {
-	constructor(span: Span, private _namspaceName: string) {
+	constructor(
+		span: Span,
+		private _namspaceName: string,
+	) {
 		super(
 			span,
 			`Unrecognized user-defined function namespace '${_namspaceName}'.`,

@@ -4,9 +4,9 @@
 // ---------------------------------------------------------------------------------------------
 
 import { MarkdownString } from "vscode";
-import { Span } from "../language/Span";
-import * as Json from "../language/json/JSON";
-import { IHoverInfo } from "./IHoverInfo";
+import type { Span } from "../language/Span";
+import type * as Json from "../language/json/JSON";
+import type { IHoverInfo } from "./IHoverInfo";
 
 /**
  * A hover that shows a JSON string with \r, \n formatted in multiple lines

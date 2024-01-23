@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as vscode from "vscode";
-import { Span } from "../../language/Span";
-import * as Json from "../../language/json/JSON";
-import { IDocument } from "./IDocument";
+import type * as vscode from "vscode";
+import type { Span } from "../../language/Span";
+import type * as Json from "../../language/json/JSON";
+import type { IDocument } from "./IDocument";
 
 /**
  * Represents an IDocument based on JSON

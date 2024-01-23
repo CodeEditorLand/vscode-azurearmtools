@@ -6,7 +6,7 @@
 import { commands, window } from "vscode";
 import {
 	DialogResponses,
-	IActionContext,
+	type IActionContext,
 	UserCancelledError,
 } from "vscode-azureextensionui";
 import { extensionName, globalStateKeys } from "../../common";

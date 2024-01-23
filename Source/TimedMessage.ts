@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { MessageItem, Uri, commands, window } from "vscode";
+import { type MessageItem, type Uri, commands, window } from "vscode";
 import {
-	IActionContext,
+	type IActionContext,
 	callWithTelemetryAndErrorHandling,
 } from "vscode-azureextensionui";
 import { ext } from "./extensionVariables";

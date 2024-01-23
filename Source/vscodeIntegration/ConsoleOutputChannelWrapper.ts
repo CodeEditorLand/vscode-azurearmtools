@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import * as vscode from "vscode";
-import { IAzExtOutputChannel } from "vscode-azureextensionui";
+import type * as vscode from "vscode";
+import type { IAzExtOutputChannel } from "vscode-azureextensionui";
 
 /**
  * Wraps an output channel to echo everything logged to the console

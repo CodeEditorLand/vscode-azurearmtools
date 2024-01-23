@@ -2,12 +2,12 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { TLE } from "../../extension.bundle";
-import { UserFunctionDefinition } from "../documents/templates/UserFunctionDefinition";
-import { UserFunctionNamespaceDefinition } from "../documents/templates/UserFunctionNamespaceDefinition";
+import type { TLE } from "../../extension.bundle";
+import type { UserFunctionDefinition } from "../documents/templates/UserFunctionDefinition";
+import type { UserFunctionNamespaceDefinition } from "../documents/templates/UserFunctionNamespaceDefinition";
 import { assert } from "../fixed_assert";
-import { Issue } from "../language/Issue";
-import * as assets from "../language/expressions/AzureRMAssets";
+import type { Issue } from "../language/Issue";
+import type * as assets from "../language/expressions/AzureRMAssets";
 import { IncorrectArgumentsCountIssue } from "./IncorrectArgumentsCountIssue";
 
 export function validateUserFunctionCallArgCounts(

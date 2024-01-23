@@ -4,10 +4,10 @@
 
 // tslint:disable max-classes-per-file // Grandfathered in
 
-import * as os from "os";
+import * as os from "node:os";
 import { MarkdownString } from "vscode";
-import { Span } from "../language/Span";
-import { IHoverInfo } from "./IHoverInfo";
+import type { Span } from "../language/Span";
+import type { IHoverInfo } from "./IHoverInfo";
 
 export interface IUsageInfo {
 	usage: string;

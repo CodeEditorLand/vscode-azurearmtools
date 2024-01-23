@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { CompletionItem, Event, EventEmitter } from "vscode";
-import { Completion } from "../../extension.bundle";
-import { IJsonDocument } from "../documents/templates/IJsonDocument";
+import { type CompletionItem, type Event, EventEmitter } from "vscode";
+import type { Completion } from "../../extension.bundle";
+import type { IJsonDocument } from "../documents/templates/IJsonDocument";
 
 export interface ICompletionsSpyResult {
 	document: IJsonDocument;

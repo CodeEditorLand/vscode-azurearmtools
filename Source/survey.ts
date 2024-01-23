@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import { MessageItem, commands, window } from "vscode";
+import { type MessageItem, commands, window } from "vscode";
 import {
-	IActionContext,
+	type IActionContext,
 	callWithTelemetryAndErrorHandling,
 } from "vscode-azureextensionui";
 import { globalStateKeys } from "../common";

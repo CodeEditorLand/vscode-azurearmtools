@@ -7,10 +7,10 @@
 // tslint:disable:switch-default // Grandfathered in
 // tslint:disable:max-classes-per-file // Grandfathered in
 import { templateKeys } from "../../../common";
-import { TemplatePositionContext } from "../../documents/positionContexts/TemplatePositionContext";
-import { IFunctionMetadata } from "../../documents/templates/IFunctionMetadata";
+import type { TemplatePositionContext } from "../../documents/positionContexts/TemplatePositionContext";
+import type { IFunctionMetadata } from "../../documents/templates/IFunctionMetadata";
 import { assert } from "../../fixed_assert";
-import { Iterator } from "../../util/Iterator";
+import type { Iterator } from "../../util/Iterator";
 import { __debugMarkRangeInString } from "../../util/debugMarkStrings";
 import { nonNullValue } from "../../util/nonNull";
 import * as Utilities from "../../util/strings";
@@ -758,11 +758,12 @@ export class FunctionCallValue extends ParentValue {
 						prevCoalescedExpression.match(/[\]})]\.[a-zA-Z0-9]/);
 					if (!previousContainsPropertyIndex) {
 						// Merge previous and current expressions into a single-quoted string
-						coalescedExpressions[
-							coalescedExpressions.length - 1
-						] = `'${Utilities.removeSingleQuotes(
-							prevCoalescedExpression,
-						)}${Utilities.removeSingleQuotes(currentExpression)}'`;
+						coalescedExpressions[coalescedExpressions.length - 1] =
+							`'${Utilities.removeSingleQuotes(
+								prevCoalescedExpression,
+							)}${Utilities.removeSingleQuotes(
+								currentExpression,
+							)}'`;
 						continue;
 					}
 				}

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 declare module "gulp-download" {
-	import { Stream } from "stream";
+	import type { Stream } from "node:stream";
 
 	function gulp_download(urls: string | string[]): Stream;
 

@@ -5,8 +5,8 @@
 
 import * as vscode from "vscode";
 import { expressionsDiagnosticsSource } from "../../common";
-import { DeploymentDocument } from "../documents/DeploymentDocument";
-import { Issue } from "../language/Issue";
+import type { DeploymentDocument } from "../documents/DeploymentDocument";
+import type { Issue } from "../language/Issue";
 import { getVSCodeRangeFromSpan } from "./vscodePosition";
 
 export function toVSCodeDiagnosticFromIssue(

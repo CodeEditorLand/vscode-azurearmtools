@@ -3,16 +3,16 @@
 // ----------------------------------------------------------------------------
 
 import { assert } from "../../fixed_assert";
-import { ContainsBehavior, Span } from "../../language/Span";
+import { ContainsBehavior, type Span } from "../../language/Span";
 import { AzureRMAssets } from "../../language/expressions/AzureRMAssets";
-import * as TLE from "../../language/expressions/TLE";
+import type * as TLE from "../../language/expressions/TLE";
 import * as Json from "../../language/json/JSON";
 import * as Completion from "../../vscodeIntegration/Completion";
-import { PositionContext } from "../positionContexts/PositionContext";
-import { TemplatePositionContext } from "../positionContexts/TemplatePositionContext";
+import type { PositionContext } from "../positionContexts/PositionContext";
+import type { TemplatePositionContext } from "../positionContexts/TemplatePositionContext";
 import { FunctionBehaviors } from "./IFunctionMetadata";
-import { IResourceInfo, getResourcesInfo } from "./getResourcesInfo";
-import { TemplateScope } from "./scopes/TemplateScope";
+import { type IResourceInfo, getResourcesInfo } from "./getResourcesInfo";
+import type { TemplateScope } from "./scopes/TemplateScope";
 
 // Handle completions for resourceId and similar functions with the usesResourceIdCompletions behavior
 

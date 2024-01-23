@@ -3,13 +3,13 @@
 // ----------------------------------------------------------------------------
 
 import { getUserFunctionUsage } from "../../vscodeIntegration/signatureFormatting";
-import { ExpressionType } from "./ExpressionType";
-import {
+import type { ExpressionType } from "./ExpressionType";
+import type {
 	FunctionBehaviors,
 	IFunctionMetadata,
 	IFunctionParameterMetadata,
 } from "./IFunctionMetadata";
-import { UserFunctionDefinition } from "./UserFunctionDefinition";
+import type { UserFunctionDefinition } from "./UserFunctionDefinition";
 
 /**
  * This class represents information about a user-defined function (name, arguments, return type, etc)

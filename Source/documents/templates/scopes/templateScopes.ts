@@ -5,29 +5,29 @@
 // tslint:disable: max-classes-per-file
 
 import { deploymentsResourceTypeLC, templateKeys } from "../../../../common";
-import { IProvideOpenedDocuments } from "../../../IProvideOpenedDocuments";
+import type { IProvideOpenedDocuments } from "../../../IProvideOpenedDocuments";
 import * as Json from "../../../language/json/JSON";
 import { assertNever } from "../../../util/assertNever";
 import { parseUri } from "../../../util/uri";
-import { IParameterDefinition } from "../../parameters/IParameterDefinition";
-import { IParameterDefinitionsSource } from "../../parameters/IParameterDefinitionsSource";
-import { IParameterValuesSource } from "../../parameters/IParameterValuesSource";
+import type { IParameterDefinition } from "../../parameters/IParameterDefinition";
+import type { IParameterDefinitionsSource } from "../../parameters/IParameterDefinitionsSource";
+import type { IParameterValuesSource } from "../../parameters/IParameterValuesSource";
 import { ParameterDefinition } from "../../parameters/ParameterDefinition";
 import { ParameterValuesSourceFromJsonObject } from "../../parameters/ParameterValuesSourceFromJsonObject";
 import { SimpleParameterDefinitionsSource } from "../../parameters/SimpleParameterDefinitionsSource";
 import { DeploymentTemplateDoc } from "../DeploymentTemplateDoc";
-import { IJsonDocument } from "../IJsonDocument";
-import { IResource } from "../IResource";
+import type { IJsonDocument } from "../IJsonDocument";
+import type { IResource } from "../IResource";
 import { Resource } from "../Resource";
 import { UserFunctionNamespaceDefinition } from "../UserFunctionNamespaceDefinition";
 import {
-	IVariableDefinition,
+	type IVariableDefinition,
 	TopLevelCopyBlockVariableDefinition,
 	TopLevelVariableDefinition,
 } from "../VariableDefinition";
-import { ILinkedTemplateReference } from "../linkedTemplates/ILinkedTemplateReference";
+import type { ILinkedTemplateReference } from "../linkedTemplates/ILinkedTemplateReference";
 import { getParameterDefinitionsFromLinkedTemplate } from "../linkedTemplates/getParameterDefinitionsFromLinkedTemplate";
-import { IDeploymentSchemaReference } from "./IDeploymentSchemaReference";
+import type { IDeploymentSchemaReference } from "./IDeploymentSchemaReference";
 import { TemplateScope, TemplateScopeKind } from "./TemplateScope";
 import { getDeploymentScopeReference } from "./getDeploymentScopeReference";
 

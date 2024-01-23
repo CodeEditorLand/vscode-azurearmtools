@@ -2,9 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import * as Json from "../../language/json/JSON";
-import { IJsonDocument } from "../templates/IJsonDocument";
-import { IParameterValuesSource } from "./IParameterValuesSource";
+import type * as Json from "../../language/json/JSON";
+import type { IJsonDocument } from "../templates/IJsonDocument";
+import type { IParameterValuesSource } from "./IParameterValuesSource";
 import { ParameterValueDefinition } from "./ParameterValueDefinition";
 
 /**

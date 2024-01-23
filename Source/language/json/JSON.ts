@@ -12,11 +12,11 @@
 // Because the JSON/ARM parsers catch these errors, it doesn't make too much difference for the end user
 //   so might not be worth fixing.
 
-import { Json } from "../../../extension.bundle";
+import type { Json } from "../../../extension.bundle";
 import { assert } from "../../fixed_assert";
 import { CachedValue } from "../../util/CachedValue";
 import { CaseInsensitiveMap } from "../../util/CaseInsensitiveMap";
-import { Iterator } from "../../util/Iterator";
+import type { Iterator } from "../../util/Iterator";
 import { assertNever } from "../../util/assertNever";
 import { nonNullValue } from "../../util/nonNull";
 import * as utilities from "../../util/strings";
@@ -801,7 +801,10 @@ export class ObjectValue extends Value {
 		CaseInsensitiveMap<string, Property | undefined>
 	> = new CachedValue<CaseInsensitiveMap<string, Property | undefined>>();
 
-	constructor(span: Span, private _properties: Property[]) {
+	constructor(
+		span: Span,
+		private _properties: Property[],
+	) {
 		super(span);
 		assert(this._properties);
 	}
@@ -980,7 +983,10 @@ export interface Properties {
  * A JSON array that contains elements.
  */
 export class ArrayValue extends Value {
-	constructor(span: Span, private _elements: Value[]) {
+	constructor(
+		span: Span,
+		private _elements: Value[],
+	) {
 		super(span);
 		assert(_elements);
 	}
@@ -1023,7 +1029,10 @@ export class ArrayValue extends Value {
  * A JSON boolean that can be either true or false.
  */
 export class BooleanValue extends Value {
-	constructor(span: Span, private _value: boolean) {
+	constructor(
+		span: Span,
+		private _value: boolean,
+	) {
 		super(span);
 	}
 
@@ -1061,7 +1070,10 @@ export class BooleanValue extends Value {
 export class StringValue extends Value {
 	private _unquotedValue: string;
 
-	constructor(quotedSpan: Span, private _quotedValue: string) {
+	constructor(
+		quotedSpan: Span,
+		private _quotedValue: string,
+	) {
 		super(quotedSpan);
 		this._unquotedValue = utilities.unquote(_quotedValue);
 	}
@@ -1104,7 +1116,10 @@ export class StringValue extends Value {
  * A JSON number.
  */
 export class NumberValue extends Value {
-	constructor(span: Span, private _text: string) {
+	constructor(
+		span: Span,
+		private _text: string,
+	) {
 		super(span);
 	}
 

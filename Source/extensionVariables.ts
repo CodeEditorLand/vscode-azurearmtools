@@ -3,23 +3,26 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as os from "os";
-import * as path from "path";
+import * as os from "node:os";
+import * as path from "node:path";
 import * as vscode from "vscode";
-import { IAzExtOutputChannel, IAzureUserInput } from "vscode-azureextensionui";
-import { LanguageClient } from "vscode-languageclient/node";
+import type {
+	IAzExtOutputChannel,
+	IAzureUserInput,
+} from "vscode-azureextensionui";
+import type { LanguageClient } from "vscode-languageclient/node";
 import { configPrefix, isWebpack } from "../common";
-import { IProvideOpenedDocuments } from "./IProvideOpenedDocuments";
-import { DeploymentFileMapping } from "./documents/parameters/DeploymentFileMapping";
+import type { IProvideOpenedDocuments } from "./IProvideOpenedDocuments";
+import type { DeploymentFileMapping } from "./documents/parameters/DeploymentFileMapping";
 import { LanguageServerState } from "./languageclient/startArmLanguageServer";
-import { ISnippetManager } from "./snippets/ISnippetManager";
+import type { ISnippetManager } from "./snippets/ISnippetManager";
 import { CompletionsSpy } from "./util/CompletionsSpy";
 import { InitializeBeforeUse } from "./util/InitializeBeforeUse";
 import {
-	IConfiguration,
+	type IConfiguration,
 	VsCodeConfiguration,
 } from "./vscodeIntegration/Configuration";
-import { JsonOutlineProvider } from "./vscodeIntegration/Treeview";
+import type { JsonOutlineProvider } from "./vscodeIntegration/Treeview";
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
