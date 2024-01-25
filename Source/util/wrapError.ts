@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as os from "node:os";
+import * as os from "os";
 import { parseError } from "vscode-azureextensionui";
 
 /**

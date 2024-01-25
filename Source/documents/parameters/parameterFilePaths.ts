@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import * as assert from "node:assert";
-import * as path from "node:path";
+import * as assert from "assert";
+import * as path from "path";
 import type { Uri } from "vscode";
 import { normalizeFilePath } from "../../util/normalizedPaths";
 

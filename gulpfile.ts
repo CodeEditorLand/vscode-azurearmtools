@@ -5,11 +5,11 @@
 
 // tslint:disable:no-unsafe-any no-console prefer-template no-implicit-dependencies export-name
 
-import * as assert from "node:assert";
-import * as cp from "node:child_process";
-import * as os from "node:os";
-import * as path from "node:path";
-import * as process from "node:process";
+import * as assert from "assert";
+import * as cp from "child_process";
+import * as os from "os";
+import * as path from "path";
+import * as process from "process";
 import * as fse from "fs-extra";
 import * as gulp from "gulp";
 import * as recursiveReadDir from "recursive-readdir";

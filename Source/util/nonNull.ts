@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { isNullOrUndefined } from "node:util";
+import { isNullOrUndefined } from "util";
 
 /**
  * Retrieves a property by name from an object and checks that it's not null and not undefined.  It is strongly typed

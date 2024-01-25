@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from "node:path";
+import * as path from "path";
 import * as fse from "fs-extra";
 import * as stripJsonComments from "strip-json-comments";
 import { window } from "vscode";

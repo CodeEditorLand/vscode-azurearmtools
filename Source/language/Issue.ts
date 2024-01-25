@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import * as assert from "node:assert";
+import * as assert from "assert";
 import type { Uri } from "vscode";
 import { assertNever } from "../util/assertNever";
 import { nonNullValue } from "../util/nonNull";

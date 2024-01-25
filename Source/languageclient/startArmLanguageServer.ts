@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as os from "node:os";
-import * as path from "node:path";
+import * as os from "os";
+import * as path from "path";
 import * as fse from "fs-extra";
 import {
 	type CancellationToken,

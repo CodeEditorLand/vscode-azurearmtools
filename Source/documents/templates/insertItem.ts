@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as assert from "node:assert";
+import * as assert from "assert";
 import * as vscode from "vscode";
 // tslint:disable-next-line:no-duplicate-imports
 import { commands } from "vscode";

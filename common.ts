@@ -5,10 +5,10 @@
 
 // NOTE: This is used by gulp and should avoid referencing code from ./src
 
-import { assert } from "node:console";
-import * as fs from "node:fs";
-import * as os from "node:os";
-import * as path from "node:path";
+import { assert } from "console";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
 export const isWebpack: boolean = !!/^(false|0)?$/i.test(
 	process.env.AZCODE_ARM_IGNORE_BUNDLE ?? "",

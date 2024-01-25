@@ -5,7 +5,7 @@
 // tslint:disable:promise-function-async max-line-length // Grandfathered in
 
 // CONSIDER: Refactor this file
-import * as path from "node:path";
+import * as path from "path";
 import * as vscode from "vscode";
 import {
 	AzureUserInput,

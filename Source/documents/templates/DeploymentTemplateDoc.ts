@@ -4,8 +4,8 @@
 
 // tslint:disable: max-classes-per-file // Private classes are related to DeploymentTemplate implementation
 
-import * as assert from "node:assert";
-import * as path from "node:path";
+import * as assert from "assert";
+import * as path from "path";
 import {
 	CodeAction,
 	type CodeActionContext,

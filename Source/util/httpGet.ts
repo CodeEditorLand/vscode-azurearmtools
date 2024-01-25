@@ -4,9 +4,9 @@
 
 // tslint:disable:promise-function-async // Grandfathered in
 
-import * as assert from "node:assert";
-import * as http from "node:http";
-import * as https from "node:https";
+import * as assert from "assert";
+import * as http from "http";
+import * as https from "https";
 
 export function httpGet(url: string): Promise<string> {
 	assert(
