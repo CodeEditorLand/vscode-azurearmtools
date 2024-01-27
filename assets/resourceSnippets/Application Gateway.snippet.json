@@ -52,7 +52,8 @@
 				"backendAddressPools": [
 					{
 						"name": "${10:appGatewayBackendPool}",
-						"properties": {}
+						"properties": {
+						}
 					}
 				],
 				"backendHttpSettingsCollection": [

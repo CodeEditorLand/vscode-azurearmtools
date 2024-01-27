@@ -38,7 +38,7 @@
 						},
 						{
 							"name": "FUNCTIONS_EXTENSION_VERSION",
-							"value": "2"
+							"value": "~2"
 						},
 						{
 							"name": "APPINSIGHTS_INSTRUMENTATIONKEY",

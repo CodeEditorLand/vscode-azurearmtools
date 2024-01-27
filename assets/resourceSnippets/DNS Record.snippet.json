@@ -16,7 +16,8 @@
 			],
 			"properties": {
 				"TTL": 3600,
-				/*${9|Arecords,AAAARecords,MXRecords,NSRecords,PTRRecords,SRVRecords,TXTRecords,CNAMERecord,SOARecord|}*/ "Arecords": []
+				/*${9|Arecords,AAAARecords,MXRecords,NSRecords,PTRRecords,SRVRecords,TXTRecords,CNAMERecord,SOARecord|}*/ "Arecords": [
+				]
 			}
 		}
 	]
