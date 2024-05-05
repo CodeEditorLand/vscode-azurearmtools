@@ -4,35 +4,37 @@
 	"version": "0.0.1",
 	"private": false,
 	"description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureArmTools#readme",
 	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureArmTools/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandAzureArmTools.git"
 	},
 	"license": "SEE LICENSE IN LICENSE",
 	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
 	},
 	"type": "module",
 	"main": "main",
 	"scripts": {
 		"$lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
 		"$lint-fix": "tslint --project tsconfig.json -t verbose --fix",
+		"Document": "Document 'Source/**/*.ts'",
 		"all": "npm i && npm test && npm    run lint",
 		"build": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -p ./",
 		"build-grammars": "gulp build-grammars",
 		"compile": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -watch -p ./",
 		"get-language-server": "gulp get-language-server",
-		"package": "npm run webpack-prod && npm run get-language-server && gulp package",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
 		"pretest-dev": "npm run build && npm run webpack",
 		"verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle",
-		"vscode:prepublish": "gulp error-vsce-package",
 		"watch-grammars": "gulp watch-grammars",
 		"webpack": "gulp webpack-dev",
 		"webpack-prod": "gulp webpack-prod",
@@ -606,45 +608,27 @@
 		"ARM_LANGUAGE_SERVER_NUGET_VERSION": ""
 	},
 	"dependencies": {
-		"fs-extra": "^10.1.0",
-		"moment": "^2.29.4",
-		"opn": "^5.5.0",
-		"strip-json-comments": "^3.1.1",
-		"vscode-azureextensionui": "^0.36.0",
-		"vscode-jsonrpc": "^8.1.0",
-		"vscode-languageclient": "^7.0.0"
+		"fs-extra": "11.2.0",
+		"moment": "2.30.1",
+		"opn": "5.5.0",
+		"strip-json-comments": "5.0.1"
 	},
 	"devDependencies": {
-		"@types/decompress": "^4.2.3",
-		"@types/fs-extra": "^5.1.0",
-		"@types/gulp": "^4.0.13",
-		"@types/mocha": "^10.0.1",
-		"@types/node": "^14.14.24",
-		"@types/recursive-readdir": "^2.2.1",
-		"@types/rimraf": "2.0.2",
-		"@types/shelljs": "0.8.12",
-		"@types/vscode": "^1.62.0",
-		"@types/webpack": "^4.41.26",
-		"@vscode/test-electron": "^1.6.2",
-		"glob": "^7.2.3",
-		"glob-promise": "^4.2.2",
-		"gulp": "^4.0.2",
-		"mocha": "^10.2.0",
-		"mocha-junit-reporter": "^2.2.1",
-		"mocha-multi-reporters": "^1.5.1",
-		"nuget": "^2.0.2",
-		"recursive-readdir": "^2.2.3",
-		"rimraf": "3.0.2",
-		"shelljs": "^0.8.5",
-		"source-map-support": "^0.5.21",
-		"ts-node": "^10.9.1",
-		"typescript": "^4.5.5",
-		"typescript-esbuild": "0.4.5",
-		"vsce": "^1.85.0",
-		"vscode-azureextensiondev": "^0.5.0",
-		"vscode-test": "^1.5.2",
-		"webpack": "^4.46.0",
-		"webpack-cli": "^3.3.12"
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
+		"@types/decompress": "4.2.7",
+		"@types/fs-extra": "11.0.4",
+		"@types/node": "20.12.7",
+		"@types/recursive-readdir": "2.2.4",
+		"@types/rimraf": "3.0.2",
+		"@types/shelljs": "0.8.15",
+		"glob": "10.3.12",
+		"glob-promise": "6.0.5",
+		"nuget": "2.0.2",
+		"recursive-readdir": "2.2.3",
+		"rimraf": "5.0.5",
+		"shelljs": "0.8.5",
+		"source-map-support": "0.5.21"
 	},
 	"extensionDependencies": [
 		"ms-dotnettools.vscode-dotnet-runtime"
