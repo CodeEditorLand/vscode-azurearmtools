@@ -618,7 +618,7 @@
 		"@playform/document": "0.0.6",
 		"@types/decompress": "4.2.7",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "20.12.7",
+		"@types/node": "20.12.10",
 		"@types/recursive-readdir": "2.2.4",
 		"@types/rimraf": "3.0.2",
 		"@types/shelljs": "0.8.15",
