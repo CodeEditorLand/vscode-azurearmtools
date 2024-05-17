@@ -1,27 +1,7 @@
 {
 	"name": "azurerm-vscode-tools",
 	"displayName": "Azure Resource Manager (ARM) Tools",
-	"version": "0.0.1",
-	"private": false,
 	"description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureArmTools#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureArmTools/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandAzureArmTools.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "main",
 	"scripts": {
 		"$lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
@@ -615,7 +595,6 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/decompress": "4.2.7",
 		"@types/fs-extra": "11.0.4",
 		"@types/node": "20.12.10",
@@ -633,9 +612,6 @@
 	"extensionDependencies": [
 		"ms-dotnettools.vscode-dotnet-runtime"
 	],
-	"publishConfig": {
-		"access": "public"
-	},
 	"icon": "AzureRMTools128x128.png",
 	"galleryBanner": {
 		"color": "E7F1FA",
