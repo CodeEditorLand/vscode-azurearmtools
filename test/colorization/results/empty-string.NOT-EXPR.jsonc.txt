@@ -1,3 +1,0 @@
-TEST STRING: ""
-"                   punctuation.definition.string.begin.json.arm-template
-"                   punctuation.definition.string.end.json.arm-template
