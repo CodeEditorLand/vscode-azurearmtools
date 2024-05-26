@@ -102,8 +102,7 @@
 				"action": {
 					"odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
 					"sendToServiceOwners": true,
-					"customEmails": [
-					]
+					"customEmails": []
 				}
 			}
 		},
@@ -137,8 +136,7 @@
 				"action": {
 					"odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
 					"sendToServiceOwners": true,
-					"customEmails": [
-					]
+					"customEmails": []
 				}
 			}
 		},
@@ -172,8 +170,7 @@
 				"action": {
 					"odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
 					"sendToServiceOwners": true,
-					"customEmails": [
-					]
+					"customEmails": []
 				}
 			}
 		},
@@ -206,8 +203,7 @@
 				"action": {
 					"odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
 					"sendToServiceOwners": true,
-					"customEmails": [
-					]
+					"customEmails": []
 				}
 			}
 		},

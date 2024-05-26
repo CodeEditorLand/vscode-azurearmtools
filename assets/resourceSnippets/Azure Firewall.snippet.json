@@ -11,8 +11,7 @@
 			"type": "Microsoft.Network/azureFirewalls",
 			"apiVersion": "2023-04-01",
 			"location": "[resourceGroup().location]",
-			"tags": {
-			},
+			"tags": {},
 			"properties": {
 				"applicationRuleCollections": [
 					{
@@ -26,20 +25,15 @@
 								{
 									"name": "${5:appRuleName1}",
 									"description": "${6:appRuleDescription}",
-									"sourceAddresses": [
-										"${7:10.0.0.4}"
-									],
+									"sourceAddresses": ["${7:10.0.0.4}"],
 									"protocols": [
 										{
 											"protocolType": /*${8|Http,Https,Mssql|}*/ "Http",
 											"port": /*${9|80,1433|}*/ 80
 										}
 									],
-									"targetFqdns": [
-										"${10:www.microsoft.com}"
-									],
-									"fqdnTags": [
-									]
+									"targetFqdns": ["${10:www.microsoft.com}"],
+									"fqdnTags": []
 								}
 							]
 						}
@@ -57,15 +51,11 @@
 								{
 									"name": "${14:natRuleName1}",
 									"description": "${15:natRuleDescription}",
-									"sourceAddresses": [
-										"${16:10.0.0.4}"
-									],
+									"sourceAddresses": ["${16:10.0.0.4}"],
 									"destinationAddresses": [
 										"[reference(resourceId('Microsoft.Network/publicIPAddresses', '${34:publicIPAddress1}')).ipAddress]"
 									],
-									"destinationPorts": [
-										"${18:3389}"
-									],
+									"destinationPorts": ["${18:3389}"],
 									"protocols": [
 										/*${19|TCP,UDP,Any,ICMP|}*/ "TCP"
 									],
@@ -88,15 +78,9 @@
 								{
 									"name": "${25:networkRuleName}",
 									"description": "${26:networkRuleDescription}",
-									"sourceAddresses": [
-										"${27:10.0.0.4}"
-									],
-									"destinationAddresses": [
-										"${28:10.0.1.4}"
-									],
-									"destinationPorts": [
-										"${29:1}"
-									],
+									"sourceAddresses": ["${27:10.0.0.4}"],
+									"destinationAddresses": ["${28:10.0.1.4}"],
+									"destinationPorts": ["${29:1}"],
 									"protocols": [
 										/*${30|TCP,UDP,Any,ICMP|}*/ "TCP"
 									]

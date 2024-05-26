@@ -4,104 +4,111 @@
 // ---------------------------------------------------------------------------------------------
 
 import * as assert from "assert";
-import { Uri } from "vscode";
+import type { Uri } from "vscode";
 import { assertNever } from "../util/assertNever";
 import { nonNullValue } from "../util/nonNull";
 import { IssueKind } from "./IssueKind";
-import { Span } from "./Span";
+import type { Span } from "./Span";
 
 export enum IssueSeverity {
-    Error,
-    Warning,
-    Information,
+	Error = 0,
+	Warning = 1,
+	Information = 2,
 }
 
 /**
  * An issue that was detected while parsing a deployment template.
  */
 export class Issue {
-    private _relatedInformation: IssueRelatedInformation[] | undefined;
+	private _relatedInformation: IssueRelatedInformation[] | undefined;
 
-    public readonly severity: IssueSeverity;
-    constructor(
-        private _span: Span,
-        private _message: string,
-        public readonly kind: IssueKind
-    ) {
-        nonNullValue(_span, "_span");
-        assert(0 <= _span.length, "_span's length must be greater than or equal to 0.");
-        nonNullValue(_message, "_message");
-        assert(_message !== "", "_message must not be empty.");
+	public readonly severity: IssueSeverity;
+	constructor(
+		private _span: Span,
+		private _message: string,
+		public readonly kind: IssueKind,
+	) {
+		nonNullValue(_span, "_span");
+		assert(
+			0 <= _span.length,
+			"_span's length must be greater than or equal to 0.",
+		);
+		nonNullValue(_message, "_message");
+		assert(_message !== "", "_message must not be empty.");
 
-        switch (kind) {
-            case IssueKind.cannotValidateLinkedTemplate:
-            case IssueKind.cannotValidateNestedTemplate:
-                this.severity = IssueSeverity.Information;
-                break;
+		switch (kind) {
+			case IssueKind.cannotValidateLinkedTemplate:
+			case IssueKind.cannotValidateNestedTemplate:
+				this.severity = IssueSeverity.Information;
+				break;
 
-            case IssueKind.inaccessibleNestedScopeMembers:
-            case IssueKind.incorrectScopeWarning:
-            case IssueKind.unusedParam:
-            case IssueKind.unusedUdf:
-            case IssueKind.unusedUdfParam:
-            case IssueKind.unusedVar:
-                this.severity = IssueSeverity.Warning;
+			case IssueKind.inaccessibleNestedScopeMembers:
+			case IssueKind.incorrectScopeWarning:
+			case IssueKind.unusedParam:
+			case IssueKind.unusedUdf:
+			case IssueKind.unusedUdfParam:
+			case IssueKind.unusedVar:
+				this.severity = IssueSeverity.Warning;
 
-                break;
+				break;
 
-            case IssueKind.badArgsCount:
-            case IssueKind.badFuncContext:
-            case IssueKind.params_missingRequiredParam:
-            case IssueKind.params_templateFileNotFound:
-            case IssueKind.referenceInVar:
-            case IssueKind.tleSyntax:
-            case IssueKind.undefinedFunc:
-            case IssueKind.undefinedNs:
-            case IssueKind.undefinedParam:
-            case IssueKind.undefinedUdf:
-            case IssueKind.undefinedVar:
-            case IssueKind.undefinedVarProp:
-            case IssueKind.varInUdf:
-                this.severity = IssueSeverity.Error;
-                break;
+			case IssueKind.badArgsCount:
+			case IssueKind.badFuncContext:
+			case IssueKind.params_missingRequiredParam:
+			case IssueKind.params_templateFileNotFound:
+			case IssueKind.referenceInVar:
+			case IssueKind.tleSyntax:
+			case IssueKind.undefinedFunc:
+			case IssueKind.undefinedNs:
+			case IssueKind.undefinedParam:
+			case IssueKind.undefinedUdf:
+			case IssueKind.undefinedVar:
+			case IssueKind.undefinedVarProp:
+			case IssueKind.varInUdf:
+				this.severity = IssueSeverity.Error;
+				break;
 
-            default:
-                assertNever(kind);
-        }
-    }
+			default:
+				assertNever(kind);
+		}
+	}
 
-    public get span(): Span {
-        return this._span;
-    }
+	public get span(): Span {
+		return this._span;
+	}
 
-    public get message(): string {
-        return this._message;
-    }
+	public get message(): string {
+		return this._message;
+	}
 
-    public get isUnnecessaryCode(): boolean {
-        switch (this.kind) {
-            case IssueKind.unusedVar:
-            case IssueKind.unusedParam:
-            case IssueKind.unusedUdfParam:
-            case IssueKind.unusedUdf:
-                return true;
+	public get isUnnecessaryCode(): boolean {
+		switch (this.kind) {
+			case IssueKind.unusedVar:
+			case IssueKind.unusedParam:
+			case IssueKind.unusedUdfParam:
+			case IssueKind.unusedUdf:
+				return true;
 
-            default:
-                return false;
-        }
-    }
+			default:
+				return false;
+		}
+	}
 
-    public get relatedInformation(): IssueRelatedInformation[] {
-        if (!this._relatedInformation) {
-            this._relatedInformation = [];
-        }
+	public get relatedInformation(): IssueRelatedInformation[] {
+		if (!this._relatedInformation) {
+			this._relatedInformation = [];
+		}
 
-        return this._relatedInformation;
-    }
+		return this._relatedInformation;
+	}
 
-    public translate(movement: number): Issue {
-        return new Issue(this._span.translate(movement), this._message, this.kind);
-    }
+	public translate(movement: number): Issue {
+		return new Issue(
+			this._span.translate(movement),
+			this._message,
+			this.kind,
+		);
+	}
 }
 
 /**
@@ -110,15 +117,15 @@ export class Issue {
  * a symbol in a scope.
  */
 export interface IssueRelatedInformation {
-    /**
-     * The location of this related diagnostic information.
-     */
-    location: IssueLocation;
+	/**
+	 * The location of this related diagnostic information.
+	 */
+	location: IssueLocation;
 
-    /**
-     * The message of this related diagnostic information.
-     */
-    message: string;
+	/**
+	 * The message of this related diagnostic information.
+	 */
+	message: string;
 }
 
 /**
@@ -126,13 +133,13 @@ export interface IssueRelatedInformation {
  * inside a text file.
  */
 export interface IssueLocation {
-    /**
-     * The resource identifier of this location.
-     */
-    uri: Uri;
+	/**
+	 * The resource identifier of this location.
+	 */
+	uri: Uri;
 
-    /**
-     * The document span for this location.
-     */
-    span: Span;
+	/**
+	 * The document span for this location.
+	 */
+	span: Span;
 }

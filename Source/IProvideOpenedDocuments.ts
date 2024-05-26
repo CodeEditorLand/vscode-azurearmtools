@@ -3,11 +3,16 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import { Uri } from "vscode";
-import { DeploymentDocument } from "./documents/DeploymentDocument";
-import { DeploymentTemplateDoc } from "./documents/templates/DeploymentTemplateDoc";
+import type { Uri } from "vscode";
+import type { DeploymentDocument } from "./documents/DeploymentDocument";
+import type { DeploymentTemplateDoc } from "./documents/templates/DeploymentTemplateDoc";
 
 export interface IProvideOpenedDocuments {
-    getOpenedDeploymentTemplate(documentOrUri: Uri): DeploymentTemplateDoc | undefined;
-    setOpenedDeploymentDocument(documentOrUri: Uri, document: DeploymentDocument): void;
+	getOpenedDeploymentTemplate(
+		documentOrUri: Uri,
+	): DeploymentTemplateDoc | undefined;
+	setOpenedDeploymentDocument(
+		documentOrUri: Uri,
+		document: DeploymentDocument,
+	): void;
 }

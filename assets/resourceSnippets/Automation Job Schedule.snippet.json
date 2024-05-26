@@ -11,8 +11,7 @@
 			"type": "Microsoft.Automation/automationAccounts/jobSchedules",
 			"apiVersion": "2022-08-08",
 			"location": "[resourceGroup().location]",
-			"tags": {
-			},
+			"tags": {},
 			"dependsOn": [
 				"[resourceId('Microsoft.Automation/automationAccounts', '${2:automationAccount1}')]"
 			],
