@@ -17,7 +17,9 @@
 				"resource": {
 					"id": "${3:container-name}",
 					"partitionKey": {
-						"paths": ["/{2:partition-key}"],
+						"paths": [
+							"/{2:partition-key}"
+						],
 						"kind": /*${4|hash,range|}*/ "hash"
 					},
 					"indexingPolicy": {
@@ -41,7 +43,8 @@
 						]
 					}
 				},
-				"options": {}
+				"options": {
+				}
 			}
 		}
 	]

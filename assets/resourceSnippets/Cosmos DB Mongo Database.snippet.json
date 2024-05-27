@@ -18,7 +18,8 @@
 					"throughput": "${4:400}",
 					"id": "${5:database-id}"
 				},
-				"options": {}
+				"options": {
+				}
 			}
 		}
 	]

@@ -17,7 +17,9 @@
 				"resource": {
 					"id": "${3:graph-name}",
 					"partitionKey": {
-						"paths": ["/{4:partition-key}"],
+						"paths": [
+							"/{4:partition-key}"
+						],
 						"kind": /*${5|hash,range|}*/ "hash"
 					},
 					"indexingPolicy": {
@@ -41,7 +43,8 @@
 						]
 					}
 				},
-				"options": {}
+				"options": {
+				}
 			}
 		}
 	]

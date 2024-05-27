@@ -234,6 +234,7 @@ FakesAssemblies/
 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
+node_modules/
 
 # Visual Studio 6 build log
 *.plg
@@ -285,6 +286,7 @@ __pycache__/
 
 # VS Code Extension Development
 out
+node_modules
 *.vsix
 dist
 *.zip
@@ -310,3 +312,4 @@ languageServer/**
 logs
 
 # Mac folder metadata
+.DS_Store

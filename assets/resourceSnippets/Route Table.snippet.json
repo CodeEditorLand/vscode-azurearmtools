@@ -11,7 +11,8 @@
 			"type": "Microsoft.Network/routeTables",
 			"apiVersion": "2023-04-01",
 			"location": "[resourceGroup().location]",
-			"tags": {},
+			"tags": {
+			},
 			"properties": {
 				"routes": [
 					{
