@@ -11,19 +11,19 @@
 export type Context = KnownContexts | string;
 
 export enum KnownContexts {
-	// No top-level JSON in the file
-	emptyDocument = "empty-document",
+    // No top-level JSON in the file
+    emptyDocument = 'empty-document',
 
-	resources = "resources",
+    resources = 'resources',
 
-	// Inside the body of a single resource
-	resourceBody = "resource-body",
+    // Inside the body of a single resource
+    resourceBody = 'resource-body',
 
-	// Parameter definitions, whether top-level or nested deployment
-	parameterDefinitions = "parameter-definitions",
-	// Parameter values, whether top-level or nested deployment
-	parameterValues = "parameter-values",
+    // Parameter definitions, whether top-level or nested deployment
+    parameterDefinitions = 'parameter-definitions',
+    // Parameter values, whether top-level or nested deployment
+    parameterValues = 'parameter-values',
 
-	// User function parameter definitions
-	userFuncParameterDefinitions = "userfunc-parameter-definitions",
+    // User function parameter definitions
+    userFuncParameterDefinitions = 'userfunc-parameter-definitions',
 }

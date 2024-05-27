@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Span } from "../language/Span";
-import type * as Completion from "../vscodeIntegration/Completion";
-import type { ISnippet } from "./ISnippet";
-import type { InsertionContext } from "./InsertionContext";
-import type { Context } from "./KnownContexts";
+import { Span } from "../language/Span";
+import * as Completion from "../vscodeIntegration/Completion";
+import { InsertionContext } from "./InsertionContext";
+import { ISnippet } from "./ISnippet";
+import { Context } from "./KnownContexts";
 
 /**
  * Manages snippets and creates completion items for them.  We do this rather
@@ -16,19 +16,16 @@ import type { Context } from "./KnownContexts";
  * 2) We can receive telemetry about snippet usage
  */
 export interface ISnippetManager {
-	/**
-	 * Retrieve all snippets that support the given context
-	 */
-	getSnippets(context: Context): Promise<ISnippet[]>;
-	/**
-	 * Retrieve all snippets regardless of context
-	 */
-	getAllSnippets(): Promise<ISnippet[]>;
-	/**
-	 * Retrieve completion items for all snippets
-	 */
-	getSnippetsAsCompletionItems(
-		insertionContext: InsertionContext,
-		span: Span,
-	): Promise<Completion.Item[]>;
+    /**
+     * Retrieve all snippets that support the given context
+     */
+    getSnippets(context: Context): Promise<ISnippet[]>;
+    /**
+     * Retrieve all snippets regardless of context
+     */
+    getAllSnippets(): Promise<ISnippet[]>;
+    /**
+     * Retrieve completion items for all snippets
+     */
+    getSnippetsAsCompletionItems(insertionContext: InsertionContext, span: Span): Promise<Completion.Item[]>;
 }

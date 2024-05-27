@@ -16,41 +16,29 @@ import { waitForLanguageServerAvailable } from "./startArmLanguageServer";
  *
  * @param schema The ARM schema of the template document to query for
  */
-export async function getAvailableResourceTypesAndVersionsNoThrow(
-	schema: string,
-): Promise<CaseInsensitiveMap<string, string[]>> {
-	try {
-		const map = new CaseInsensitiveMap<string, string[]>();
+export async function getAvailableResourceTypesAndVersionsNoThrow(schema: string): Promise<CaseInsensitiveMap<string, string[]>> {
+    try {
+        const map = new CaseInsensitiveMap<string, string[]>();
 
-		await callWithTelemetryAndErrorHandling(
-			"getAvailableResourceTypesAndVersions",
-			async () => {
-				await waitForLanguageServerAvailable();
+        await callWithTelemetryAndErrorHandling("getAvailableResourceTypesAndVersions", async () => {
+            await waitForLanguageServerAvailable();
 
-				const resourceTypes = <{ [key: string]: string[] }>(
-					await ext.languageServerClient?.sendRequest(
-						"arm-template/getAvailableResourceTypesAndVersions",
-						{
-							Schema: schema,
-						},
-					)
-				);
+            const resourceTypes = <{ [key: string]: string[] }>
+                await ext.languageServerClient?.
+                    sendRequest("arm-template/getAvailableResourceTypesAndVersions", {
+                        Schema: schema
+                    });
 
-				for (const entry of Object.entries(resourceTypes)) {
-					const key = entry[0];
-					const value = entry[1].map((apiVersion) =>
-						apiVersion.toLowerCase(),
-					);
+            for (const entry of Object.entries(resourceTypes)) {
+                const key = entry[0];
+                const value = entry[1].map(apiVersion => apiVersion.toLowerCase());
 
-					map.set(key, value);
-				}
-			},
-		);
+                map.set(key, value);
+            }
+        });
 
-		return map;
-	} catch (err) {
-		assert.fail(
-			"getAvailableResourceTypesAndVersionsNoThrow shouldn't throw",
-		);
-	}
+        return map;
+    } catch (err) {
+        assert.fail("getAvailableResourceTypesAndVersionsNoThrow shouldn't throw");
+    }
 }

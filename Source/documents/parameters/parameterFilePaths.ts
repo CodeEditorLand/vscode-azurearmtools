@@ -4,28 +4,19 @@
 // ---------------------------------------------------------------------------------------------
 
 import * as assert from "assert";
-import * as path from "path";
-import type { Uri } from "vscode";
-import { normalizeFilePath } from "../../util/normalizedPaths";
+import * as path from 'path';
+import { Uri } from 'vscode';
+import { normalizeFilePath } from '../../util/normalizedPaths';
 
-export function getRelativeParameterFilePath(
-	templateUri: Uri,
-	parameterUri: Uri,
-): string {
-	const templatePath = normalizeFilePath(templateUri);
-	const paramPath = normalizeFilePath(parameterUri);
+export function getRelativeParameterFilePath(templateUri: Uri, parameterUri: Uri): string {
+    const templatePath = normalizeFilePath(templateUri);
+    const paramPath = normalizeFilePath(parameterUri);
 
-	return path.relative(path.dirname(templatePath), paramPath);
+    return path.relative(path.dirname(templatePath), paramPath);
 }
 
-export function resolveParameterFilePath(
-	templatePath: string,
-	parameterPathRelativeToTemplate: string,
-): string {
-	assert(path.isAbsolute(templatePath));
-	const resolved = path.resolve(
-		path.dirname(templatePath),
-		parameterPathRelativeToTemplate,
-	);
-	return resolved;
+export function resolveParameterFilePath(templatePath: string, parameterPathRelativeToTemplate: string): string {
+    assert(path.isAbsolute(templatePath));
+    const resolved = path.resolve(path.dirname(templatePath), parameterPathRelativeToTemplate);
+    return resolved;
 }

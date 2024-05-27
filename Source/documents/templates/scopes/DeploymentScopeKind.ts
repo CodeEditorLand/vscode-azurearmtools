@@ -4,8 +4,8 @@
 // ---------------------------------------------------------------------------------------------
 
 export enum DeploymentScopeKind {
-	resourceGroup = "resourceGroup",
-	subscription = "subscription",
-	managementGroup = "managementGroup",
-	tenant = "tenant",
+    resourceGroup = "resourceGroup",
+    subscription = "subscription",
+    managementGroup = "managementGroup",
+    tenant = "tenant"
 }

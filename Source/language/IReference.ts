@@ -3,10 +3,10 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-import type { IJsonDocument } from "../documents/templates/IJsonDocument";
-import type { Span } from "./Span";
+import { IJsonDocument } from "../documents/templates/IJsonDocument";
+import { Span } from "./Span";
 
 export interface IReference {
-	document: IJsonDocument;
-	span: Span;
+    document: IJsonDocument;
+    span: Span;
 }

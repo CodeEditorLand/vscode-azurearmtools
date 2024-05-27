@@ -2,34 +2,34 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // ----------------------------------------------------------------------------
 
-import type { Location, Range, Uri } from "vscode";
-import type { IParameterDefinitionsSource } from "../documents/parameters/IParameterDefinitionsSource";
-import type { IParameterValuesSource } from "../documents/parameters/IParameterValuesSource";
+import { Location, Range, Uri } from "vscode";
+import { IParameterDefinitionsSource } from "../documents/parameters/IParameterDefinitionsSource";
+import { IParameterValuesSource } from "../documents/parameters/IParameterValuesSource";
 
 export interface IGotoParameterValueArgs {
-	inParameterFile?: {
-		// Can't guarantee parameter file doesn't change since the code lens was created, so resolve the parameter
-		//   location only when needed
-		parameterFileUri: Uri;
-		parameterName: string | undefined; // If no parameter name, just navigate to the parameters property or the top of the file
-	};
+    inParameterFile?: {
+        // Can't guarantee parameter file doesn't change since the code lens was created, so resolve the parameter
+        //   location only when needed
+        parameterFileUri: Uri;
+        parameterName: string | undefined; // If no parameter name, just navigate to the parameters property or the top of the file
+    };
 
-	inTemplateFile?: {
-		documentUri: Uri;
-		range: Range;
-	};
+    inTemplateFile?: {
+        documentUri: Uri;
+        range: Range;
+    };
 
-	telemetryProperties?: { [key: string]: string };
+    telemetryProperties?: { [key: string]: string };
 }
 
 export interface IAddMissingParametersArgs {
-	parameterDefinitionsSource: IParameterDefinitionsSource;
-	parameterValuesSource: IParameterValuesSource;
-	parentParameterDefinitionsSource: IParameterDefinitionsSource | undefined;
+    parameterDefinitionsSource: IParameterDefinitionsSource;
+    parameterValuesSource: IParameterValuesSource;
+    parentParameterDefinitionsSource: IParameterDefinitionsSource | undefined;
 }
 
 export interface IGotoResourcesArgs {
-	source: Location;
-	targets: Location[];
-	telemetryProperties?: { [key: string]: string };
+    source: Location;
+    targets: Location[];
+    telemetryProperties?: { [key: string]: string };
 }
