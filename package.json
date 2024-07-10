@@ -587,23 +587,23 @@
 		"ARM_LANGUAGE_SERVER_NUGET_VERSION": "3.0.0-preview.24224.1"
 	},
 	"dependencies": {
-		"fs-extra": "^10.1.0",
-		"moment": "^2.29.4",
+		"fs-extra": "^11.2.0",
+		"moment": "^2.30.1",
 		"opn": "^5.5.0",
-		"strip-json-comments": "^3.1.1"
+		"strip-json-comments": "^5.0.1"
 	},
 	"devDependencies": {
-		"@types/decompress": "^4.2.3",
-		"@types/fs-extra": "^5.1.0",
-		"@types/node": "^14.14.24",
-		"@types/recursive-readdir": "^2.2.1",
-		"@types/rimraf": "2.0.2",
-		"@types/shelljs": "0.8.12",
-		"glob": "^7.2.3",
-		"glob-promise": "^4.2.2",
+		"@types/decompress": "^4.2.7",
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^20.14.10",
+		"@types/recursive-readdir": "^2.2.4",
+		"@types/rimraf": "3.0.2",
+		"@types/shelljs": "0.8.15",
+		"glob": "^11.0.0",
+		"glob-promise": "^6.0.7",
 		"nuget": "^2.0.2",
 		"recursive-readdir": "^2.2.3",
-		"rimraf": "3.0.2",
+		"rimraf": "6.0.0",
 		"shelljs": "^0.8.5",
 		"source-map-support": "^0.5.21"
 	},
