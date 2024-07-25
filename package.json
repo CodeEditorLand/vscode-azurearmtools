@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"activationEvents": [
 		"onLanguage:arm-template",
 		"onLanguage:json",
@@ -38,6 +39,26 @@
 	"config": {
 		"$comment.ARM_LANGUAGE_SERVER_NUGET_VERSION": "E.g., 3.0.0-preview.24163.1, or lease blank to pick up the latest",
 		"ARM_LANGUAGE_SERVER_NUGET_VERSION": "3.0.0-preview.24224.1"
+=======
+	"name": "azurerm-vscode-tools",
+	"displayName": "Azure Resource Manager (ARM) Tools",
+	"description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
+	"main": "main",
+	"scripts": {
+		"$lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
+		"$lint-fix": "tslint --project tsconfig.json -t verbose --fix",
+		"all": "npm i && npm test && npm    run lint",
+		"build": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -p ./",
+		"build-grammars": "gulp build-grammars",
+		"compile": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -watch -p ./",
+		"get-language-server": "gulp get-language-server",
+		"pretest-dev": "npm run build && npm run webpack",
+		"verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle",
+		"watch-grammars": "gulp watch-grammars",
+		"webpack": "gulp webpack-dev",
+		"webpack-prod": "gulp webpack-prod",
+		"webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats"
+>>>>>>> 0447398e243a0a60fd32d7a1ec4ea54865fe185b
 	},
 	"contributes": {
 		"commands": [
@@ -573,6 +594,7 @@
 			]
 		}
 	},
+<<<<<<< HEAD
 	"dependencies": {
 		"fs-extra": "^10.1.0",
 		"moment": "^2.29.4",
@@ -599,10 +621,72 @@
 	"extensionDependencies": [
 		"ms-dotnettools.vscode-dotnet-runtime"
 	],
+=======
+	"activationEvents": [
+		"onLanguage:arm-template",
+		"onLanguage:json",
+		"onLanguage:jsonc",
+		"onCommand:azurerm-vscode-tools.sortTemplate",
+		"onCommand:azurerm-vscode-tools.sortFunctions",
+		"onCommand:azurerm-vscode-tools.sortOutputs",
+		"onCommand:azurerm-vscode-tools.sortParameters",
+		"onCommand:azurerm-vscode-tools.sortResources",
+		"onCommand:azurerm-vscode-tools.sortVariables",
+		"onCommand:azurerm-vscode-tools.selectParameterFile",
+		"onCommand:azurerm-vscode-tools.openParameterFile",
+		"onCommand:azurerm-vscode-tools.openTemplateFile",
+		"onCommand:azurerm-vscode-tools.codeLens.openLinkedTemplateFile",
+		"onCommand:azurerm-vscode-tools.codeLens.reloadLinkedTemplateFile",
+		"onCommand:azurerm-vscode-tools.codeLens.gotoParameterValue",
+		"onCommand:azurerm-vscode-tools.codeAction.addAllMissingParameters",
+		"onCommand:azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
+		"onCommand:azurerm-vscode-tools.codeAction.extractParameter",
+		"onCommand:azurerm-vscode-tools.codeAction.extractVariable",
+		"onCommand:azurerm-vscode-tools.insertItem",
+		"onCommand:azurerm-vscode-tools.insertParameter",
+		"onCommand:azurerm-vscode-tools.insertVariable",
+		"onCommand:azurerm-vscode-tools.insertOutput",
+		"onCommand:azurerm-vscode-tools.insertFunction",
+		"onCommand:azurerm-vscode-tools.insertResource",
+		"onCommand:azurerm-vscode-tools.developer.resetGlobalState",
+		"onCommand:azurerm-vscode-tools.developer.showInsertionContext",
+		"onCommand:azurerm-vscode-tools.developer.showAvailableResourceTypesAndVersions"
+	],
+	"config": {
+		"$comment.ARM_LANGUAGE_SERVER_NUGET_VERSION": "E.g., 3.0.0-preview.24163.1, or lease blank to pick up the latest",
+		"ARM_LANGUAGE_SERVER_NUGET_VERSION": "3.0.0-preview.24224.1"
+	},
+	"dependencies": {
+		"fs-extra": "11.2.0",
+		"moment": "2.30.1",
+		"opn": "5.5.0",
+		"strip-json-comments": "5.0.1"
+	},
+	"devDependencies": {
+		"@types/decompress": "4.2.7",
+		"@types/fs-extra": "11.0.4",
+		"@types/node": "20.14.12",
+		"@types/recursive-readdir": "2.2.4",
+		"@types/rimraf": "3.0.2",
+		"@types/shelljs": "0.8.15",
+		"glob": "11.0.0",
+		"glob-promise": "6.0.7",
+		"nuget": "2.0.2",
+		"recursive-readdir": "2.2.3",
+		"rimraf": "6.0.1",
+		"shelljs": "0.8.5",
+		"source-map-support": "0.5.21"
+	},
+	"extensionDependencies": [
+		"ms-dotnettools.vscode-dotnet-runtime"
+	],
+	"icon": "AzureRMTools128x128.png",
+>>>>>>> 0447398e243a0a60fd32d7a1ec4ea54865fe185b
 	"galleryBanner": {
 		"color": "E7F1FA",
 		"theme": "light"
 	},
+<<<<<<< HEAD
 	"icon": "AzureRMTools128x128.png",
 	"main": "main",
 	"name": "azurerm-vscode-tools",
@@ -621,5 +705,13 @@
 		"webpack": "gulp webpack-dev",
 		"webpack-prod": "gulp webpack-prod",
 		"webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats"
+=======
+	"preview": true,
+	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+	"capabilities": {
+		"virtualWorkspaces": {
+			"supported": false
+		}
+>>>>>>> 0447398e243a0a60fd32d7a1ec4ea54865fe185b
 	}
 }
