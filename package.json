@@ -598,7 +598,7 @@
 		"@types/decompress": "4.2.7",
 		"@types/estree": "1.0.6",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "22.7.2",
+		"@types/node": "22.7.3",
 		"@types/recursive-readdir": "2.2.4",
 		"@types/rimraf": "4.0.5",
 		"@types/shelljs": "0.8.15",
