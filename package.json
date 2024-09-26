@@ -1,25 +1,44 @@
 {
-	"name": "azurerm-vscode-tools",
-	"displayName": "Azure Resource Manager (ARM) Tools",
-	"description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
-	"main": "main",
-	"scripts": {
-		"$lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
-		"$lint-fix": "tslint --project tsconfig.json -t verbose --fix",
-		"$test.comment": "Runs tests from the webpacked extension. If you want to run tests from the source code directly, run from without vscode.",
-		"all": "npm i && npm test && npm run lint",
-		"build": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -p ./",
-		"build-grammars": "gulp build-grammars",
-		"compile": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -watch -p ./",
-		"get-language-server": "gulp get-language-server",
-		"pretest-dev": "npm run webpack && gulp pretest",
-		"pretest-prod": "npm run webpack-prod && gulp pretest",
-		"verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle",
-		"watch-grammars": "gulp watch-grammars",
-		"webpack": "gulp webpack-prod",
-		"webpack-dev": "npm run build && gulp webpack-dev",
-		"webpack-prod": "npm run build && gulp webpack-prod",
-		"webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats"
+	"$devDependencies.comment": "@types/estree is to fix eslint issue, see https://stackoverflow.com/questions/67806963/types-eslint-error-chainexpression-and-importexpression-members-of-estree-not#:~:text=Solution%20to%20this%20problem%20is%3A%20npm%20install%20--save-dev,again%3A%20npm%20install%20Errors%20should%20be%20gone%20now.",
+	"activationEvents": [
+		"onLanguage:arm-template",
+		"onLanguage:json",
+		"onLanguage:jsonc",
+		"onCommand:azurerm-vscode-tools.sortTemplate",
+		"onCommand:azurerm-vscode-tools.sortFunctions",
+		"onCommand:azurerm-vscode-tools.sortOutputs",
+		"onCommand:azurerm-vscode-tools.sortParameters",
+		"onCommand:azurerm-vscode-tools.sortResources",
+		"onCommand:azurerm-vscode-tools.sortVariables",
+		"onCommand:azurerm-vscode-tools.selectParameterFile",
+		"onCommand:azurerm-vscode-tools.openParameterFile",
+		"onCommand:azurerm-vscode-tools.openTemplateFile",
+		"onCommand:azurerm-vscode-tools.codeLens.openLinkedTemplateFile",
+		"onCommand:azurerm-vscode-tools.codeLens.reloadLinkedTemplateFile",
+		"onCommand:azurerm-vscode-tools.codeLens.gotoParameterValue",
+		"onCommand:azurerm-vscode-tools.codeAction.addAllMissingParameters",
+		"onCommand:azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
+		"onCommand:azurerm-vscode-tools.codeAction.extractParameter",
+		"onCommand:azurerm-vscode-tools.codeAction.extractVariable",
+		"onCommand:azurerm-vscode-tools.insertItem",
+		"onCommand:azurerm-vscode-tools.insertParameter",
+		"onCommand:azurerm-vscode-tools.insertVariable",
+		"onCommand:azurerm-vscode-tools.insertOutput",
+		"onCommand:azurerm-vscode-tools.insertFunction",
+		"onCommand:azurerm-vscode-tools.insertResource",
+		"onCommand:azurerm-vscode-tools.developer.resetGlobalState",
+		"onCommand:azurerm-vscode-tools.developer.showInsertionContext",
+		"onCommand:azurerm-vscode-tools.developer.showAvailableResourceTypesAndVersions"
+	],
+	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+	"capabilities": {
+		"virtualWorkspaces": {
+			"supported": false
+		}
+	},
+	"config": {
+		"$comment.ARM_LANGUAGE_SERVER_NUGET_VERSION": "E.g., 3.0.0-preview.24163.1, or lease blank to pick up the latest",
+		"ARM_LANGUAGE_SERVER_NUGET_VERSION": "3.0.0-preview.24224.1"
 	},
 	"contributes": {
 		"commands": [
@@ -555,45 +574,12 @@
 			]
 		}
 	},
-	"activationEvents": [
-		"onLanguage:arm-template",
-		"onLanguage:json",
-		"onLanguage:jsonc",
-		"onCommand:azurerm-vscode-tools.sortTemplate",
-		"onCommand:azurerm-vscode-tools.sortFunctions",
-		"onCommand:azurerm-vscode-tools.sortOutputs",
-		"onCommand:azurerm-vscode-tools.sortParameters",
-		"onCommand:azurerm-vscode-tools.sortResources",
-		"onCommand:azurerm-vscode-tools.sortVariables",
-		"onCommand:azurerm-vscode-tools.selectParameterFile",
-		"onCommand:azurerm-vscode-tools.openParameterFile",
-		"onCommand:azurerm-vscode-tools.openTemplateFile",
-		"onCommand:azurerm-vscode-tools.codeLens.openLinkedTemplateFile",
-		"onCommand:azurerm-vscode-tools.codeLens.reloadLinkedTemplateFile",
-		"onCommand:azurerm-vscode-tools.codeLens.gotoParameterValue",
-		"onCommand:azurerm-vscode-tools.codeAction.addAllMissingParameters",
-		"onCommand:azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
-		"onCommand:azurerm-vscode-tools.codeAction.extractParameter",
-		"onCommand:azurerm-vscode-tools.codeAction.extractVariable",
-		"onCommand:azurerm-vscode-tools.insertItem",
-		"onCommand:azurerm-vscode-tools.insertParameter",
-		"onCommand:azurerm-vscode-tools.insertVariable",
-		"onCommand:azurerm-vscode-tools.insertOutput",
-		"onCommand:azurerm-vscode-tools.insertFunction",
-		"onCommand:azurerm-vscode-tools.insertResource",
-		"onCommand:azurerm-vscode-tools.developer.resetGlobalState",
-		"onCommand:azurerm-vscode-tools.developer.showInsertionContext",
-		"onCommand:azurerm-vscode-tools.developer.showAvailableResourceTypesAndVersions"
-	],
-	"config": {
-		"$comment.ARM_LANGUAGE_SERVER_NUGET_VERSION": "E.g., 3.0.0-preview.24163.1, or lease blank to pick up the latest",
-		"ARM_LANGUAGE_SERVER_NUGET_VERSION": "3.0.0-preview.24224.1"
-	},
 	"dependencies": {
 		"fs-extra": "11.2.0",
 		"moment": "2.30.1",
 		"strip-json-comments": "5.0.1"
 	},
+	"description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
 	"devDependencies": {
 		"@types/decompress": "4.2.7",
 		"@types/estree": "1.0.6",
@@ -610,20 +596,34 @@
 		"shelljs": "0.8.5",
 		"source-map-support": "0.5.21"
 	},
+	"displayName": "Azure Resource Manager (ARM) Tools",
 	"extensionDependencies": [
 		"ms-dotnettools.vscode-dotnet-runtime"
 	],
-	"icon": "AzureRMTools128x128.png",
 	"galleryBanner": {
 		"color": "E7F1FA",
 		"theme": "light"
 	},
+	"icon": "AzureRMTools128x128.png",
+	"main": "main",
+	"name": "azurerm-vscode-tools",
 	"preview": true,
-	"$devDependencies.comment": "@types/estree is to fix eslint issue, see https://stackoverflow.com/questions/67806963/types-eslint-error-chainexpression-and-importexpression-members-of-estree-not#:~:text=Solution%20to%20this%20problem%20is%3A%20npm%20install%20--save-dev,again%3A%20npm%20install%20Errors%20should%20be%20gone%20now.",
-	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-	"capabilities": {
-		"virtualWorkspaces": {
-			"supported": false
-		}
+	"scripts": {
+		"$lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
+		"$lint-fix": "tslint --project tsconfig.json -t verbose --fix",
+		"$test.comment": "Runs tests from the webpacked extension. If you want to run tests from the source code directly, run from without vscode.",
+		"all": "npm i && npm test && npm run lint",
+		"build": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -p ./",
+		"build-grammars": "gulp build-grammars",
+		"compile": "gulp build-grammars && npm run get-language-server && gulp verify-test-uses-extension-bundle && tsc -watch -p ./",
+		"get-language-server": "gulp get-language-server",
+		"pretest-dev": "npm run webpack && gulp pretest",
+		"pretest-prod": "npm run webpack-prod && gulp pretest",
+		"verify-test-uses-extension-bundle": "gulp verify-test-uses-extension-bundle",
+		"watch-grammars": "gulp watch-grammars",
+		"webpack": "gulp webpack-prod",
+		"webpack-dev": "npm run build && gulp webpack-dev",
+		"webpack-prod": "npm run build && gulp webpack-prod",
+		"webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats"
 	}
 }
