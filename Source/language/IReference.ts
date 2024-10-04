@@ -7,6 +7,6 @@ import { IJsonDocument } from "../documents/templates/IJsonDocument";
 import { Span } from "./Span";
 
 export interface IReference {
-    document: IJsonDocument;
-    span: Span;
+	document: IJsonDocument;
+	span: Span;
 }

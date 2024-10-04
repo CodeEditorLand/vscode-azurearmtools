@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------------
 
 import { Uri } from "vscode";
+
 import { IParameterValuesSource } from "./IParameterValuesSource";
 
 /**
@@ -10,13 +11,13 @@ import { IParameterValuesSource } from "./IParameterValuesSource";
  * nested or linked templates
  */
 export interface IParameterValuesSourceProvider {
-    /**
-     * If this represents a parameter file, returns its URL, otherwise undefined.
-     */
-    parameterFileUri: Uri | undefined;
+	/**
+	 * If this represents a parameter file, returns its URL, otherwise undefined.
+	 */
+	parameterFileUri: Uri | undefined;
 
-    /**
-     * Retrieve the actual parameters, perhaps asynchronously (e.g. for a parameter file, where it has to be loaded dynamically)
-     */
-    getValuesSource(): Promise<IParameterValuesSource>;
+	/**
+	 * Retrieve the actual parameters, perhaps asynchronously (e.g. for a parameter file, where it has to be loaded dynamically)
+	 */
+	getValuesSource(): Promise<IParameterValuesSource>;
 }

@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 import { Range } from "vscode";
+
 import { emptyPosition } from "./emptyPosition";
 
 export const emptyRange = new Range(emptyPosition, emptyPosition);

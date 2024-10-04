@@ -4,10 +4,11 @@
 // ---------------------------------------------------------------------------------------------
 
 import { IParameterDefinitionsSource } from "./IParameterDefinitionsSource";
+
 /**
  * Provides a parameterDefinitionsSource
  */
 
 export interface IParameterDefinitionsSourceProvider {
-    parameterDefinitionsSource: IParameterDefinitionsSource | undefined;
+	parameterDefinitionsSource: IParameterDefinitionsSource | undefined;
 }
