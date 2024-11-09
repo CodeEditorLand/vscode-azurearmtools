@@ -1,0 +1,18 @@
+{
+    "extends": "../tslint.json",
+    "rules": {
+        "no-console": false,
+        "no-implicit-dependencies": [
+            true,
+            [
+                "vscode",
+                "gulp",
+                "dev",
+                "mocha",
+                "@microsoft/vscode-azext-dev",
+                "@vscode/test-electron"
+            ]
+        ],
+        "no-unexternalized-strings": false
+    }
+}
