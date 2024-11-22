@@ -25,6 +25,7 @@ export class Duration {
 
 	public dividedBy(divisor: number): Duration {
 		assert.notEqual(0, divisor, "divisor cannot be 0");
+
 		return Duration.milliseconds(this._milliseconds / divisor);
 	}
 
@@ -34,6 +35,7 @@ export class Duration {
 
 	public toString(): string {
 		let ms = this.totalMilliseconds;
+
 		return `${ms} millisecond${ms !== 1 ? "s" : ""}`;
 	}
 

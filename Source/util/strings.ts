@@ -67,34 +67,42 @@ export function escape(
 
 	if (value) {
 		result = "";
+
 		for (const c of value) {
 			switch (c) {
 				case "\b":
 					result += "\\b";
+
 					break;
 
 				case "\f":
 					result += "\\f";
+
 					break;
 
 				case "\n":
 					result += "\\n";
+
 					break;
 
 				case "\r":
 					result += "\\r";
+
 					break;
 
 				case "\t":
 					result += "\\t";
+
 					break;
 
 				case "\v":
 					result += "\\v";
+
 					break;
 
 				default:
 					result += c;
+
 					break;
 			}
 		}
@@ -115,6 +123,7 @@ export function escapeAndQuote(value: string | undefined | null): string {
 export function getCombinedLength(values: { length(): number }[]): number {
 	let result: number = 0;
 	assert(values);
+
 	for (const value of values) {
 		result += value.length();
 	}
@@ -127,6 +136,7 @@ export function getCombinedLength(values: { length(): number }[]): number {
 export function getCombinedText(values: { toString(): string }[]): string {
 	let result: string = "";
 	assert(values);
+
 	for (const value of values) {
 		result += value.toString();
 	}

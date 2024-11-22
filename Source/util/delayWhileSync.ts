@@ -11,6 +11,7 @@ export async function delayWhileSync(
 ): Promise<void> {
 	return new Promise((resolve, reject): void => {
 		const start = Date.now();
+
 		const handler = setInterval(() => {
 			try {
 				if (!predicate()) {

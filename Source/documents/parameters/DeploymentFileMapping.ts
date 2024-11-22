@@ -51,9 +51,11 @@ export class DeploymentFileMapping {
 			) ||
 			// tslint:disable-next-line: strict-boolean-expressions
 			{};
+
 		if (typeof paramFiles === "object") {
 			for (let templatePath of Object.getOwnPropertyNames(paramFiles)) {
 				let paramPathObject = paramFiles[templatePath];
+
 				if (
 					typeof paramPathObject !== "string" ||
 					isNullOrUndefined(paramPathObject)
@@ -63,6 +65,7 @@ export class DeploymentFileMapping {
 				const paramPath: string = <string>paramPathObject;
 
 				const resolvedTemplatePath = path.resolve(templatePath);
+
 				const normalizedTemplatePath: string =
 					normalizeFilePath(resolvedTemplatePath);
 
@@ -72,6 +75,7 @@ export class DeploymentFileMapping {
 						normalizedTemplatePath,
 						paramPath,
 					);
+
 					if (isFilePath(resolvedParamPath)) {
 						// If the user has an entry in both workspace and user settings, vscode combines the two objects,
 						//   with workspace settings overriding the user settings.
@@ -105,8 +109,11 @@ export class DeploymentFileMapping {
 	 */
 	public getParameterFile(templateFileUri: Uri): Uri | undefined {
 		this.ensureMapsCreated();
+
 		const normalizedTemplatePath = normalizeFilePath(templateFileUri);
+
 		const entry = this._mapToParams?.get(normalizedTemplatePath);
+
 		return entry?.resolvedParams;
 	}
 
@@ -115,8 +122,11 @@ export class DeploymentFileMapping {
 	 */
 	public getTemplateFile(parameterFileUri: Uri): Uri | undefined {
 		this.ensureMapsCreated();
+
 		const normalizedParamPath = normalizeFilePath(parameterFileUri);
+
 		const entry = this._mapToTemplates?.get(normalizedParamPath);
+
 		return entry?.resolvedTemplate;
 	}
 
@@ -130,6 +140,7 @@ export class DeploymentFileMapping {
 		const relativeParamFilePath: string | undefined = paramFileUri
 			? getRelativeParameterFilePath(templateUri, paramFileUri)
 			: undefined;
+
 		const normalizedTemplatePath = normalizeFilePath(templateUri.fsPath);
 
 		// We want to adjust the collection in the user settings, ignoring anything in the workspace settings
@@ -169,5 +180,6 @@ export class DeploymentFileMapping {
 
 function isFilePath(p: string): boolean {
 	const resolved = path.resolve(p);
+
 	return !!resolved.match(/[^./\\]/);
 }

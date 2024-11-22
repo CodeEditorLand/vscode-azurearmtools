@@ -33,6 +33,7 @@ export function getResourceIdCompletions(
 		const functionMetadata = AzureRMAssets.getFunctionMetadataFromName(
 			funcCall.name,
 		);
+
 		if (
 			functionMetadata?.hasBehavior(
 				FunctionBehaviors.usesResourceIdCompletions,
@@ -43,8 +44,10 @@ export function getResourceIdCompletions(
 
 			// What argument to the function call is the cursor in?
 			const argumentIndex = pc.getFunctionCallArgumentIndex(funcCall);
+
 			if (typeof argumentIndex === "number" && argumentIndex >= 0) {
 				const segmentIndex = argumentIndex;
+
 				return getCompletions(
 					pc,
 					scope,
@@ -130,6 +133,7 @@ function getCompletions(
 	// tslint:disable-next-line:no-constant-condition
 	while (true) {
 		assert(argIndex <= argIndexAtCursor);
+
 		if (argIndex === argIndexAtCursor) {
 			break;
 		}
@@ -140,6 +144,7 @@ function getCompletions(
 			parentStringToken,
 			argIndex,
 		);
+
 		if (!argExpression) {
 			return [];
 		}
@@ -155,12 +160,15 @@ function getCompletions(
 
 	// Add completions for all remaining resources, at the given name segment index
 	const results: Completion.Item[] = [];
+
 	for (let info of filteredResources) {
 		const insertText = info.nameSegmentExpressions[nameSegmentIndex];
+
 		if (insertText) {
 			const label = insertText;
 
 			let nameSegmentArgument = funcCall.argumentExpressions[argIndex];
+
 			let span = getReplacementSpan(
 				pc,
 				nameSegmentArgument,
@@ -215,12 +223,14 @@ function findFunctionCallArgumentWithResourceType(
 			parentStringToken,
 			argIndex,
 		);
+
 		if (argText) {
 			if (looksLikeResourceTypeStringLiteral(argText)) {
 				return { argIndex, typeExpression: argText };
 			}
 
 			let argTextLC = argText?.toLowerCase();
+
 			if (argTextLC) {
 				for (let info of resources) {
 					if (
@@ -245,6 +255,7 @@ function filterResourceInfosByType(
 		return [];
 	}
 	const typeExpressionLC = typeExpression.toLowerCase();
+
 	return infos.filter(
 		(info) =>
 			info.getFullTypeExpression()?.toLowerCase() === typeExpressionLC,
@@ -260,6 +271,7 @@ function filterResourceInfosByNameSegment(
 		return [];
 	}
 	const segmentExpressionLC = lowerCaseAndNoWhitespace(segmentExpression);
+
 	return infos.filter(
 		(info) =>
 			lowerCaseAndNoWhitespace(
@@ -291,15 +303,20 @@ function getResourceTypeCompletions(
 	}
 
 	const results: Completion.Item[] = [];
+
 	const infos = getResourcesInfo({
 		scope,
 		recognizeDecoupledChildren: false,
 	});
+
 	for (const info of infos) {
 		const insertText = info.getFullTypeExpression();
+
 		if (insertText) {
 			const label = insertText;
+
 			let typeArgument = funcCall.argumentExpressions[argumentIndex];
+
 			let span = getReplacementSpan(pc, typeArgument, parentStringToken);
 
 			const item = new Completion.Item({
@@ -346,6 +363,7 @@ function getReplacementSpan(
 	let span =
 		argument?.getSpan()?.translate(parentStringToken.span.startIndex) ??
 		pc.emptySpanAtDocumentCharacterIndex;
+
 	return span;
 }
 
@@ -360,6 +378,7 @@ function getArgumentExpressionText(
 ): string | undefined {
 	const argExpressionValue: TLE.Value | undefined =
 		funcCall.argumentExpressions[argumentIndex];
+
 	if (argExpressionValue) {
 		return pc.document
 			.getTextAtTleValue(argExpressionValue, parentStringToken)

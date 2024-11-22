@@ -142,8 +142,10 @@ export class Span {
 
 	public union(rhs: Span | undefined): Span {
 		let result: Span;
+
 		if (!!rhs) {
 			let minStart = Math.min(this.startIndex, rhs.startIndex);
+
 			let maxAfterEndIndex = Math.max(
 				this.afterEndIndex,
 				rhs.afterEndIndex,
@@ -182,6 +184,7 @@ export class Span {
 		if (!!rhs) {
 			// tslint:disable-next-line:no-this-assignment
 			let lhs: Span = this;
+
 			if (rhs.startIndex < this.startIndex) {
 				[lhs, rhs] = [rhs, lhs];
 			}
@@ -190,6 +193,7 @@ export class Span {
 			//     return undefined;
 			// }
 			let start = rhs.startIndex;
+
 			let afterEnd =
 				lhs.afterEndIndex < rhs.afterEndIndex
 					? lhs.afterEndIndex
@@ -241,6 +245,7 @@ export class Span {
 
 	public getText(text: string, offsetIndex?: number): string {
 		const start = this.startIndex + (offsetIndex ?? 0);
+
 		return text.slice(start, start + this.length);
 	}
 }

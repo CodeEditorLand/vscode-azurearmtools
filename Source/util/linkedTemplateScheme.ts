@@ -21,6 +21,7 @@ export function prependLinkedTemplateScheme(uri: Uri): Uri {
 
 		default:
 			const newUri = `${documentSchemes.linkedTemplate}:${stringifyUri(uri)}`;
+
 			return parseUri(newUri);
 	}
 }

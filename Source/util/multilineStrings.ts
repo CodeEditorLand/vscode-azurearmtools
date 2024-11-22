@@ -12,7 +12,9 @@ export function indentMultilineString(
 	indent: number,
 ): string {
 	const lines = splitIntoLines(multilineText);
+
 	const indentation: string = " ".repeat(indent);
+
 	return indentation + lines.join(ext.EOL + indentation);
 }
 
@@ -25,17 +27,22 @@ export function unindentMultilineString(
 	ignoreFirstLineWhenCalculatingIndent: boolean = false,
 ): string {
 	const lines = splitIntoLines(multilineText);
+
 	const linesToCalculateIndent = ignoreFirstLineWhenCalculatingIndent
 		? lines.slice(1)
 		: lines;
+
 	const minIndent = linesToCalculateIndent
 		.map(getLineIndentation)
 		.reduce(
 			(previous, current) => Math.min(previous, current),
 			Number.MAX_SAFE_INTEGER,
 		);
+
 	const removeFromStart = new RegExp(`^\\s{0,${minIndent}}`, "gm");
+
 	const unindentedLines = lines.map((l) => l.replace(removeFromStart, ""));
+
 	return unindentedLines.join(ext.EOL);
 }
 
@@ -44,6 +51,7 @@ export function unindentMultilineString(
  */
 export function getLineIndentation(singleLineText: string): number {
 	const indentation = singleLineText.match(/^\s+/);
+
 	if (!indentation) {
 		return 0;
 	}

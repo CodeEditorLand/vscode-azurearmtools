@@ -19,6 +19,7 @@ import * as Json from "../language/json/JSON";
  */
 export class UndefinedVariablePropertyVisitor extends TleVisitor {
 	private _errors: Issue[] = [];
+
 	constructor(private _scope: TemplateScope) {
 		super();
 	}
@@ -29,17 +30,21 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 		if (tlePropertyAccess.nameToken) {
 			const functionSource: FunctionCallValue | undefined =
 				tlePropertyAccess.functionSource;
+
 			if (functionSource) {
 				// Get the definition for the variable that's being referenced via a variables('v') call
 				const variableProperty: IVariableDefinition | undefined =
 					this._scope.getVariableDefinitionFromFunctionCall(
 						functionSource,
 					);
+
 				if (variableProperty) {
 					const variableDefinition: Json.ObjectValue | undefined =
 						Json.asObjectValue(variableProperty.value);
+
 					const sourcesNameStack: string[] =
 						tlePropertyAccess.sourcesNameStack;
+
 					if (variableDefinition) {
 						const sourcePropertyDefinition:
 							| Json.ObjectValue
@@ -48,6 +53,7 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 								sourcesNameStack,
 							),
 						);
+
 						if (
 							sourcePropertyDefinition &&
 							!sourcePropertyDefinition.hasProperty(
@@ -66,10 +72,13 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 	}
 	private addIssue(tlePropertyAccess: PropertyAccess): void {
 		const nameToken = tlePropertyAccess.nameToken;
+
 		const propertyName: string = nameToken
 			? nameToken.stringValue
 			: "(unknown)";
+
 		const sourceString: string = tlePropertyAccess.source.toString();
+
 		const span = nameToken ? nameToken.span : tlePropertyAccess.getSpan();
 		this._errors.push(
 			new Issue(
@@ -84,6 +93,7 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 		scope: TemplateScope,
 	): UndefinedVariablePropertyVisitor {
 		const visitor = new UndefinedVariablePropertyVisitor(scope);
+
 		if (tleValue) {
 			tleValue.accept(visitor);
 		}

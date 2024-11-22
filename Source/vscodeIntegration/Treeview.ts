@@ -334,10 +334,12 @@ export class JsonOutlineProvider
 			) {
 				if (!this.tree) {
 					this.refresh();
+
 					throw new Error("No tree");
 				}
 
 				let result: IElementInfo[] = [];
+
 				if (!elementInfo) {
 					if (this.tree.value instanceof Json.ObjectValue) {
 						// tslint:disable-next-line:one-variable-per-declaration
@@ -386,6 +388,7 @@ export class JsonOutlineProvider
 						// tslint:disable-next-line:one-variable-per-declaration
 						for (let i = 0, il = valueNode.length; i < il; i++) {
 							let valueElement = valueNode.elements[i];
+
 							if (valueElement instanceof Json.ObjectValue) {
 								let item = this.getElementInfo(
 									valueElement,
@@ -410,9 +413,12 @@ export class JsonOutlineProvider
 		// TODO: Shouldn't be using activeTextEditor (can be null) - store in IElementInfo?
 
 		// assert(activeTextEditor, "getTreeItem: no activeTextEditor");
+
 		if (activeTextEditor) {
 			const document = activeTextEditor?.document;
+
 			const start = document.positionAt(elementInfo.current.key.start);
+
 			const end =
 				elementInfo.current.value.end !== undefined
 					? document.positionAt(elementInfo.current.value.end)
@@ -441,6 +447,7 @@ export class JsonOutlineProvider
 	public revealRangeInEditor(range: vscode.Range): void {
 		const editor: vscode.TextEditor | undefined =
 			vscode.window.activeTextEditor;
+
 		if (editor) {
 			// Center the method in the document
 			editor.revealRange(range, vscode.TextEditorRevealType.Default);
@@ -472,12 +479,14 @@ export class JsonOutlineProvider
 			elementInfo.current.level === 1
 				? elementInfo.current
 				: elementInfo.root;
+
 		const keyNode =
 			this.tree &&
 			this.tree.getValueAtCharacterIndex(
 				element.key.start,
 				ContainsBehavior.strict,
 			);
+
 		if (keyNode instanceof Json.StringValue) {
 			return `${keyNode.unquotedValue}@${elementInfo.current.level}`;
 		}
@@ -501,6 +510,7 @@ export class JsonOutlineProvider
 				if (keyNode.hasProperty(templateKeys.resourceApiVersion)) {
 					// It's a resource
 					const info = getResourceInfo(keyNode);
+
 					if (info) {
 						return info.getFriendlyResourceLabel({
 							fullName: false,
@@ -509,6 +519,7 @@ export class JsonOutlineProvider
 				}
 
 				let label = this.getLabelFromPropery("name", keyNode);
+
 				if (label !== undefined) {
 					return label;
 				}
@@ -556,6 +567,7 @@ export class JsonOutlineProvider
 					propertyName.toUpperCase()
 			) {
 				let name = toFriendlyString(props.value);
+
 				return shortenTreeLabel(name);
 			}
 		}
@@ -676,6 +688,7 @@ export class JsonOutlineProvider
 	): string {
 		// tslint:disable-next-line: strict-boolean-expressions
 		itemName = (itemName || "").toLowerCase();
+
 		let iconItem = icons.find((item) => item[0].toLowerCase() === itemName);
 
 		return iconItem ? iconItem[1] : defaultIcon;
@@ -683,6 +696,7 @@ export class JsonOutlineProvider
 
 	private getIconPath(elementInfo: IElementInfo): string | undefined {
 		let icon: string | undefined;
+
 		const keyOrResourceNode = this.tree?.getValueAtCharacterIndex(
 			elementInfo.current.key.start,
 			ContainsBehavior.strict,
@@ -705,6 +719,7 @@ export class JsonOutlineProvider
 				elementInfo.root.key.start,
 				ContainsBehavior.strict,
 			);
+
 			if (rootNode) {
 				icon = this.getIcon(
 					topLevelChildIconsByRootNode,
@@ -736,10 +751,12 @@ export class JsonOutlineProvider
 					i++
 				) {
 					const name = keyOrResourceNode.properties[i].nameValue;
+
 					if (
 						name.toString().toUpperCase() === "type".toUpperCase()
 					) {
 						const value = keyOrResourceNode.properties[i].value;
+
 						if (value) {
 							let resourceType = value.toString().toUpperCase();
 							icon = this.getIcon(
@@ -772,6 +789,7 @@ export class JsonOutlineProvider
 		node: Json.Value | undefined,
 	): string | undefined {
 		const level: number | undefined = elementInfo.current.level;
+
 		if (!node || level === undefined) {
 			return undefined;
 		}
@@ -797,10 +815,12 @@ export class JsonOutlineProvider
 	private updateTreeState(): void {
 		const activeEditor: vscode.TextEditor | undefined =
 			vscode.window.activeTextEditor;
+
 		const document: vscode.TextDocument | undefined = !!activeEditor
 			? activeEditor.document
 			: undefined;
 		this.parseTree(document);
+
 		const showTreeView =
 			!!document && this.shouldShowTreeForDocument(document);
 

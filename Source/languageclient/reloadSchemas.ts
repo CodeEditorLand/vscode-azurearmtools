@@ -14,6 +14,7 @@ export async function reloadSchemas(): Promise<void> {
 		await ext.languageServerClient.sendRequest("schema/reloadSchemas", {});
 
 		const reload = "Reload Now";
+
 		if (
 			reload ===
 			(await window.showInformationMessage(

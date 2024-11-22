@@ -101,6 +101,7 @@ export abstract class PositionContext {
 				allowOutOfBounds,
 				`documentLineIndex cannot be greater than or equal to the deployment template's line count`,
 			);
+
 			documentLineIndex = this._document.lineCount - 1;
 		}
 		if (
@@ -111,6 +112,7 @@ export abstract class PositionContext {
 				allowOutOfBounds,
 				`documentColumnIndex cannot be greater than the line's maximum index`,
 			);
+
 			documentColumnIndex =
 				this._document.getMaxColumnIndex(documentLineIndex);
 		}
@@ -136,11 +138,13 @@ export abstract class PositionContext {
 			documentCharacterIndex >= 0,
 			"documentCharacterIndex cannot be negative",
 		);
+
 		if (documentCharacterIndex > this._document.maxCharacterIndex) {
 			assert(
 				allowOutOfBounds,
 				`documentCharacterIndex cannot be greater than the maximum character index`,
 			);
+
 			documentCharacterIndex = this._document.maxCharacterIndex;
 		}
 
@@ -163,6 +167,7 @@ export abstract class PositionContext {
 	 */
 	public get __debugDisplay(): string {
 		let docText: string = this._document.documentText;
+
 		return __debugMarkPositionInString(
 			docText,
 			this.documentCharacterIndex,
@@ -175,6 +180,7 @@ export abstract class PositionContext {
 	 */
 	public get __debugFullDisplay(): string {
 		let docText: string = this._document.documentText;
+
 		return __debugMarkPositionInString(
 			docText,
 			this.documentCharacterIndex,
@@ -241,6 +247,7 @@ export abstract class PositionContext {
 		token: Json.Token | undefined;
 	} {
 		const index = this.documentCharacterIndex;
+
 		let tokenAtCursor =
 			this.document.getJSONTokenAtDocumentCharacterIndex(index);
 
@@ -248,10 +255,12 @@ export abstract class PositionContext {
 		if (!tokenAtCursor && index > 0) {
 			const tokenAfterCursor =
 				this.document.getJSONTokenAtDocumentCharacterIndex(index - 1);
+
 			if (tokenAfterCursor) {
 				const line = this.document.getDocumentPosition(
 					tokenAfterCursor.span.startIndex,
 				).line;
+
 				if (line === this.documentPosition.line) {
 					tokenAtCursor = tokenAfterCursor;
 				}
@@ -266,7 +275,9 @@ export abstract class PositionContext {
 			// "arm-keyvault" or "arm!mg" are replaced in whole by the snippet.  But such characters
 			// aren't part of literals in JSON, so look for a match directly in the text.
 			let start = tokenAtCursor.span.startIndex;
+
 			const documentText = this.document.documentText;
+
 			while (
 				start > 0 &&
 				documentText.charAt(start - 1).match(/^[\w-!\$]/)
@@ -277,6 +288,7 @@ export abstract class PositionContext {
 			const match = this.document.documentText
 				.slice(start)
 				.match(/^[\w-!\$]+/);
+
 			return {
 				span: match ? new Span(start, match[0].length) : undefined,
 				token: tokenAtCursor,
@@ -310,8 +322,10 @@ export abstract class PositionContext {
 
 		const reference: IReferenceSite | undefined =
 			this.getReferenceSiteInfo(false);
+
 		if (reference) {
 			const span = reference.unquotedReferenceSpan;
+
 			const definition = reference.definition;
 			infos.push(
 				new UsageInfoHoverInfo(
@@ -342,6 +356,7 @@ export abstract class PositionContext {
 		allowInsideJsonString?: boolean;
 	}): InsertionContext {
 		const triggerCharacter = options.triggerCharacter;
+
 		const allowInsideJsonString = !!options.allowInsideJsonString;
 
 		if (!this.document.topLevelValue) {
@@ -351,11 +366,13 @@ export abstract class PositionContext {
 
 		const insideJsonString =
 			this.jsonToken?.type === Json.TokenType.QuotedString;
+
 		let parents: (Json.ArrayValue | Json.ObjectValue | Json.Property)[] =
 			[];
 
 		let insertionParent: Json.ArrayValue | Json.ObjectValue | undefined =
 			this.getInsertionParent();
+
 		if (insideJsonString && !insertionParent && allowInsideJsonString) {
 			const pcAtStartOfString =
 				this.document.getContextFromDocumentCharacterIndex(
@@ -398,6 +415,7 @@ export abstract class PositionContext {
 				//
 				const parentPropertyName =
 					parents[1].propertyName?.toLowerCase();
+
 				return {
 					context: parentPropertyName,
 					parents,
@@ -423,6 +441,7 @@ export abstract class PositionContext {
 				//
 				const parentPropertyName =
 					parents[1].propertyName?.toLowerCase();
+
 				return {
 					context: parentPropertyName,
 					parents,
@@ -474,6 +493,7 @@ export abstract class PositionContext {
 					//
 					const parentPropertyName =
 						parents[2].propertyName?.toLowerCase();
+
 					return {
 						context: parentPropertyName,
 						curlyBraces: insertionParent.span,
@@ -506,6 +526,7 @@ export abstract class PositionContext {
 				this.documentCharacterIndex,
 				ContainsBehavior.enclosed,
 			);
+
 		if (
 			!(
 				enclosingJsonValue instanceof Json.ObjectValue ||
@@ -537,15 +558,18 @@ export abstract class PositionContext {
 				this.documentCharacterIndex,
 				ContainsBehavior.enclosed,
 			);
+
 		if (enclosingJsonValue) {
 			const lineage:
 				| (Json.ArrayValue | Json.ObjectValue | Json.Property)[]
 				| undefined =
 				this.document.topLevelValue?.findLineage(enclosingJsonValue) ??
 				[];
+
 			const lineageWithoutProperties = <
 				(Json.ArrayValue | Json.ObjectValue)[]
 			>lineage.filter((l) => !(l instanceof Json.Property));
+
 			return lineageWithoutProperties[lineage.length - 1];
 		}
 

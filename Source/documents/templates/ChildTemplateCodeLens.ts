@@ -48,7 +48,9 @@ export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
         topLevelParameterValuesProvider: IParameterValuesSourceProvider | undefined
     ): ResolvableCodeLens[] {
         const lenses: ResolvableCodeLens[] = [];
+
         let title: string;
+
         const hasParameterFile = !!topLevelParameterValuesProvider?.parameterFileUri;
 
         fullValidationStatus = fullValidationStatus ?? {
@@ -60,10 +62,14 @@ export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
         switch (scope.scopeKind) {
             case TemplateScopeKind.NestedDeploymentWithInnerScope:
                 title = "Nested template with inner scope";
+
                 break;
+
             case TemplateScopeKind.NestedDeploymentWithOuterScope:
                 title = "Nested template with outer scope";
+
                 break;
+
             default:
                 assert.fail("Unexpected nested code lens type");
         }
@@ -75,6 +81,7 @@ export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
 
         // If language server not running yet, show language server state instead of file load state
         let langServerLoadState: string | undefined = getLoadStateFromLanguageServerStatus();
+
         if (langServerLoadState) {
             title += ` - ${langServerLoadState}`;
         }
@@ -82,6 +89,7 @@ export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
         lenses.push(new NestedTemplateCodeLens(scope, span, title));
 
         addSelectParamFileLensIfNeeded(lenses, fullValidationStatus, topLevelParameterValuesProvider, scope, span);
+
         return lenses;
     }
 
@@ -119,8 +127,11 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
         topLevelParameterValuesProvider: IParameterValuesSourceProvider | undefined
     ): ResolvableCodeLens[] {
         const lenses: ResolvableCodeLens[] = [];
+
         let title: string;
+
         const isRelativePath = scope.isRelativePath;
+
         const hasParameterFile = !!topLevelParameterValuesProvider?.parameterFileUri;
 
         fullValidationStatus = fullValidationStatus ?? {
@@ -151,22 +162,29 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
         langServerLoadState = getLoadStateFromLanguageServerStatus();
 
         let linkedUri: Uri | undefined;
+
         let friendlyPath: string | undefined;
+
         let fullPath: string | undefined;
+
         try {
             const templateUri = scope.document.documentUri;
             linkedUri = firstLinkedTemplateRef?.fullUri ? parseUri(firstLinkedTemplateRef.fullUri) : undefined;
+
             if (linkedUri && templateUri.fsPath && linkedUri.scheme === documentSchemes.file) {
                 const templateFolder = path.dirname(templateUri.fsPath);
                 friendlyPath = path.relative(templateFolder, linkedUri.fsPath);
                 fullPath = linkedUri.fsPath;
+
                 if (!path.isAbsolute(friendlyPath) && !friendlyPath.startsWith('.')) {
                     friendlyPath = `.${ext.pathSeparator}${friendlyPath}`;
                 }
             } else {
                 const maxQueryLength = 40;
+
                 let shortenedUri = linkedUri;
                 fullPath = linkedUri?.toString(true);
+
                 if (linkedUri && linkedUri?.query.length > maxQueryLength) {
                     shortenedUri = shortenedUri?.with({
                         query: `${linkedUri.query.slice(0, maxQueryLength)}...`
@@ -235,16 +253,22 @@ function getLoadStateFromLanguageServerStatus(): string | undefined {
         case LanguageServerState.Running:
             // Everything fine, no need for state to be displayed in label
             return undefined;
+
         case LanguageServerState.Failed:
             return "language server failed to start";
+
         case LanguageServerState.NotStarted:
             return "language server not started";
+
         case LanguageServerState.Starting:
             return "starting up...";
+
         case LanguageServerState.Stopped:
             return "language server stopped";
+
         case LanguageServerState.LoadingInitialSchemas:
             return "loading schemas...";
+
         default:
             assertNever(ext.languageServerState);
     }
@@ -254,17 +278,22 @@ function getLinkedFileLoadStateLabelSuffix(ref: ILinkedTemplateReference): strin
     switch (ref.loadState) {
         case LinkedFileLoadState.LoadFailed:
             return `$(error) ${ref.loadErrorMessage ?? 'Load failed'}`;
+
         case LinkedFileLoadState.Loading:
             return "loading...";
+
         case LinkedFileLoadState.NotLoaded:
             return "not loaded";
+
         case LinkedFileLoadState.NotSupported:
         case LinkedFileLoadState.TooDeep:
             // An error will be shown already
             return "";
+
         case LinkedFileLoadState.SuccessfullyLoaded:
             // Don't need an extra status for successful operation
             return "";
+
         default:
             assertNever(ref.loadState);
     }

@@ -55,6 +55,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 
 	private addReference(definition: INamedDefinition, span: Span): void {
 		let list = this._referenceListsMap.get(definition);
+
 		if (!list) {
 			list = new Reference.ReferenceList(definition.definitionKind);
 			this._referenceListsMap.set(definition, list);
@@ -83,6 +84,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 		}
 
 		const namespaceName = tleFunctionCall.namespace;
+
 		const name = tleFunctionCall.name;
 
 		if (tleFunctionCall.namespaceToken) {
@@ -94,6 +96,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 					| UserFunctionNamespaceDefinition
 					| undefined =
 					this._scope.getFunctionNamespaceDefinition(namespaceName);
+
 				if (userNamespaceDefinition) {
 					// ... Namespace exists, add reference
 					this.addReference(
@@ -107,6 +110,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 						userNamespaceDefinition,
 						name,
 					);
+
 					if (userFunctionDefinition) {
 						// ... User-defined function exists in namespace, add reference
 						this.addReference(
@@ -167,11 +171,13 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 					case templateKeys.parameters:
 						// ... parameter reference
 						this.addParameterRefOrError(tleFunctionCall);
+
 						break;
 
 					case templateKeys.variables:
 						// ... variable reference
 						this.addVariableRefOrError(tleFunctionCall);
+
 						break;
 
 					default:
@@ -206,10 +212,13 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 	): void {
 		if (tleFunctionCall.argumentExpressions.length === 1) {
 			const arg = tleFunctionCall.argumentExpressions[0];
+
 			if (arg instanceof StringValue) {
 				const argName = arg.toString();
+
 				const varDefinition =
 					this._scope.getVariableDefinition(argName);
+
 				if (varDefinition) {
 					this.addReference(varDefinition, arg.unquotedSpan);
 				} else {
@@ -241,10 +250,13 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 		if (tleFunctionCall.argumentExpressions.length === 1) {
 			const arg: TLE.Value | undefined =
 				tleFunctionCall.argumentExpressions[0];
+
 			if (arg instanceof StringValue) {
 				const argName = arg.toString();
+
 				const paramDefinition =
 					this._scope.getParameterDefinition(argName);
+
 				if (paramDefinition) {
 					this.addReference(paramDefinition, arg.unquotedSpan);
 				} else {

@@ -61,11 +61,13 @@ export abstract class DeploymentDocument extends JsonDocument {
 				positionOrRange.start.character,
 				{ allowOutOfBounds: true },
 			);
+
 			const endIndex = this.getDocumentCharacterIndex(
 				positionOrRange.end.line,
 				positionOrRange.end.character,
 				{ allowOutOfBounds: true },
 			);
+
 			return __debugMarkRangeInString(
 				this.documentText,
 				startIndex,
@@ -77,6 +79,7 @@ export abstract class DeploymentDocument extends JsonDocument {
 				positionOrRange.character,
 				{ allowOutOfBounds: true },
 			);
+
 			return __debugMarkPositionInString(this.documentText, index);
 		} else {
 			return __debugMarkPositionInString(

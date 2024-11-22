@@ -10,6 +10,7 @@ export function showInsertionContext(pc: PositionContext): void {
 		allowInsideJsonString: true,
 	});
 	ext.outputChannel.show();
+
 	const context = insertionContext.context ?? "(none)";
 	ext.outputChannel.appendLine(
 		`Insertion context at ${pc.documentPosition.line + 1},${pc.documentPosition.column + 1}: ${context}`,

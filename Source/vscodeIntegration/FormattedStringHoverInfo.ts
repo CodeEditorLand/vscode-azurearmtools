@@ -27,9 +27,11 @@ export class FormattedStringHoverInfo implements IHoverInfo {
 			.replace(/\\r/g, "\n")
 			.replace(/\\n/g, "\n")
 			.replace(/\\t/g, "\t");
+
 		const markdown = new MarkdownString();
 		markdown.appendMarkdown("Multi-line string:");
 		markdown.appendCodeblock(formattedString, "plaintext");
+
 		return markdown;
 	}
 }

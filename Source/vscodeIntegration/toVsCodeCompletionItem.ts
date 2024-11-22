@@ -16,6 +16,7 @@ export function toVsCodeCompletionItem(jsonDocument: IJsonDocument, item: Comple
 
     const vscodeItem = new vscode.CompletionItem(item.label);
     vscodeItem.range = range;
+
     const insertText = item.insertText;
     vscodeItem.insertText = new vscode.SnippetString(insertText);
     vscodeItem.detail = item.detail;
@@ -26,16 +27,23 @@ export function toVsCodeCompletionItem(jsonDocument: IJsonDocument, item: Comple
     vscodeItem.kind = toVsCodeCompletionItemKind(item.kind);
 
     let sortPriorityPrefix: string;
+
     switch (item.priority) {
         case Completion.CompletionPriority.low:
             sortPriorityPrefix = `${String.fromCharCode(255)}-`;
+
             break;
+
         case Completion.CompletionPriority.high:
             sortPriorityPrefix = `${String.fromCharCode(1)}-`;
+
             break;
+
         case Completion.CompletionPriority.normal:
             sortPriorityPrefix = '';
+
             break;
+
         default:
             assertNever(item.priority);
     }
@@ -58,6 +66,7 @@ export function toVsCodeCompletionItem(jsonDocument: IJsonDocument, item: Comple
         kind: item.kind,
         function: item.kind === Completion.CompletionKind.tleFunction ? item.label : undefined
     };
+
     for (let key of Object.getOwnPropertyNames(item.telemetryProperties ?? {})) {
         telemetryArgs[key] = item.telemetryProperties?.[key];
     }

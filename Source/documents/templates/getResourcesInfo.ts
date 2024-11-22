@@ -26,8 +26,10 @@ export function getResourcesInfo({
 	const resourcesArray = scope.rootObject?.getPropertyValue(
 		templateKeys.resources,
 	)?.asArrayValue;
+
 	if (resourcesArray) {
 		const infos = getInfoFromResourcesArray(resourcesArray, undefined);
+
 		if (recognizeDecoupledChildren) {
 			findAndSetDecoupledChildren(infos);
 		}
@@ -45,7 +47,9 @@ export function getResourceInfo(
 	resourceObject: Json.ObjectValue,
 ): IJsonResourceInfo | undefined {
 	const results: IJsonResourceInfo[] = [];
+
 	getInfoFromResourceObject(resourceObject, undefined, results, false);
+
 	return results[0];
 }
 
@@ -193,7 +197,9 @@ export class ResourceInfo implements IResourceInfo {
 			this.typeSegmentExpressions.length > 0
 		) {
 			const typeExpression = this.getFullTypeExpression();
+
 			const nameExpressions = this.nameSegmentExpressions.join(", ");
+
 			return `resourceId(${typeExpression}, ${nameExpressions})`;
 		}
 
@@ -271,9 +277,12 @@ function concatExpressionsWithSeparator(
 
 	// Coalesce adjacent string literals
 	const coalescedExpressions: string[] = [];
+
 	const expressionsLength = expressions.length;
+
 	for (let i = 0; i < expressionsLength; ++i) {
 		let expression = expressions[i];
+
 		const isLastSegment = i === expressionsLength - 1;
 
 		if (isSingleQuoted(expression)) {
@@ -285,6 +294,7 @@ function concatExpressionsWithSeparator(
 			// Merge with last expression if it's also a string literal
 			const lastCoalescedExpression =
 				coalescedExpressions[coalescedExpressions.length - 1];
+
 			if (
 				lastCoalescedExpression &&
 				isSingleQuoted(lastCoalescedExpression)
@@ -296,6 +306,7 @@ function concatExpressionsWithSeparator(
 			}
 		} else {
 			coalescedExpressions.push(expression);
+
 			if (unquotedLiteralSeparator && !isLastSegment) {
 				// Add separator
 				coalescedExpressions.push(`'${unquotedLiteralSeparator}'`);
@@ -315,8 +326,10 @@ function getInfoFromResourcesArray(
 	parent: IJsonResourceInfo | undefined,
 ): IJsonResourceInfo[] {
 	const results: IJsonResourceInfo[] = [];
+
 	for (let resourceValue of resourcesArray.elements ?? []) {
 		const resourceObject = Json.asObjectValue(resourceValue);
+
 		if (resourceObject) {
 			getInfoFromResourceObject(resourceObject, parent, results, true);
 		}
@@ -334,12 +347,14 @@ function getInfoFromResourceObject(
 	const resName = Json.asStringValue(
 		resourceObject.getPropertyValue(templateKeys.resourceName),
 	);
+
 	const resType = Json.asStringValue(
 		resourceObject.getPropertyValue(templateKeys.resourceType),
 	);
 
 	if (resName && resType) {
 		let nameExpressions: string[];
+
 		let typeExpressions: string[];
 
 		// If there's a parent, generally the type specified in the template
@@ -348,6 +363,7 @@ function getInfoFromResourceObject(
 		const typeSegments = splitResourceTypeIntoSegments(
 			resType.unquotedValue,
 		);
+
 		if (parent && typeSegments.length <= 1) {
 			// Add to end of parent type segments
 			typeExpressions = [
@@ -361,6 +377,7 @@ function getInfoFromResourceObject(
 		const nameSegments = splitResourceNameIntoSegments(
 			resName.unquotedValue,
 		);
+
 		if (parent && nameSegments.length <= 1) {
 			// Add to end of parent name segments
 			nameExpressions = [
@@ -384,6 +401,7 @@ function getInfoFromResourceObject(
 			const childResources = resourceObject.getPropertyValue(
 				templateKeys.resources,
 			)?.asArrayValue;
+
 			if (childResources) {
 				const childrenInfo = getInfoFromResourcesArray(
 					childResources,
@@ -418,16 +436,20 @@ function getInfoFromResourceObject(
 				const subnets = resourceObject
 					.getPropertyValue(templateKeys.properties)
 					?.asObjectValue?.getPropertyValue("subnets")?.asArrayValue;
+
 				for (let subnet of subnets?.elements ?? []) {
 					const subnetObject = subnet.asObjectValue;
+
 					const subnetName = subnetObject?.getPropertyValue(
 						templateKeys.resourceName,
 					)?.asStringValue;
+
 					if (subnetObject && subnetName) {
 						const subnetTypes = [
 							`'Microsoft.Network/virtualNetworks'`,
 							`'subnets'`,
 						];
+
 						const subnetInfo = new JsonResourceInfo(
 							[
 								jsonStringToTleExpression(
@@ -557,8 +579,11 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
 	// No sense taking time for parsing the expression if '/' is nowhere in the expression
 	if (jsonString.includes("/")) {
 		const quotedValue = `"${jsonString}"`;
+
 		const parseResult = TLE.Parser.parse(quotedValue);
+
 		const expression = parseResult.expression;
+
 		if (parseResult.errors.length === 0 && expression) {
 			// Handle this pattern:
 			// "[concat(expression1, '/' , expression2)]" => [expression1, expression2]
@@ -567,6 +592,7 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
 				expression.isCallToBuiltinWithName("concat")
 			) {
 				const argumentExpressions = expression.argumentExpressions;
+
 				if (argumentExpressions.every((v) => !!v)) {
 					// First, rewrite any string literals that contain a forward slash
 					// into separate string literals, e.g.
@@ -593,14 +619,17 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
 					// string literals, e.g.
 					//   [a, '/', b, c, '/', d] -> [ [a], [b, c], [d]]
 					let segmentGroups: string[][] = [];
+
 					let newGroup: string[] = [];
 
 					let separatorFound = false;
+
 					for (let arg of rewrittenArgs) {
 						const argAsString =
 							typeof arg === "string"
 								? arg
 								: arg.getSpan().getText(quotedValue);
+
 						if (arg === `'/'`) {
 							separatorFound = true;
 							segmentGroups.push(newGroup);
@@ -637,9 +666,11 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
  */
 function splitStringAndKeepSeparators(s: string, separator: string): string[] {
 	let result: string[] = [];
+
 	let substrings: string[] = s.split(separator);
 
 	let first = true;
+
 	for (let substring of substrings) {
 		if (!first) {
 			result.push("/");
@@ -668,8 +699,10 @@ function getFriendlyNameExpression({
 	let tags = resourceObject?.getPropertyValue(
 		templateKeys.tags,
 	)?.asObjectValue;
+
 	let displayName = tags?.getPropertyValue(templateKeys.displayNameTag)
 		?.asStringValue?.unquotedValue;
+
 	if (displayName) {
 		friendlyName = displayName;
 	} else {
@@ -677,6 +710,7 @@ function getFriendlyNameExpression({
 		const name = fullName
 			? resource.getFullNameExpression()
 			: resource.shortNameExpression;
+
 		if (name) {
 			friendlyName = getFriendlyExpressionFromTleExpression(name);
 		} else {
@@ -700,6 +734,7 @@ function getFriendlyTypeExpression({
 	friendlyType = friendlyType
 		? getFriendlyExpressionFromTleExpression(friendlyType)
 		: "(no type)";
+
 	return friendlyType;
 }
 
@@ -722,7 +757,9 @@ function getFriendlyResourceLabel({
 
 function findAndSetDecoupledChildren(infos: IJsonResourceInfo[]): void {
 	const topLevel = infos.filter((info) => !info.parent);
+
 	const possibleParents = topLevel;
+
 	const possibleChildren = topLevel.filter(
 		(info) => !info.parent && info.nameSegmentExpressions.length > 1,
 	);
@@ -736,6 +773,7 @@ function findAndSetDecoupledChildren(infos: IJsonResourceInfo[]): void {
 				!child.parent,
 				"Should have been removed from the array already",
 			);
+
 			if (areDecoupledChildAndParent(child, parent)) {
 				parent.children.push(child);
 				child.parent = parent;

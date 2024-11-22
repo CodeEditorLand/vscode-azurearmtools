@@ -16,7 +16,9 @@ export function validateUserFunctionCallArgCounts(
 	functionDefinition: UserFunctionDefinition,
 ): Issue | undefined {
 	let actualFullFunctionName: string;
+
 	let minimumArguments: number;
+
 	let maximumArguments: number | undefined;
 
 	actualFullFunctionName = functionDefinition.fullName;
@@ -36,7 +38,9 @@ export function validateBuiltInFunctionCallArgCounts(
 	functionMetadata: assets.BuiltinFunctionMetadata,
 ): Issue | undefined {
 	let actualFullFunctionName: string;
+
 	let minimumArguments: number;
+
 	let maximumArguments: number | undefined;
 
 	actualFullFunctionName = functionMetadata.fullName;
@@ -67,6 +71,7 @@ function getFunctionArgumentCountError(
 		tleFunction.argumentExpressions.length;
 
 	let message: string | undefined;
+
 	if (minimumArguments === maximumArguments) {
 		if (functionCallArgumentCount !== minimumArguments) {
 			message = `The function '${actualFullFunctionName}' takes ${minimumArguments} ${getArgumentsString(minimumArguments)}.`;
@@ -77,6 +82,7 @@ function getFunctionArgumentCountError(
 		}
 	} else {
 		assert(minimumArguments < maximumArguments);
+
 		if (
 			functionCallArgumentCount < minimumArguments ||
 			maximumArguments < functionCallArgumentCount
@@ -95,6 +101,7 @@ function getFunctionArgumentCountError(
 			minimumArguments,
 			maximumArguments,
 		);
+
 		return issue;
 	}
 }

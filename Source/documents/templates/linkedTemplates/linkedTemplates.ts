@@ -95,6 +95,7 @@ export async function onRequestOpenLinkedFile(
         properties.openResult = 'Error';
 
         let requestedLinkUri: Uri;
+
         try {
             requestedLinkUri = parseUri(requestedLinkResolvedUri);
         } catch (error) {
@@ -107,9 +108,11 @@ export async function onRequestOpenLinkedFile(
 
         if (requestedLinkUri.scheme === documentSchemes.untitled) {
             properties.openErrorType = 'template not saved';
+
             return { loadErrorMessage: "Template file needs to be saved" };
         } else if (!path.isAbsolute(requestedLinkUri.fsPath)) {
             properties.openErrorType = 'path not absolute';
+
             return { loadErrorMessage: "Link uri should be an absolute path" };
         } else if (requestedLinkUri.scheme === documentSchemes.file) {
             // It's a local file.
@@ -117,6 +120,7 @@ export async function onRequestOpenLinkedFile(
             const localPath = requestedLinkUri.fsPath;
 
             const result = await tryOpenLocalLinkedFile(localPath, pathType, context);
+
             if (result.document) {
                 properties.openResult = 'Loaded';
             } else {
@@ -125,16 +129,19 @@ export async function onRequestOpenLinkedFile(
             }
 
             const loadErrorMessage = result.loadError ? parseError(result.loadError).message : undefined;
+
             return { loadErrorMessage };
         } else {
             // Something else (http etc).  Try to retrieve the content and return it directly
             try {
                 const content = await tryLoadNonLocalLinkedFile(requestedLinkUri, context, true);
                 properties.openResult = 'Loaded';
+
                 return { content };
             } catch (error) {
                 const parsedError = parseError(error);
                 properties.openErrorType = parsedError.errorType;
+
                 return { loadErrorMessage: parsedError.message };
             }
         }
@@ -143,17 +150,21 @@ export async function onRequestOpenLinkedFile(
 
 export async function tryLoadNonLocalLinkedFile(uri: Uri, context: IActionContext, open: boolean): Promise<string> {
     uri = removeLinkedTemplateScheme(uri);
+
     let content: string;
+
     try {
         content = await httpGet(stringifyUri(uri));
     } catch (err) {
         // Improve the error message for downstream, UI doesn't currently know about statusMessage/statusCode
         const error = <Errorish & { statusMessage?: string; statusCode?: number }>err;
         error.message = String(error.message ?? error.statusMessage ?? error.statusCode);
+
         throw error;
     }
 
     assert(ext.provideOpenedDocuments, "ext.provideOpenedDocuments");
+
     const newUri = prependLinkedTemplateScheme(uri);
 
     // We need to place it into our docs immediately because our text document content provider will be queried
@@ -163,6 +174,7 @@ export async function tryLoadNonLocalLinkedFile(uri: Uri, context: IActionContex
 
     if (open) {
         const doc = await workspace.openTextDocument(newUri);
+
         setLangIdToArm(doc, context);
     }
 
@@ -195,9 +207,11 @@ async function tryOpenLocalLinkedFile(
         // Note: If the URI is already opened, this returns the existing document
         const document = await workspace.openTextDocument(localPath);
         // ext.outputChannel.appendLine(`... Opened linked file ${localPath}, langid = ${document.languageId}`);
+
         if (document.languageId !== armTemplateLanguageId) {
             // ext.outputChannel.appendLine(`... Setting langid to ${armTemplateLanguageId}`);
             context.telemetry.properties.isLinkedTemplate = 'true';
+
             setLangIdToArm(document, context);
         }
 
@@ -205,6 +219,7 @@ async function tryOpenLocalLinkedFile(
         return { document };
     } catch (err) {
         ext.outputChannel.appendLine(`... Failed loading ${localPath}: ${parseError(err).message}`);
+
         return { loadError: <Errorish>err };
     }
 }
@@ -224,6 +239,7 @@ export function assignTemplateGraphToDeploymentTemplate(
 
     // Clear current
     const linkedScopes = filterByType(dt.allScopes, LinkedTemplateScope);
+
     for (const linkReference of graph.linkedTemplates) {
         const linkPositionInTemplate = dt.getDocumentCharacterIndex(
             linkReference.lineNumberInParent,
@@ -238,6 +254,7 @@ export function assignTemplateGraphToDeploymentTemplate(
         // Since templated deployments can't have children (in the defining document), there can be at most one linked deployment scope whose defining
         //   resource contains the location
         const matchingScope = linkedScopes.find(scope => scope.owningDeploymentResource.span.contains(linkPositionInTemplate, ContainsBehavior.enclosed));
+
         if (matchingScope) {
             matchingScope.assignLinkedFileReferences([linkReference], provideOpenDocuments);
         }
@@ -258,12 +275,15 @@ export async function openLinkedTemplateFileCommand(linkedTemplateUri: Uri, acti
     if (linkedTemplateUri.scheme === documentSchemes.file) {
         const exists = await pathExistsNoThrow(linkedTemplateUri);
         actionContext.telemetry.properties.exists = String(exists);
+
         if (!exists) {
             const fsPath = linkedTemplateUri.fsPath;
+
             const response = await actionContext.ui.showWarningMessage(
                 `Could not find file "${fsPath}".  Do you want to create it?`,
                 DialogResponses.yes,
                 DialogResponses.cancel);
+
             if (response === DialogResponses.yes) {
                 await fse.mkdirs(path.dirname(fsPath));
                 await fse.writeFile(fsPath, "", {});
@@ -278,6 +298,7 @@ export async function openLinkedTemplateFileCommand(linkedTemplateUri: Uri, acti
     }
 
     const doc = await workspace.openTextDocument(targetUri);
+
     setLangIdToArm(doc, actionContext);
     await window.showTextDocument(doc);
 }
@@ -289,12 +310,15 @@ export async function reloadLinkedTemplateFileCommand(linkedTemplateUri: Uri, ac
     if (linkedTemplateUri.scheme === documentSchemes.file) {
         const exists = await pathExistsNoThrow(linkedTemplateUri);
         actionContext.telemetry.properties.exists = String(exists);
+
         if (!exists) {
             const fsPath = linkedTemplateUri.fsPath;
+
             const response = await actionContext.ui.showWarningMessage(
                 `Could not find file "${fsPath}".  Do you want to create it?`,
                 DialogResponses.yes,
                 DialogResponses.cancel);
+
             if (response === DialogResponses.yes) {
                 await fse.writeFile(fsPath, "", {});
             } else {
@@ -308,6 +332,7 @@ export async function reloadLinkedTemplateFileCommand(linkedTemplateUri: Uri, ac
     }
 
     const doc = await workspace.openTextDocument(targetUri);
+
     setLangIdToArm(doc, actionContext);
     await window.showTextDocument(doc);
 }

@@ -245,12 +245,16 @@ export function readQuotedString(
 
 	// tslint:disable-next-line: no-non-null-assertion // Asserted
 	const startQuote: basic.Token = startingToken!;
+
 	const quotedStringTokens: basic.Token[] = [startQuote];
 	iterator.moveNext();
 
 	let escaped: boolean = false;
+
 	let endQuote: basic.Token | undefined;
+
 	let current: basic.Token | undefined = iterator.current();
+
 	while (!endQuote && current) {
 		quotedStringTokens.push(current);
 
@@ -280,6 +284,7 @@ export function readWhitespace(iterator: Iterator<basic.Token>): basic.Token[] {
 	// tslint:disable-next-line: no-constant-condition
 	while (true) {
 		let current: basic.Token | undefined = iterator.current();
+
 		if (!current) {
 			return whitespaceTokens;
 		}
@@ -293,6 +298,7 @@ export function readWhitespace(iterator: Iterator<basic.Token>): basic.Token[] {
 				whitespaceTokens.push(current);
 				iterator.moveNext();
 				current = iterator.current();
+
 				break;
 
 			default:
@@ -310,6 +316,7 @@ export function readNumber(iterator: Iterator<basic.Token>): basic.Token[] {
 
 	// tslint:disable-next-line:no-non-null-assertion no-unnecessary-type-assertion // Precondition is that current points to Dash or Digits
 	const dashOrDigitsToken = iterator.current()!;
+
 	if (dashOrDigitsToken.getType() === basic.TokenType.Dash) {
 		// Negative sign
 		numberBasicTokens.push(dashOrDigitsToken);
@@ -317,6 +324,7 @@ export function readNumber(iterator: Iterator<basic.Token>): basic.Token[] {
 	}
 
 	const digits = iterator.current();
+
 	if (digits && digits.getType() === basic.TokenType.Digits) {
 		// Whole number digits
 		numberBasicTokens.push(digits);
@@ -324,12 +332,14 @@ export function readNumber(iterator: Iterator<basic.Token>): basic.Token[] {
 	}
 
 	const decimal = iterator.current();
+
 	if (decimal && decimal.getType() === basic.TokenType.Period) {
 		// Decimal point
 		numberBasicTokens.push(decimal);
 		iterator.moveNext();
 
 		const fractionalDigits = iterator.current();
+
 		if (
 			fractionalDigits &&
 			fractionalDigits.getType() === basic.TokenType.Digits
@@ -341,6 +351,7 @@ export function readNumber(iterator: Iterator<basic.Token>): basic.Token[] {
 	}
 
 	const exponentLetter = iterator.current();
+
 	if (exponentLetter) {
 		if (
 			exponentLetter.getType() === basic.TokenType.Letters &&
@@ -351,6 +362,7 @@ export function readNumber(iterator: Iterator<basic.Token>): basic.Token[] {
 			iterator.moveNext();
 
 			const exponentSign = iterator.current();
+
 			if (
 				exponentSign &&
 				(exponentSign.getType() === basic.TokenType.Dash ||
@@ -362,6 +374,7 @@ export function readNumber(iterator: Iterator<basic.Token>): basic.Token[] {
 			}
 
 			const exponentDigits = iterator.current();
+
 			if (
 				exponentDigits &&
 				exponentDigits.getType() === basic.TokenType.Digits
@@ -417,6 +430,7 @@ export class Tokenizer {
 	private currentBasicTokenType(): basic.TokenType | undefined {
 		const currentBasicToken: basic.Token | undefined =
 			this.currentBasicToken();
+
 		return currentBasicToken ? currentBasicToken.getType() : undefined;
 	}
 
@@ -426,11 +440,14 @@ export class Tokenizer {
 	 */
 	private moveNextBasicToken(): boolean {
 		const result: boolean = this._innerTokenizer.moveNext();
+
 		let currentBasicToken = this.currentBasicToken();
+
 		if (currentBasicToken) {
 			let currentBasicTokenType = this.currentBasicTokenType();
 			this._lineLengths[this._lineLengths.length - 1] +=
 				currentBasicToken.length();
+
 			if (
 				currentBasicTokenType === basic.TokenType.NewLine ||
 				currentBasicTokenType === basic.TokenType.CarriageReturnNewLine
@@ -467,6 +484,7 @@ export class Tokenizer {
 		}
 
 		this._current = undefined;
+
 		if (this.currentBasicToken()) {
 			switch (this.currentBasicTokenType()) {
 				case basic.TokenType.LeftCurlyBracket:
@@ -478,6 +496,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
+
 					break;
 
 				case basic.TokenType.RightCurlyBracket:
@@ -485,6 +504,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
+
 					break;
 
 				case basic.TokenType.LeftSquareBracket:
@@ -492,6 +512,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
+
 					break;
 
 				case basic.TokenType.RightSquareBracket:
@@ -499,16 +520,19 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.moveNextBasicToken();
+
 					break;
 
 				case basic.TokenType.Comma:
 					this._current = Comma(this._currentTokenStartIndex);
 					this.moveNextBasicToken();
+
 					break;
 
 				case basic.TokenType.Colon:
 					this._current = Colon(this._currentTokenStartIndex);
 					this.moveNextBasicToken();
+
 					break;
 
 				case basic.TokenType.Dash:
@@ -517,10 +541,12 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 						readNumber(this.asBasicTokenIterator()),
 					);
+
 					break;
 
 				case basic.TokenType.ForwardSlash:
 					this.moveNextBasicToken();
+
 					if (!this.currentBasicToken()) {
 						this._current = Literal(this._currentTokenStartIndex, [
 							basic.ForwardSlash,
@@ -532,6 +558,7 @@ export class Tokenizer {
 									basic.ForwardSlash,
 									basic.ForwardSlash,
 								];
+
 								while (
 									this.moveNextBasicToken() &&
 									this.currentBasicTokenType() !==
@@ -549,6 +576,7 @@ export class Tokenizer {
 									lineCommentBasicTokens,
 								);
 								this._commentsCount++;
+
 								break;
 
 							case basic.TokenType.Asterisk:
@@ -579,6 +607,7 @@ export class Tokenizer {
 												this.currentBasicToken()!,
 											);
 											this.moveNextBasicToken();
+
 											break;
 										}
 									} else {
@@ -591,6 +620,7 @@ export class Tokenizer {
 									blockCommentBasicTokens,
 								);
 								this._commentsCount++;
+
 								break;
 
 							default:
@@ -598,6 +628,7 @@ export class Tokenizer {
 									this._currentTokenStartIndex,
 									[basic.ForwardSlash],
 								);
+
 								break;
 						}
 					}
@@ -612,6 +643,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 						readWhitespace(this.asBasicTokenIterator()),
 					);
+
 					break;
 
 				case basic.TokenType.SingleQuote:
@@ -620,6 +652,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 						readQuotedString(this.asBasicTokenIterator()),
 					);
+
 					break;
 
 				case basic.TokenType.Letters:
@@ -633,11 +666,13 @@ export class Tokenizer {
 								this.currentBasicToken()!,
 							);
 							this.moveNextBasicToken();
+
 							break;
 
 						case "null":
 							this._current = Null(this._currentTokenStartIndex);
 							this.moveNextBasicToken();
+
 							break;
 
 						default:
@@ -663,6 +698,7 @@ export class Tokenizer {
 								this._currentTokenStartIndex,
 								literalTokens,
 							);
+
 							break;
 					}
 					break;
@@ -674,6 +710,7 @@ export class Tokenizer {
 						this.currentBasicToken()!,
 					);
 					this.moveNextBasicToken();
+
 					break;
 			}
 		}
@@ -841,6 +878,7 @@ export class ObjectValue extends Value {
 	public getPropertyValue(propertyName: string): Value | undefined {
 		const result: Property | undefined =
 			this.caseInsensitivePropertyMap.get(propertyName);
+
 		return result ? result.value : undefined;
 	}
 
@@ -851,6 +889,7 @@ export class ObjectValue extends Value {
 	public getProperty(propertyName: string): Property | undefined {
 		const result: Property | undefined =
 			this.caseInsensitivePropertyMap.get(propertyName);
+
 		return result ? result : undefined;
 	}
 
@@ -1219,6 +1258,7 @@ export class ParseResult {
 		if (commentBehavior === Comments.includeCommentTokens) {
 			const tokens = this.tokens.concat(this.commentTokens);
 			tokens.sort((a, b) => a.span.startIndex - b.span.startIndex);
+
 			return tokens;
 		} else {
 			return this.tokens;
@@ -1228,8 +1268,11 @@ export class ParseResult {
 	// Might or might not make a copy
 	public getTokensInSpan(span: Span, commentsBehavior: Comments): Token[] {
 		const results: Token[] = [];
+
 		const tokens = this.getTokens(commentsBehavior);
+
 		const spanStartIndex = span.startIndex;
+
 		const spanEndIndex = span.endIndex;
 
 		for (let token of tokens) {
@@ -1250,6 +1293,7 @@ export class ParseResult {
 		commentBehavior: Comments = Comments.ignoreCommentTokens,
 	): Token | undefined {
 		const startOfLineIndex = this.getCharacterIndex(line, 0);
+
 		const lastLine = this.lineLengths.length - 1;
 
 		const tokens = this.getTokens(commentBehavior);
@@ -1283,6 +1327,7 @@ export class ParseResult {
 	 */
 	public get maxCharacterIndex(): number {
 		let result = 0;
+
 		for (let lineLength of this._lineLengths) {
 			result += lineLength;
 		}
@@ -1307,6 +1352,7 @@ export class ParseResult {
 			0 <= lineIndex,
 			`Cannot get a character index for a negative line index (${lineIndex}).`,
 		);
+
 		if (lineIndex >= this.lineLengths.length) {
 			if (options?.allowOutOfBounds) {
 				lineIndex = this.lineLengths.length - 1;
@@ -1323,7 +1369,9 @@ export class ParseResult {
 			0 <= columnIndex,
 			`Cannot get a character index for a negative columnIndex (${columnIndex}).`,
 		);
+
 		const maxColumnIndex = this.getMaxColumnIndex(lineIndex);
+
 		if (columnIndex > maxColumnIndex) {
 			if (options?.allowOutOfBounds) {
 				columnIndex = Math.max(0, maxColumnIndex - 1);
@@ -1336,11 +1384,13 @@ export class ParseResult {
 		}
 
 		let characterIndex = columnIndex;
+
 		for (let i = 0; i < lineIndex; ++i) {
 			characterIndex += this.lineLengths[i];
 		}
 
 		assert(0 <= characterIndex);
+
 		return characterIndex;
 	}
 
@@ -1348,6 +1398,7 @@ export class ParseResult {
 		assert(0 <= characterIndex);
 
 		let line: number = 0;
+
 		let column: number = 0;
 
 		let remainingChars: number = characterIndex;
@@ -1359,6 +1410,7 @@ export class ParseResult {
 			} else {
 				// Reached the line with the character index
 				column = remainingChars;
+
 				break;
 			}
 		}
@@ -1378,6 +1430,7 @@ export class ParseResult {
 		assert(0 <= lineIndex && lineIndex < this.lineLengths.length);
 
 		let maxColumnIndex: number = this.lineLengths[lineIndex];
+
 		if (lineIndex < this.lineLengths.length - 1) {
 			--maxColumnIndex; // CONSIDER: Is this for LF?  What about CRLF?
 		}
@@ -1411,6 +1464,7 @@ export class ParseResult {
 			characterIndex,
 			Comments.includeCommentTokens,
 		);
+
 		if (token?.type === TokenType.Comment) {
 			switch (containsBehavior) {
 				case ContainsBehavior.strict:
@@ -1435,10 +1489,12 @@ export class ParseResult {
 		// Are we after a line comment on the same line (if we're on the \r or \n after
 		//   a line comment, the enclosing token is a whitespace token)
 		const line = this.getPositionFromCharacterIndex(characterIndex).line;
+
 		const lastTokenOnLineIncludingComments = this.getLastTokenOnLine(
 			line,
 			Comments.includeCommentTokens,
 		);
+
 		if (
 			lastTokenOnLineIncludingComments &&
 			lastTokenOnLineIncludingComments.type === TokenType.Comment &&
@@ -1465,6 +1521,7 @@ export class ParseResult {
 		);
 
 		const tokens = this.getTokens(commentBehavior);
+
 		return ParseResult.getTokenAtCharacterIndex(tokens, characterIndex);
 	}
 
@@ -1478,6 +1535,7 @@ export class ParseResult {
 		);
 
 		const tokenCount: number = tokens.length;
+
 		const lastToken: Token | undefined = ParseResult.getLastToken(tokens);
 
 		let token: Token | undefined;
@@ -1487,12 +1545,16 @@ export class ParseResult {
 		} else {
 			// Perform a binary search
 			let minTokenIndex = 0;
+
 			let maxTokenIndex = tokenCount - 1;
+
 			while (!token && minTokenIndex <= maxTokenIndex) {
 				let midTokenIndex = Math.floor(
 					(maxTokenIndex + minTokenIndex) / 2,
 				);
+
 				let currentToken = ParseResult.getToken(tokens, midTokenIndex);
+
 				let currentTokenSpan = currentToken.span;
 
 				if (characterIndex < currentTokenSpan.startIndex) {
@@ -1551,8 +1613,10 @@ export class ParseResult {
 					}
 				} else if (currentValue instanceof ObjectValue) {
 					assert(currentValue.properties);
+
 					for (const property of currentValue.properties) {
 						assert(property);
+
 						if (
 							property.span.contains(
 								characterIndex,
@@ -1564,8 +1628,10 @@ export class ParseResult {
 					}
 				} else if (currentValue instanceof ArrayValue) {
 					assert(currentValue.elements);
+
 					for (const element of currentValue.elements) {
 						assert(element);
+
 						if (
 							element.span.contains(
 								characterIndex,
@@ -1594,8 +1660,11 @@ export function parse(stringValue: string): ParseResult {
 	nonNullValue(stringValue, "stringValue");
 
 	const tokens: Token[] = [];
+
 	const commentTokens: Token[] = [];
+
 	const jt = new Tokenizer(stringValue);
+
 	const value: Value | undefined = parseValue(jt, tokens, commentTokens);
 
 	// Read the rest of the Tokens so that they will be put into the tokens array.
@@ -1637,6 +1706,7 @@ function parseValue(
 					tokenizer.current.toString(),
 				);
 				next(tokenizer, tokens, commentTokens);
+
 				break;
 
 			case TokenType.Number:
@@ -1645,6 +1715,7 @@ function parseValue(
 					tokenizer.current.toString(),
 				);
 				next(tokenizer, tokens, commentTokens);
+
 				break;
 
 			case TokenType.Boolean:
@@ -1653,19 +1724,23 @@ function parseValue(
 					tokenizer.current.toString() === "true",
 				);
 				next(tokenizer, tokens, commentTokens);
+
 				break;
 
 			case TokenType.LeftCurlyBracket:
 				value = parseObject(tokenizer, tokens, commentTokens);
+
 				break;
 
 			case TokenType.LeftSquareBracket:
 				value = parseArray(tokenizer, tokens, commentTokens);
+
 				break;
 
 			case TokenType.Null:
 				value = new NullValue(tokenizer.current.span);
 				next(tokenizer, tokens, commentTokens);
+
 				break;
 		}
 	}
@@ -1683,12 +1758,15 @@ function parseObject(
 	}
 
 	let objectSpan: Span = tokenizer.current.span;
+
 	const properties: Property[] = [];
 
 	next(tokenizer, tokens, commentTokens);
 
 	let propertySpan: Span | undefined;
+
 	let propertyName: StringValue | undefined;
+
 	let foundColon: boolean = false;
 	// tslint:disable-next-line: strict-boolean-expressions
 	while (tokenizer.current) {
@@ -1696,6 +1774,7 @@ function parseObject(
 
 		if (tokenizer.current.type === TokenType.RightCurlyBracket) {
 			next(tokenizer, tokens, commentTokens);
+
 			break;
 		} else if (!propertyName) {
 			if (tokenizer.current.type === TokenType.QuotedString) {
@@ -1712,6 +1791,7 @@ function parseObject(
 			propertySpan = propertySpan
 				? propertySpan.union(tokenizer.current.span)
 				: tokenizer.current.span;
+
 			if (tokenizer.current.type === TokenType.Colon) {
 				foundColon = true;
 				next(tokenizer, tokens, commentTokens);
@@ -1728,6 +1808,7 @@ function parseObject(
 				tokens,
 				commentTokens,
 			);
+
 			if (propertyValue) {
 				propertySpan = propertySpan
 					? propertySpan.union(propertyValue.span)
@@ -1763,6 +1844,7 @@ function parseArray(
 	}
 
 	let span: Span = tokenizer.current.span;
+
 	const elements: Value[] = [];
 
 	next(tokenizer, tokens, commentTokens);
@@ -1774,6 +1856,7 @@ function parseArray(
 
 		if (tokenizer.current.type === TokenType.RightSquareBracket) {
 			next(tokenizer, tokens, commentTokens);
+
 			break;
 		} else if (expectElement) {
 			const element: Value | undefined = parseValue(
@@ -1781,6 +1864,7 @@ function parseArray(
 				tokens,
 				commentTokens,
 			);
+
 			if (element) {
 				span = span.union(element.span);
 
@@ -1808,10 +1892,12 @@ function next(
 	while (tokenizer.moveNext()) {
 		// tslint:disable-next-line: no-non-null-assertion // Guaranteed by tokenizer.moveNext() returning true
 		const current: Token = tokenizer.current!;
+
 		if (current.type === TokenType.Comment) {
 			commentTokens.push(current);
 		} else if (current.type !== TokenType.Whitespace) {
 			tokens.push(current);
+
 			break;
 		}
 	}
@@ -1912,6 +1998,7 @@ export class FindLineageVisitor extends Visitor {
 				this._found();
 			} else {
 				this._lineage.push(property);
+
 				super.visitProperty(property);
 				this._lineage.pop();
 			}
@@ -1924,6 +2011,7 @@ export class FindLineageVisitor extends Visitor {
 				this._found();
 			} else {
 				this._lineage.push(objectValue);
+
 				super.visitObjectValue(objectValue);
 				this._lineage.pop();
 			}
@@ -1936,6 +2024,7 @@ export class FindLineageVisitor extends Visitor {
 				this._found();
 			} else {
 				this._lineage.push(arrayValue);
+
 				super.visitArrayValue(arrayValue);
 				this._lineage.pop();
 			}
@@ -1952,6 +2041,7 @@ export class FindLineageVisitor extends Visitor {
 	): (Json.ArrayValue | Json.ObjectValue | Json.Property)[] | undefined {
 		const visitor = new FindLineageVisitor(find);
 		root.accept(visitor);
+
 		return visitor._foundLineageValues;
 	}
 }

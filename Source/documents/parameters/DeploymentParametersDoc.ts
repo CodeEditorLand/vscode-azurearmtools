@@ -79,6 +79,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 	): ParameterValueDefinition | undefined {
 		// Number of parameters generally small, not worth creating a case-insensitive dictionary
 		const parameterNameLC = parameterName.toLowerCase();
+
 		for (let param of this.parameterValueDefinitions) {
 			if (
 				param.nameValue.unquotedValue.toLowerCase() === parameterNameLC
@@ -152,6 +153,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 			const paramValue = this.getParameterValue(
 				definition.nameValue.unquotedValue,
 			);
+
 			if (paramValue) {
 				results.add({
 					document: this,
@@ -176,6 +178,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 		context: CodeActionContext,
 	): (Command | CodeAction)[] {
 		const template = expectTemplateDocumentOrUndefined(associatedDocument);
+
 		if (template) {
 			return getParameterValuesCodeActions(
 				this.topLevelParameterValuesSource,
@@ -197,6 +200,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 		}
 
 		const template = expectTemplateDocument(associatedDocument);
+
 		return getMissingParameterErrors(
 			this.topLevelParameterValuesSource,
 			template.topLevelScope.parameterDefinitionsSource,

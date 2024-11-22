@@ -19,7 +19,9 @@ export function toVSCodeDiagnosticFromIssue(
 		deploymentDocument,
 		issue.span,
 	);
+
 	const message: string = issue.message;
+
 	let diagnostic = new vscode.Diagnostic(range, message, severity);
 	diagnostic.source = expressionsDiagnosticsSource;
 	diagnostic.code = "";

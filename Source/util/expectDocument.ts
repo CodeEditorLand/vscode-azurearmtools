@@ -31,6 +31,7 @@ export function expectTemplateDocument(
 		associatedDocument instanceof DeploymentTemplateDoc,
 		`Expected associated document to be a template file`,
 	);
+
 	return associatedDocument;
 }
 
@@ -56,5 +57,6 @@ export function expectParameterDocument(
 		associatedDocument instanceof DeploymentParametersDoc,
 		`Expected associated document to be a parameter file`,
 	);
+
 	return associatedDocument;
 }

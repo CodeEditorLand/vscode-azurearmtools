@@ -24,6 +24,7 @@ export class Issue {
 	private _relatedInformation: IssueRelatedInformation[] | undefined;
 
 	public readonly severity: IssueSeverity;
+
 	constructor(
 		private _span: Span,
 		private _message: string,
@@ -41,6 +42,7 @@ export class Issue {
 			case IssueKind.cannotValidateLinkedTemplate:
 			case IssueKind.cannotValidateNestedTemplate:
 				this.severity = IssueSeverity.Information;
+
 				break;
 
 			case IssueKind.inaccessibleNestedScopeMembers:
@@ -67,6 +69,7 @@ export class Issue {
 			case IssueKind.undefinedVarProp:
 			case IssueKind.varInUdf:
 				this.severity = IssueSeverity.Error;
+
 				break;
 
 			default:

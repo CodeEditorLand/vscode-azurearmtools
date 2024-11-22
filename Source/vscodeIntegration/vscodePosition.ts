@@ -20,6 +20,7 @@ export function getVSCodeRangeFromSpan(
 	const startPosition: LineColPos = deploymentDocument.getDocumentPosition(
 		span.startIndex,
 	);
+
 	const vscodeStartPosition = new vscode.Position(
 		startPosition.line,
 		startPosition.column,
@@ -28,6 +29,7 @@ export function getVSCodeRangeFromSpan(
 	const endPosition: LineColPos = deploymentDocument.getDocumentPosition(
 		span.afterEndIndex,
 	);
+
 	const vscodeEndPosition = new vscode.Position(
 		endPosition.line,
 		endPosition.column,

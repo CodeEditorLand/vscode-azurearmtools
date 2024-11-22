@@ -21,17 +21,21 @@ export const defaultTabSize: number = 4;
 
 export async function queryCreateParameterFile(actionContext: IActionContext, scope: TemplateScope, tabSize: number = defaultTabSize): Promise<Uri> {
     const all = <QuickPickItem>{ label: "All parameters" };
+
     const required = <QuickPickItem>{ label: "Only required parameters", description: "Uses only parameters that have no default value in the template file" };
+
     const templateUri = scope.document.documentUri;
 
     const whichParams = await actionContext.ui.showQuickPick([all, required], {
         placeHolder: `Include which parameters from ${path.basename(templateUri.fsPath)}?`
     });
+
     const onlyRequiredParams = whichParams === required;
     actionContext.telemetry.properties.onlyRequiredParams = String(onlyRequiredParams);
 
     const fileNameWithoutJsonC: string = path.basename(templateUri.fsPath)
         .replace(/\.[Jj][Ss][Oo][Nn][Cc]?$/, '');
+
     const defaultParamPath: string = path.join(
         path.dirname(templateUri.fsPath),
         `${fileNameWithoutJsonC}.parameters.json`);
@@ -42,6 +46,7 @@ export async function queryCreateParameterFile(actionContext: IActionContext, sc
             JSON: ['json', 'jsonc']
         }
     });
+
     if (!newUri) {
         throw new UserCancelledError();
     }
@@ -72,6 +77,7 @@ export function createParameterFileContents(scope: TemplateScope, tabSize: numbe
     const tab = makeIndent(tabSize);
 
     const params: CaseInsensitiveMap<string, string> = createParameters(scope, tabSize, onlyRequiredParameters);
+
     const paramsContent = params.map((key, value) => value).join(`,${ext.EOL}`);
 
     // tslint:disable-next-line: prefer-template
@@ -112,9 +118,12 @@ export function createParameterFromTemplateParameter(
     */
 
     let value: string | undefined;
+
     const parameterNameLC = parameter.nameValue.unquotedValue.toLowerCase();
+
     const matchingParentParameter = parentParameterDefinitions?.parameterDefinitions.find(
         def => def.nameValue.unquotedValue.toLowerCase() === parameterNameLC);
+
     if (matchingParentParameter) {
         value = `"[parameters('${matchingParentParameter.nameValue.unquotedValue}')]"`;
     } else if (parameter.defaultValue) {
@@ -122,8 +131,10 @@ export function createParameterFromTemplateParameter(
         // value in the param file
         const isExpression = parameter.defaultValue instanceof Json.StringValue &&
             isTleExpression(parameter.defaultValue.unquotedValue);
+
         if (!isExpression) {
             const defValueSpan = parameter.defaultValue.span;
+
             const defValue: string = parameter.document.documentText.slice(defValueSpan.startIndex, defValueSpan.afterEndIndex);
             value = unindentMultilineString(defValue, true);
         }
@@ -142,6 +153,7 @@ export function createParameterFromTemplateParameter(
 
 function getDefaultValueFromType(propType: ExpressionType | undefined, indent: number): string {
     const comment = "// TODO: Fill in parameter value";
+
     const tab = ' '.repeat(indent);
 
     switch (propType) {

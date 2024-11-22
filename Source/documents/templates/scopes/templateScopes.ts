@@ -166,6 +166,7 @@ function getParameterDefinitionsFromObject(
 		const parameters: Json.ObjectValue | undefined = Json.asObjectValue(
 			objectValue.getPropertyValue(templateKeys.parameters),
 		);
+
 		if (parameters) {
 			for (const parameter of parameters.properties) {
 				parameterDefinitions.push(
@@ -185,8 +186,10 @@ function getVariableDefinitionsFromObject(
 		const variables: Json.ObjectValue | undefined = Json.asObjectValue(
 			objectValue.getPropertyValue(templateKeys.variables),
 		);
+
 		if (variables) {
 			const varDefs: IVariableDefinition[] = [];
+
 			for (let prop of variables.properties) {
 				if (
 					prop.nameValue.unquotedValue.toLowerCase() ===
@@ -209,11 +212,13 @@ function getVariableDefinitionsFromObject(
 					// Each element of the array is a TopLevelCopyBlockVariableDefinition
 					const varsArray: Json.ArrayValue | undefined =
 						Json.asArrayValue(prop.value);
+
 					for (let varElement of varsArray?.elements ?? []) {
 						const def =
 							TopLevelCopyBlockVariableDefinition.createIfValid(
 								varElement,
 							);
+
 						if (def) {
 							varDefs.push(def);
 						}
@@ -264,9 +269,11 @@ function getNamespaceDefinitionsFromObject(
 			Json.asArrayValue(
 				objectValue.getPropertyValue(templateKeys.functions),
 			);
+
 		if (functionNamespacesArray) {
 			for (let namespaceElement of functionNamespacesArray.elements) {
 				const namespaceObject = Json.asObjectValue(namespaceElement);
+
 				if (namespaceObject) {
 					let namespace =
 						UserFunctionNamespaceDefinition.createIfValid(
@@ -274,6 +281,7 @@ function getNamespaceDefinitionsFromObject(
 							document,
 							namespaceObject,
 						);
+
 					if (namespace) {
 						namespaceDefinitions.push(namespace);
 					}
@@ -303,10 +311,13 @@ export function getResourcesFromObject(
 	objectValue: Json.ObjectValue | undefined,
 ): IResource[] {
 	const resources: IResource[] = [];
+
 	if (objectValue) {
 		const resourceObjects = getResourceObjects(objectValue);
+
 		for (let resourceValue of resourceObjects?.elements ?? []) {
 			const resourceObject = resourceValue.asObjectValue;
+
 			if (resourceObject) {
 				resources.push(new Resource(owningScope, resourceObject));
 			}
@@ -494,6 +505,7 @@ export class LinkedTemplateScope
 			// Ignore all but the first reference for the same scope (as happens when the the deployment
 			// resources is inside a COPY loop)
 			const firstLinkedFileReference = linkedFileReferences[0];
+
 			const parameterDefinitions: IParameterDefinition[] =
 				getParameterDefinitionsFromLinkedTemplate(
 					firstLinkedFileReference,
@@ -570,6 +582,7 @@ export function isDeploymentResource(
 	const resourceTypeLC = resourceObject?.asObjectValue?.getPropertyValue(
 		templateKeys.resourceType,
 	)?.asStringValue?.unquotedValue;
+
 	return resourceTypeLC?.toLowerCase() === deploymentsResourceTypeLC;
 }
 
@@ -608,12 +621,15 @@ export function getChildTemplateForResourceObject(
 		const propertiesObject = resourceObject?.getPropertyValue(
 			templateKeys.properties,
 		)?.asObjectValue;
+
 		const nestedTemplateObject = propertiesObject?.getPropertyValue(
 			templateKeys.nestedDeploymentTemplateProperty,
 		)?.asObjectValue;
+
 		const templateName: string =
 			resourceObject?.getPropertyValue(templateKeys.resourceName)
 				?.asStringValue?.unquotedValue ?? "(unnamed)";
+
 		const parameterValuesProperty: Json.Property | undefined =
 			resourceObject
 				?.getPropertyValue(templateKeys.properties)
@@ -622,6 +638,7 @@ export function getChildTemplateForResourceObject(
 		if (nestedTemplateObject) {
 			// It's a nested (embedded) template
 			const scopeKind = getExpressionScopeKind(resourceObject);
+
 			switch (scopeKind) {
 				case ExpressionScopeKind.outer:
 					return new NestedTemplateOuterScope(
@@ -631,6 +648,7 @@ export function getChildTemplateForResourceObject(
 						parameterValuesProperty,
 						`Nested template "${templateName}" with outer scope`,
 					);
+
 				case ExpressionScopeKind.inner:
 					return new NestedTemplateInnerScope(
 						parentScope,
@@ -640,6 +658,7 @@ export function getChildTemplateForResourceObject(
 						parameterValuesProperty,
 						`Nested template "${templateName}" with inner scope`,
 					);
+
 				default:
 					assertNever(scopeKind);
 			}
@@ -647,6 +666,7 @@ export function getChildTemplateForResourceObject(
 			const templateLinkObject = propertiesObject?.getPropertyValue(
 				templateKeys.linkedDeploymentTemplateLink,
 			)?.asObjectValue;
+
 			if (templateLinkObject) {
 				return new LinkedTemplateScope(
 					parentScope,
@@ -673,6 +693,7 @@ function getExpressionScopeKind(
 		?.asObjectValue?.getPropertyValue(
 			templateKeys.nestedDeploymentExprEvalScope,
 		)?.asStringValue?.unquotedValue;
+
 	return scopeValue?.toLowerCase() ===
 		templateKeys.nestedDeploymentExprEvalScopeInner
 		? ExpressionScopeKind.inner
@@ -685,5 +706,6 @@ function getDeploymentScopeReferenceFromRootObject(
 	const schemaStringValue = rootObject?.getPropertyValue(
 		templateKeys.schema,
 	)?.asStringValue;
+
 	return getDeploymentScopeReference(schemaStringValue);
 }

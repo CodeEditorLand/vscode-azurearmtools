@@ -15,6 +15,7 @@ export function areDecoupledChildAndParent(
 	parent: IResourceInfo,
 ): boolean {
 	const childTypeSegments = child.typeSegmentExpressions;
+
 	const parentTypeSegments = parent.typeSegmentExpressions;
 
 	if (
@@ -36,6 +37,7 @@ export function areDecoupledChildAndParent(
 	}
 
 	const childNameSegments = child.nameSegmentExpressions;
+
 	const parentNameSegments = parent.nameSegmentExpressions;
 
 	if (childTypeSegments.length === 0 || parentTypeSegments.length === 0) {
@@ -67,6 +69,7 @@ export function areDecoupledChildAndParent(
 		parentSegments: string[],
 	): boolean {
 		assert(childSegments.length === parentSegments.length + 1);
+
 		for (let i = 0; i < parentSegments.length; ++i) {
 			if (!expressionsAreSame(childSegments[i], parentSegments[i])) {
 				return false;
@@ -79,6 +82,7 @@ export function areDecoupledChildAndParent(
 
 function expressionsAreSame(expr1: string, expr2: string): boolean {
 	const expr1LC = expr1.toLowerCase();
+
 	const expr2LC = expr2.toLowerCase();
 
 	if (expr1LC === expr2LC) {
@@ -89,6 +93,7 @@ function expressionsAreSame(expr1: string, expr2: string): boolean {
 		// Expressions could contain whitespace, so remove it
 		// CONSIDER: Do we need to be more exact than this?  For instance, could produce false positives when strings inside the expression differ by whitespace.  But probably not worth the extra work.
 		const expr1NoWhitespace = expr1.replace(/\s+/g, "");
+
 		const expr2NoWhitespace = expr2.replace(/\s+/g, "");
 
 		return expr1NoWhitespace === expr2NoWhitespace;

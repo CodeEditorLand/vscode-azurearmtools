@@ -38,6 +38,7 @@ export async function getAvailableResourceTypesAndVersionsNoThrow(
 
 				for (const entry of Object.entries(resourceTypes)) {
 					const key = entry[0];
+
 					const value = entry[1].map((apiVersion) =>
 						apiVersion.toLowerCase(),
 					);

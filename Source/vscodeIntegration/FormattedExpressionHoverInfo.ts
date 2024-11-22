@@ -26,13 +26,16 @@ export class FormattedExpressionHoverInfo implements IHoverInfo {
 		let formattedExpression = this._expression.format({
 			multiline: { tabSize: 4 },
 		});
+
 		formattedExpression = indentMultilineString(formattedExpression, 4);
+
 		const markdown = new MarkdownString();
 		markdown.appendMarkdown("Full expression:");
 		markdown.appendCodeblock(
 			`"[\n${formattedExpression}\n]"`,
 			"arm-template",
 		);
+
 		return markdown;
 	}
 }

@@ -56,6 +56,7 @@ export function findSchemaInfo(schemaUri: string): ISchemaInfo | undefined {
 	}
 
 	const extractedSchema = extractSchemaWithoutHttpOrHash(schemaUri);
+
 	return extractedSchema
 		? normalizedSchemaLCToSchemaInfoMap.get(extractedSchema.toLowerCase())
 		: undefined;
@@ -68,9 +69,11 @@ export function findSchemaInfo(schemaUri: string): ISchemaInfo | undefined {
  */
 function extractSchemaWithoutHttpOrHash(schema: string): string | undefined {
 	const matches = isArmSchemaRegex.exec(schema);
+
 	const extractedSchema: string | undefined = matches
 		? matches[1]
 		: undefined;
+
 	return extractedSchema;
 }
 
@@ -88,14 +91,18 @@ export type currentSchemas =
 export type allSchemas = deprecatedSchemas | currentSchemas;
 
 const containsArmSchemaRegexString = `https?:\/\/schema\.management\.azure\.com\/schemas\/([^"\/]+\/[a-zA-Z]*[dD]eploymentTemplate\.json)#?`;
+
 const containsArmSchemaRegex = new RegExp(containsArmSchemaRegexString, "i");
+
 const isArmSchemaRegex = new RegExp(`^${containsArmSchemaRegexString}$`, "i");
 
 const containsParametersSchemaRegexString = `https?:\/\/schema\.management\.azure\.com\/schemas\/[^"\/]+\/[a-zA-Z]*[dD]eploymentParameters\.json#?`;
+
 const containsParametersSchemaRegex = new RegExp(
 	containsParametersSchemaRegexString,
 	"i",
 );
+
 const isParametersSchemaRegex = new RegExp(
 	`^${containsParametersSchemaRegexString}$`,
 	"i",

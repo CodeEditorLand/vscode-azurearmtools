@@ -21,6 +21,7 @@ export async function resetGlobalState(actionContext: IActionContext): Promise<v
         ext.context.globalState.update(globalStateKeys.messages.bicepMessagePostponedUntilTime, undefined);
 
         const reload = "Reload Now";
+
         if (reload === await window.showInformationMessage(`Global state for ${extensionName} has been reset.`, reload)) {
             // Don't wait
             commands.executeCommand("workbench.action.reloadWindow");

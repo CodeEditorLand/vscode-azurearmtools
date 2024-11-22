@@ -27,15 +27,20 @@ export class FunctionCountVisitor extends TleVisitor {
 
 		// tslint:disable-next-line: strict-boolean-expressions
 		let args = tleFunction.argumentExpressions || [];
+
 		let argsCount = args.length;
+
 		let functionName = tleFunction.fullName;
+
 		let functionNameWithArgs = `${functionName}(${argsCount})`;
 		this._functionCounts.add(functionName);
 		this._functionCounts.add(functionNameWithArgs);
+
 		super.visitFunctionCall(tleFunction);
 	}
 	public static visit(tleValue: Value | undefined): FunctionCountVisitor {
 		let visitor = new FunctionCountVisitor();
+
 		if (tleValue) {
 			tleValue.accept(visitor);
 		}

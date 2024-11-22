@@ -48,18 +48,24 @@ const languageServerPackagingPath = env.LANGUAGE_SERVER_PACKAGING_PATH;
 const languageServerAvailable = !env.DISABLE_LANGUAGE_SERVER && (languageServerPackagingPath || (!!env.LANGSERVER_NUGET_USERNAME && !!env.LANGSERVER_NUGET_PASSWORD));
 
 const publicLicenseFileName = 'LICENSE.md';
+
 const languageServerLicenseFileName = 'License.txt';
+
 const languageServerVersionEnv = 'npm_package_config_ARM_LANGUAGE_SERVER_NUGET_VERSION'; // Set the value in package.json's config section
 const languageServerVersion = env[languageServerVersionEnv];
+
 const languageServerNugetPackage = 'Microsoft.ArmLanguageServer';
 
 const jsonArmGrammarSourcePath: string = path.resolve('grammars', 'JSONC.arm.tmLanguage.json');
+
 const jsonArmGrammarDestPath: string = path.resolve('dist', 'grammars', 'JSONC.arm.tmLanguage.json');
 
 const tleGrammarSourcePath: string = path.resolve('grammars', 'arm-expression-string.tmLanguage.json');
+
 const tleGrammarBuiltPath: string = path.resolve('dist', 'grammars', 'arm-expression-string.tmLanguage.json');
 
 const armConfigurationSourcePath: string = path.resolve('grammars', 'jsonc.arm.language-configuration.json');
+
 const armConfigurationDestPath: string = path.resolve('dist', 'grammars', 'jsonc.arm.language-configuration.json');
 
 interface IGrammar {
@@ -93,8 +99,10 @@ async function pretest(): Promise<void> {
     console.log("");
 
     const vscodeExecutablePath = await downloadAndUnzipVSCode();
+
     const [cliRawPath, ...cliArguments] =
       resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
+
     const cliPath = `"${cliRawPath}"`;
 
     const extensionInstallArguments = [
@@ -107,11 +115,13 @@ async function pretest(): Promise<void> {
       console.log(
         `Installing dotnet extension: ${cliPath} ${extensionInstallArguments.join(" ")}`,
       );
+
     let result = cp.spawnSync(cliPath, extensionInstallArguments, {
         encoding: "utf-8",
         stdio: "inherit",
         shell: true,
     });
+
     if (result.status !== 0) {
         throw new Error("Failed to install dotnet runtime extension: " + (result.error ?? result.output?.filter((o) => !!o).join("\n") ?? "Unknown error"));
     }
@@ -125,6 +135,7 @@ async function pretest(): Promise<void> {
       shell: true,
     });
     console.log(result.error ?? result.output?.filter((o) => !!o).join("\n"));
+
     if (result.error) {
       process.exit(1);
     }
@@ -132,12 +143,16 @@ async function pretest(): Promise<void> {
 
 function buildTLEGrammar(): void {
     const sourceGrammar: string = fse.readFileSync(tleGrammarSourcePath).toString();
+
     let grammar: string = sourceGrammar;
+
     const expressionMetadataPath: string = path.resolve("assets/ExpressionMetadata.json");
+
     const expressionMetadata = <IExpressionMetadata>JSON.parse(fse.readFileSync(expressionMetadataPath).toString());
 
     // Add list of built-in functions from our metadata and place at beginning of grammar's preprocess section
     let builtinFunctions: string[] = expressionMetadata.functionSignatures.map(sig => sig.name);
+
     let grammarAsObject = <IGrammar>JSON.parse(grammar);
     grammarAsObject.preprocess = {
         "builtin-functions": `(?:(?i)${builtinFunctions.join('|')})`,
@@ -160,9 +175,11 @@ function buildTLEGrammar(): void {
         let replacementKey = `{{${key}}}`;
         // Re-read value from current grammar contents because the replacement value might contain replacements, too
         let value = JSON.parse(grammar).preprocess[key];
+
         let valueString = JSON.stringify(value);
         // remove quotes
         valueString = valueString.slice(1, valueString.length - 1);
+
         if (!sourceGrammar.includes(replacementKey)) {
             console.log(`WARNING: Preprocess key ${replacementKey} is never referenced in ${tleGrammarSourcePath}`);
         }
@@ -196,9 +213,11 @@ async function buildGrammars(): Promise<void> {
 
 function executeInShell(command: string): void {
     console.log(command);
+
     const result = shelljs.exec(command);
     console.log(result.stdout);
     console.log(result.stderr);
+
     if (result.code !== 0) {
         throw new Error(`Error executing ${command}`);
     }
@@ -214,16 +233,19 @@ async function getLanguageServer(): Promise<void> {
 
         // Create temporary config file with credentials
         const config = fse.readFileSync(path.join(__dirname, 'NuGet.Config')).toString();
+
         const withCreds = config.
             // tslint:disable-next-line: strict-boolean-expressions
             replace('$LANGSERVER_NUGET_USERNAME', env.LANGSERVER_NUGET_USERNAME || '').
             // tslint:disable-next-line: strict-boolean-expressions
             replace('$LANGSERVER_NUGET_PASSWORD', env.LANGSERVER_NUGET_PASSWORD || '');
+
         const configPath = getTempFilePath('nuget', '.config');
         fse.writeFileSync(configPath, withCreds);
 
         // Nuget install to pkgs folder
         let app = 'nuget';
+
         const args = [
             'install',
             languageServerNugetPackage,
@@ -234,6 +256,7 @@ async function getLanguageServer(): Promise<void> {
             '-NonInteractive',
             '-ConfigFile', configPath
         ];
+
         if (languageServerVersion) {
             args.push('-Version', languageServerVersion);
         } else {
@@ -245,6 +268,7 @@ async function getLanguageServer(): Promise<void> {
             args.unshift('nuget.exe');
         }
         const command = `${app} ${args.join(' ')}`;
+
         const languageServerPackageFolderName = path.join(pkgsPath, languageServerNugetPackage);
         console.log(`Deleting ${languageServerPackageFolderName}`);
         rimraf.sync(languageServerPackageFolderName);
@@ -256,6 +280,7 @@ async function getLanguageServer(): Promise<void> {
         rimraf.sync(destPath);
 
         console.log(`Copying language server binaries to ${languageServerFolderName}`);
+
         const langServerSourcePath = path.join(pkgsPath, languageServerNugetPackage, 'lib', `net${langServerDotnetVersion}`);
 
         fse.mkdirpSync(destPath);
@@ -263,6 +288,7 @@ async function getLanguageServer(): Promise<void> {
         copyFolder(langServerSourcePath, destPath);
 
         const licenseSourcePath = path.join(pkgsPath, languageServerNugetPackage, languageServerLicenseFileName);
+
         const licenseDest = path.join(languageServerFolderName, languageServerLicenseFileName);
         console.log(`Copying language server license ${licenseSourcePath} to ${licenseDest}`);
         fse.copyFileSync(licenseSourcePath, licenseDest);
@@ -278,7 +304,9 @@ function copyFolder(sourceFolder: string, destFolder: string, sourceRoot: string
 
     fse.readdirSync(sourceFolder).forEach(fn => {
         let src = path.join(sourceFolder, fn);
+
         let dest = path.join(destFolder, fn);
+
         if (fse.statSync(src).isFile()) {
             // console.log(`Copying file ${src} to ${dest}`);
             fse.copyFileSync(src, dest);
@@ -294,6 +322,7 @@ async function packageVsix(): Promise<void> {
     // We use a staging folder so we have more control over exactly what goes into the .vsix
     function copyToStagingFolder(relativeOrAbsSource: string, relativeDest: string): void {
         const absSource = path.resolve(__dirname, relativeOrAbsSource);
+
         const absDest = path.join(stagingFolder, relativeDest);
 
         if (fse.statSync(absSource).isDirectory()) {
@@ -317,8 +346,10 @@ async function packageVsix(): Promise<void> {
     filesInStaging.forEach(fn => assert(!/license/i.test(fn), `Should not have copied the original license file into staging: ${fn}`));
 
     let expectedLicenseFileName: string;
+
     if (languageServerAvailable) {
         let languageServerSourcePath: string;
+
         let licenseSourcePath: string;
 
         if (languageServerPackagingPath) {
@@ -364,10 +395,12 @@ async function packageVsix(): Promise<void> {
 
     // Copy vsix to current folder
     let vsixName = fse.readdirSync(stagingFolder).find(fn => /\.vsix$/.test(fn));
+
     if (!vsixName) {
         throw new Error("Couldn't find a .vsix file");
     }
     let vsixDestPath = path.join(__dirname, vsixName);
+
     if (!languageServerAvailable) {
         vsixDestPath = vsixDestPath.replace('.vsix', '-no-languageserver.vsix');
     }
@@ -396,9 +429,12 @@ async function verifyTestsReferenceOnlyExtensionBundle(testFolder: string): Prom
 
     async function verifyFile(file: string): Promise<void> {
         const regex = /import .*['"]\.\.\/(\.\.\/)?src\/.*['"]/mg;
+
         if (path.extname(file) === ".ts") {
             const contents: string = (await fse.readFile(file)).toString();
+
             const matches = contents.match(regex);
+
             if (matches) {
                 for (let match of matches) {
                     if (!match.includes('.shared.ts')) {

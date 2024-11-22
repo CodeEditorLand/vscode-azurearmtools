@@ -32,6 +32,7 @@ export class UserFunctionParameterDefinition implements IParameterDefinition {
 		const name = Json.asStringValue(
 			parameterObject.getPropertyValue("name"),
 		);
+
 		if (name) {
 			return new UserFunctionParameterDefinition(
 				document,
@@ -51,6 +52,7 @@ export class UserFunctionParameterDefinition implements IParameterDefinition {
 	public get type(): Json.StringValue | undefined {
 		const parameterDefinition: Json.ObjectValue | undefined =
 			Json.asObjectValue(this._objectValue);
+
 		if (parameterDefinition) {
 			return Json.asStringValue(
 				parameterDefinition.getPropertyValue("type"),

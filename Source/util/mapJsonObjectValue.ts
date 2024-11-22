@@ -14,18 +14,22 @@ export function mapJsonObjectValue(
 	map: (prop: Json.Property) => Json.Property | Json.Property[],
 ): Json.ObjectValue {
 	let changed = false;
+
 	const modifiedProps: Json.Property[] = [];
 
 	for (let prop of objectValue.properties) {
 		const newProp: Json.Property | Json.Property[] = map(prop);
+
 		if (newProp instanceof Json.Property) {
 			modifiedProps.push(newProp);
+
 			if (newProp !== prop) {
 				changed = true;
 			}
 		} else {
 			// Returned an array of properties - add them all
 			const newProperties: Json.Property[] = newProp;
+
 			for (let propElement of newProperties) {
 				modifiedProps.push(propElement);
 			}
@@ -39,6 +43,7 @@ export function mapJsonObjectValue(
 			objectValue.span,
 			modifiedProps,
 		);
+
 		return modifiedObject;
 	} else {
 		return objectValue;

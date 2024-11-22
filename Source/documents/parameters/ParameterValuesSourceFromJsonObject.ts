@@ -40,6 +40,7 @@ export class ParameterValuesSourceFromJsonObject
 			this.parameterValuesProperty?.value?.asObjectValue?.getProperty(
 				parameterName,
 			);
+
 		return parameterProperty
 			? new ParameterValueDefinition(parameterProperty)
 			: undefined;
@@ -48,6 +49,7 @@ export class ParameterValuesSourceFromJsonObject
 	public get parameterValueDefinitions(): ParameterValueDefinition[] {
 		const parameterProperties =
 			this.parameterValuesProperty?.value?.asObjectValue?.properties;
+
 		return parameterProperties
 			? parameterProperties.map((p) => new ParameterValueDefinition(p))
 			: [];

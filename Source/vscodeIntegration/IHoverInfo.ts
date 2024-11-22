@@ -10,6 +10,7 @@ import { Span } from "../language/Span";
 export interface IHoverInfo {
 	hoverType: string; // for telemetry
 	span: Span;
+
 	getHoverText(): MarkdownString;
 }
 

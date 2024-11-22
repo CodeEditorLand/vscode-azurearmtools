@@ -76,6 +76,7 @@ const resourceTypesNotAllowedInRGDeployments: string[] = [
     "Microsoft.Management/managementGroups",
     "Microsoft.Subscription/aliases",
 ];
+
 const resourceTypesNotAllowedInRGDeploymentsLC: string[] = resourceTypesNotAllowedInRGDeployments.map(resType => resType.toLowerCase());
 
 /**
@@ -123,6 +124,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
     public get apiProfile(): string | undefined {
         if (this.topLevelValue) {
             const apiProfileValue = Json.asStringValue(this.topLevelValue.getPropertyValue(templateKeys.apiProfile));
+
             if (apiProfileValue) {
                 return apiProfileValue.unquotedValue;
             }
@@ -153,10 +155,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         // Loop through each reachable string in the template
         this.visitAllReachableStringValues(jsonStringValue => {
             //const jsonTokenStartIndex: number = jsonQuotedStringToken.span.startIndex;
+
             const jsonTokenStartIndex = jsonStringValue.span.startIndex;
 
             const tleParseResult: IScopedParseResult = this.getTLEParseResultFromJsonStringValue(jsonStringValue);
+
             const expressionScope: TemplateScope = tleParseResult.scope;
+
             const tleExpression: TLE.Value | undefined = tleParseResult.parseResult.expression;
 
             for (const error of tleParseResult.parseResult.errors) {
@@ -165,6 +170,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
             // Undefined variable properties
             const tleUndefinedVariablePropertyVisitor = UndefinedVariablePropertyVisitor.UndefinedVariablePropertyVisitor.visit(tleExpression, expressionScope);
+
             for (const error of tleUndefinedVariablePropertyVisitor.errors) {
                 errors.push(error.translate(jsonTokenStartIndex));
             }
@@ -172,10 +178,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
         // ReferenceInVariableDefinitionsVisitor
         const deploymentTemplateObject: Json.ObjectValue | undefined = Json.asObjectValue(this.jsonParseResult.value);
+
         if (deploymentTemplateObject) {
             const variablesObject: Json.ObjectValue | undefined = Json.asObjectValue(deploymentTemplateObject.getPropertyValue(templateKeys.variables));
+
             if (variablesObject) {
                 const referenceInVariablesFinder = new ReferenceInVariableDefinitionsVisitor(this);
+
                 variablesObject.accept(referenceInVariablesFinder);
 
                 // Can't call reference() inside variable definitions
@@ -187,13 +196,17 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         }
 
         errors.push(...this.getMissingParameterErrors());
+
         return errors;
     }
 
     public getWarnings(): Issue[] {
         const unusedWarnings = this.getUnusedDefinitionWarnings();
+
         const inaccessibleScopeMembers = this.getInaccessibleScopeMemberWarnings();
+
         const incorrectScopeWarnings = this.getIncorrectScopeWarnings();
+
         const disabledValidationInfoWarnings = this.getDisabledValidationInfoWarnings();
 
         return unusedWarnings.concat(inaccessibleScopeMembers, incorrectScopeWarnings, disabledValidationInfoWarnings);
@@ -202,12 +215,15 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
     private get allReferences(): IAllReferences {
         return this._allReferences.getOrCacheValue(() => {
             const referenceListsMap = new Map<INamedDefinition, ReferenceList>();
+
             const issues: Issue[] = [];
+
             const functions: FunctionsMetadata = AzureRMAssets.getFunctionsMetadata();
 
             // Find all references for all reachable strings
             this.visitAllReachableStringValues(jsonStringValue => {
                 const tleParseResult: IScopedParseResult | undefined = this.getTLEParseResultFromJsonStringValue(jsonStringValue);
+
                 if (tleParseResult.parseResult.expression) {
                     // tslint:disable-next-line:no-non-null-assertion // Guaranteed by if
                     const scope = tleParseResult.scope;
@@ -224,6 +240,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
     private getUnusedDefinitionWarnings(): Issue[] {
         const warnings: Issue[] = [];
+
         const referenceListsMap = this.allReferences.referenceListsMap;
 
         for (const scope of this.uniqueNonExternalScopes) { // Don't consider linked templates, they
@@ -277,7 +294,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
                     || scope instanceof LinkedTemplateScope
                 ) {
                     let span: Span = scope.owningDeploymentResource.nameValue?.span ?? scope.owningDeploymentResource.span;
+
                     const kind = scope instanceof LinkedTemplateScope ? IssueKind.cannotValidateLinkedTemplate : IssueKind.cannotValidateNestedTemplate;
+
                     const message = `${kind === IssueKind.cannotValidateLinkedTemplate ? 'Linked template' : 'Nested template'} "${scope.owningDeploymentResource.nameValue?.unquotedValue ?? 'unknown'}" will not have validation or parameter completion. To enable, either add default values to all top-level parameters or add a parameter file ("Select/Create Parameter File" command).`;
                     issues.push(new Issue(span, message, kind));
                 }
@@ -293,6 +312,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
      */
     private getInaccessibleScopeMemberWarnings(): Issue[] {
         const warnings: Issue[] = [];
+
         const warningMessage =
             // tslint:disable-next-line: prefer-template
             'Variables, parameters and user functions of an outer-scoped nested template are inaccessible to any expressions. '
@@ -346,16 +366,21 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
         // Only check top-level scope for now
         const scope = this.topLevelScope;
+
         const deploymentSchema: IDeploymentSchemaReference | undefined = scope.deploymentSchema;
+
         if (deploymentSchema?.matchingInfo?.deploymentScopeKind === DeploymentScopeKind.resourceGroup) {
             for (const resource of scope.resources) {
                 if (resource.resourceTypeValue) {
                     const resourceTypeLC: string | undefined = resource.resourceTypeValue.asStringValue?.unquotedValue.toLowerCase();
+
                     if (resourceTypeLC && resourceTypesNotAllowedInRGDeploymentsLC.includes(resourceTypeLC)) {
                         const warningMessage = `This resource type may not available for a deployment scoped to resource group. Are you using the correct schema?`;
+
                         const warning = new Issue(resource.resourceTypeValue.span, warningMessage, IssueKind.incorrectScopeWarning);
 
                         const schemaSpan = deploymentSchema.schemaStringValue?.span;
+
                         if (schemaSpan) {
                             warning.relatedInformation.push({
                                 location: {
@@ -400,7 +425,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
                 this.jsonParseResult.value,
                 (stringValue: Json.StringValue): void => {
                     const tleParseResult = this.getTLEParseResultFromJsonStringValue(stringValue);
+
                     let tleFunctionCountVisitor = FunctionCountVisitor.visit(tleParseResult.parseResult.expression);
+
                     functionCounts.add(tleFunctionCountVisitor.functionCounts);
                 });
         }
@@ -415,7 +442,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         availableResourceTypesAndVersions: CaseInsensitiveMap<string, string[]>
     ): [Histogram, Histogram, Histogram] {
         const resourceCounts = new Histogram();
+
         const invalidResourceCounts = new Histogram();
+
         const invalidVersionCounts = new Histogram();
 
         // tslint:disable-next-line: strict-boolean-expressions
@@ -423,6 +452,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
         // Collect all resources used
         const resources: Json.ArrayValue | undefined = this.topLevelValue ? Json.asArrayValue(this.topLevelValue.getPropertyValue(templateKeys.resources)) : undefined;
+
         if (resources) {
             traverseResources(resources, undefined);
 
@@ -432,10 +462,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
                         const count = resourceCounts.getCount(key);
 
                         let apiVersionsForType: string[] | undefined;
+
                         let apiVersion: string;
+
                         let resourceType: string;
 
                         const match = key.match(/([a-z./0-9-]+)@([a-z0-9-]+)/);
+
                         if (match) {
                             resourceType = match[1];
                             apiVersion = match[2];
@@ -465,11 +498,15 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         function traverseResources(resourcesObject: Json.ArrayValue, parentKey: string | undefined): void {
             for (let resource of resourcesObject.elements) {
                 const resourceObject = Json.asObjectValue(resource);
+
                 if (resourceObject) {
                     const resourceType = Json.asStringValue(resourceObject.getPropertyValue(templateKeys.resourceType));
+
                     if (resourceType) {
                         const apiVersion = Json.asStringValue(resourceObject.getPropertyValue(templateKeys.resourceApiVersion));
+
                         let apiVersionString: string | undefined = apiVersion ? apiVersion.unquotedValue.trim().toLowerCase() : undefined;
+
                         if (!apiVersionString) {
                             apiVersionString = apiProfileString;
                         } else {
@@ -479,16 +516,19 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
                         }
 
                         let resourceTypeString = resourceType.unquotedValue.trim().toLowerCase();
+
                         if (resourceTypeString.startsWith('[')) {
                             resourceTypeString = "[expression]";
                         }
 
                         let simpleKey = `${resourceTypeString}@${apiVersionString}`;
+
                         const fullKey = parentKey ? `${simpleKey}[parent=${parentKey}]` : simpleKey;
                         resourceCounts.add(fullKey);
 
                         // Check for child resources
                         const childResources = Json.asArrayValue(resourceObject.getPropertyValue(templateKeys.resources));
+
                         if (childResources) {
                             traverseResources(childResources, simpleKey);
                         }
@@ -517,7 +557,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         linkedTemplatesRelativePathCount: number;
     } {
         const scopes = this.allScopes;
+
         const linkedTemplateScopes = filterByType(scopes, LinkedTemplateScope);
+
         const templateLinkObjects = filterNotUndefined(
             linkedTemplateScopes.map(lts => lts.templateLinkObject));
 
@@ -545,6 +587,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
      */
     public getTLEParseResultFromJsonStringValue(jsonStringValue: Json.StringValue): IScopedParseResult {
         const result = this.quotedStringToTleParseResultMap.get(jsonStringValue);
+
         if (result) {
             return result;
         }
@@ -553,8 +596,10 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         //   the language server should show in our diagnostics.
         // Go ahead and parse it now, pretending it has top-level scope
         const tleParseResult = TLE.Parser.parse(jsonStringValue.quotedValue);
+
         const scopedResult: IScopedParseResult = { parseResult: tleParseResult, scope: this.topLevelScope };
         this.quotedStringToTleParseResultMap.set(jsonStringValue, scopedResult);
+
         return scopedResult;
     }
 
@@ -567,6 +612,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         }
 
         const referencesList = this.allReferences.referenceListsMap.get(definition);
+
         if (referencesList) {
             result.addAll(referencesList);
         }
@@ -576,6 +622,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
     private visitAllReachableStringValues(onStringValue: (stringValue: Json.StringValue) => void): void {
         let value = this.topLevelValue;
+
         if (value) {
             GenericStringVisitor.visit(value, onStringValue);
         }
@@ -592,6 +639,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         for (const scope of this.uniqueScopes) {
             if (scope.parameterValuesSource) {
                 let parentParameterDefinitionsSource: IParameterDefinitionsSource | undefined = scope.parentWithUniqueParamsVarsAndFunctions.parameterDefinitionsSource;
+
                 const scopeActions = getParameterValuesCodeActions(
                     scope.parameterValuesSource,
                     scope.parameterDefinitionsSource,
@@ -612,6 +660,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
     // tslint:disable-next-line: cyclomatic-complexity // TODO: Consider refactoring
     private getExtractVarParamCodeActions(range: Range | Selection): (CodeAction | Command)[] {
         let shouldAddExtractActions: boolean = false;
+
         let pc = this.getContextFromDocumentLineAndColumnIndexes(range.start.line, range.start.character, undefined);
 
         // We currently only handle single-line strings
@@ -619,8 +668,10 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
             // Can only call pc.jsonTokenStartIndex if we're inside a JSON token
             if (pc.jsonToken && pc.jsonTokenStartIndex > 0) {
                 let jsonToken = pc.document.getJSONValueAtDocumentCharacterIndex(pc.jsonTokenStartIndex - 1, ContainsBehavior.extended);
+
                 if ((jsonToken instanceof Json.Property || jsonToken instanceof Json.ArrayValue) && pc.document.topLevelValue) {
                     let scope = pc.getScope();
+
                     if (!scope.rootObject) {
                         return [];
                     }
@@ -630,16 +681,22 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
                         return [];
                     }
                     let jsonValue = pc.document.getJSONValueAtDocumentCharacterIndex(pc.jsonTokenStartIndex, ContainsBehavior.extended);
+
                     if (!jsonValue) {
                         return [];
                     }
                     const stringValue = jsonValue.asStringValue;
+
                     if (stringValue) {
                         if (!range.isEmpty) {
                             let startIndex = this.getDocumentCharacterIndex(range.start.line, range.start.character);
+
                             let endIndex = this.getDocumentCharacterIndex(range.end.line, range.end.character);
+
                             let span: Span = new Span(startIndex, endIndex - startIndex);
+
                             const selectedText = this.getDocumentTextWithSquareBrackets(span);
+
                             if (this.isParameterOrVariableReference(selectedText)) {
                                 return [];
                             }
@@ -672,11 +729,14 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
     private getDocumentTextWithSquareBrackets(span: Span): string {
         let text = this.getDocumentText(span);
+
         if (text.startsWith("[") && text.endsWith("]")) {
             return text;
         }
         let extendedSpan = span.extendLeft(1).extendRight(1);
+
         let extendedText = this.getDocumentText(extendedSpan);
+
         if (extendedText.startsWith("[") && extendedText.endsWith("]")) {
             return extendedText;
         }
@@ -685,11 +745,14 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
     private getDocumentTextWithSurroundingCharacters(span: Span, start: string, end: string): string {
         let text = this.getDocumentText(span);
+
         if (text.startsWith(start) && text.endsWith(end)) {
             return text;
         }
         let extendedSpan = span.extendLeft(1).extendRight(1);
+
         let extendedText = this.getDocumentText(extendedSpan);
+
         if (extendedText.startsWith(start) && extendedText.endsWith(end)) {
             return extendedText;
         }
@@ -698,6 +761,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
     private isParameterOrVariableReference(text: string): boolean {
         const regEx = /^"?\[?(parameters|variables)\('.+'\)]?"?/gi;
+
         return regEx.test(text);
     }
 
@@ -710,7 +774,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
     public isValidExpression(text: string): boolean {
         const functionCallRegex = /^\s*[\w\.]+\(.*\)\s*$/gi;
+
         const textRegex = /^\s*'.+'\s*$/gi;
+
         return functionCallRegex.test(text) || textRegex.test(text);
     }
 
@@ -730,12 +796,15 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
     private createExtractCommand(title: string, command: string): CodeAction {
         const action = new CodeAction(title, CodeActionKind.RefactorExtract);
         action.command = { command: `azurerm-vscode-tools.codeAction.${command}`, title: '' };
+
         return action;
     }
 
     public getTextAtTleValue(tleValue: TLE.Value, parentStringToken: Json.Token): string {
         assert.equal(parentStringToken.type, Json.TokenType.QuotedString);
+
         const spanOfValueInsideString = tleValue.getSpan();
+
         return this.getDocumentText(spanOfValueInsideString, parentStringToken.span.startIndex);
     }
 
@@ -799,6 +868,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
             // Is there a parameter file?
             const parameterFileUri = parameterValuesSourceProvider?.parameterFileUri;
+
             if (parameterFileUri) {
                 // Yes - indicate current parameter file path
                 assert(uniqueScope instanceof TopLevelTemplateScope, "Expecting top-level scope");
@@ -821,8 +891,10 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         topLevelParameterValuesProvider: IParameterValuesSourceProvider | undefined
     ): ResolvableCodeLens[] {
         const lenses: ResolvableCodeLens[] = [];
+
         for (let scope of this.allScopes) {
             const owningDeploymentResource = (<Partial<IChildDeploymentScope>>scope).owningDeploymentResource;
+
             if (scope.rootObject || owningDeploymentResource) {
                 switch (scope.scopeKind) {
                     case TemplateScopeKind.NestedDeploymentWithInnerScope:
@@ -837,10 +909,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
                             );
                         }
                         break;
+
                     case TemplateScopeKind.LinkedDeployment:
                         assert(scope instanceof LinkedTemplateScope, "Expected a LinkedTemplateScope");
+
                         if (owningDeploymentResource) {
                             const templateLinkObject = scope.templateLinkObject;
+
                             let span = templateLinkObject ? templateLinkObject.span : owningDeploymentResource.span;
 
                             lenses.push(...
@@ -853,6 +928,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
                             );
                         }
                         break;
+
                     default:
                         break;
                 }
@@ -868,10 +944,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         // Make a document link out of each deployment "relativePath" property value
         for (const scope of filterByType(this.allScopes, LinkedTemplateScope)) {
             const templateLinkObject = scope.templateLinkObject;
+
             const relativePathStringValue: Json.StringValue | undefined =
                 templateLinkObject?.getPropertyValue(templateKeys.linkedDeploymentTemplateLinkRelativePath)
                     ?.asStringValue;
+
             const relativePathValue: string | undefined = relativePathStringValue?.unquotedValue;
+
             if (relativePathStringValue && relativePathValue && !isTleExpression(relativePathValue)) {
                 const link = new DocumentLink(
                     getVSCodeRangeFromSpan(this, relativePathStringValue.unquotedSpan));
@@ -910,6 +989,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
         return this._allScopes.getOrCacheValue(() => {
             let scopes: TemplateScope[] = [this.topLevelScope];
             traverse(this.topLevelScope);
+
             return scopes;
 
             function traverse(scope: TemplateScope | undefined): void {
@@ -939,11 +1019,13 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 
     public static createParsedStringMap(dt: DeploymentTemplateDoc): Map<Json.StringValue, IScopedParseResult> {
         const visitor = new StringParseAndScopeAssignmentVisitor(dt);
+
         return visitor.createMap();
     }
 
     private createMap(): Map<Json.StringValue, IScopedParseResult> {
         this._dt.topLevelValue?.accept(this);
+
         return this._jsonStringValueToTleParseResultMap;
     }
 
@@ -959,7 +1041,9 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 
     public visitObjectValue(jsonObjectValue: Json.ObjectValue): void {
         const currentScope = this._currentScope;
+
         const newScope = this._uniqueTemplateScopes.find(scope => scope.rootObject === jsonObjectValue);
+
         if (newScope) {
             this._scopeStack.push(this._currentScope);
             this._currentScope = newScope;

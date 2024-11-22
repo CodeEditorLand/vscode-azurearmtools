@@ -79,6 +79,7 @@ export class UserFunctionDefinition implements INamedDefinition {
 			let output = Json.asObjectValue(
 				this.objectValue.getPropertyValue("output"),
 			);
+
 			if (output) {
 				return new OutputDefinition(output);
 			}
@@ -96,15 +97,18 @@ export class UserFunctionDefinition implements INamedDefinition {
 				Json.asArrayValue(
 					this.objectValue.getPropertyValue(templateKeys.parameters),
 				);
+
 			if (parametersArray) {
 				for (const parameter of parametersArray.elements) {
 					const parameterObject = Json.asObjectValue(parameter);
+
 					if (parameterObject) {
 						const parameterDefinition =
 							UserFunctionParameterDefinition.createIfValid(
 								this.document,
 								parameterObject,
 							);
+
 						if (parameterDefinition) {
 							parameterDefinitions.push(parameterDefinition);
 						}

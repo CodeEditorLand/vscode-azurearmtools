@@ -21,6 +21,7 @@ export function wrapError(outerMessage: string, innerError: unknown): Error {
     if (innerError instanceof Error) {
         const copy = cloneError(innerError);
         copy.message = newMessage;
+
         return copy;
     } else {
         return new Error(newMessage);
@@ -29,6 +30,7 @@ export function wrapError(outerMessage: string, innerError: unknown): Error {
 
 function cloneError(error: Error): Error {
     const copy = new Error();
+
     for (const propName of Object.getOwnPropertyNames(error)) {
         try {
             // tslint:disable-next-line: no-any

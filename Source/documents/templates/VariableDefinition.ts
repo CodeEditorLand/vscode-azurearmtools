@@ -55,7 +55,9 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 	public get value(): Json.Value | undefined {
 		return this._value.getOrCacheValue(() => {
 			const value = this._property.value;
+
 			const valueObject = Json.asObjectValue(value);
+
 			if (valueObject) {
 				return this.expandCopyBlocks(valueObject);
 			} else {
@@ -87,6 +89,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 		value: Json.Value | undefined,
 	): Json.Value | undefined {
 		const valueAsObject = Json.asObjectValue(value);
+
 		if (!valueAsObject) {
 			return value;
 		}
@@ -107,6 +110,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 
 		return mapJsonObjectValue(valueAsObject, (prop) => {
 			const arrayValue = Json.asArrayValue(prop.value);
+
 			if (
 				!!arrayValue &&
 				prop.nameValue.unquotedValue.toLowerCase() ===
@@ -124,15 +128,18 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 				for (let copyElement of arrayValue.elements) {
 					// Element has to be an object
 					const loopVarObject = Json.asObjectValue(copyElement);
+
 					if (loopVarObject) {
 						const name = Json.asStringValue(
 							loopVarObject.getPropertyValue(
 								templateKeys.copyName,
 							),
 						);
+
 						const input = loopVarObject.getPropertyValue(
 							templateKeys.copyInput,
 						);
+
 						const count = loopVarObject.getPropertyValue(
 							templateKeys.copyCount,
 						);
@@ -173,6 +180,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 				//   but we need to check further into the object for deeper
 				//   copy blocks
 				const processedValue = this.expandCopyBlocks(prop.value);
+
 				if (processedValue !== prop.value) {
 					// It's been changed - wrap it in a new property
 					return new Json.Property(
@@ -240,12 +248,15 @@ export class TopLevelCopyBlockVariableDefinition extends VariableDefinition {
 		//   }
 
 		const asObject = Json.asObjectValue(copyVariableObject);
+
 		if (asObject) {
 			const nameValue = Json.asStringValue(
 				asObject.getPropertyValue(templateKeys.copyName),
 			);
+
 			if (nameValue) {
 				const value = asObject.getPropertyValue(templateKeys.copyInput);
+
 				return new TopLevelCopyBlockVariableDefinition(
 					asObject,
 					nameValue,

@@ -16,7 +16,9 @@ export async function gotoResources(actionContext: IActionContext, args: IGotoRe
 
     if (args.targets.length === 1) {
         const target = args.targets[0];
+
         const editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor;
+
         if (editor && editor.document.uri.fsPath === target.uri.fsPath) {
             editor.revealRange(target.range, vscode.TextEditorRevealType.Default);
             editor.selection = new vscode.Selection(target.range.start, target.range.start);

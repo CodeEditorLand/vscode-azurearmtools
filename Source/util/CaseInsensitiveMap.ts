@@ -16,12 +16,14 @@ export class CaseInsensitiveMap<TKey extends string, TValue> {
 	// tslint:disable-next-line: no-reserved-keywords
 	public get(key: TKey): TValue | undefined {
 		const found = this._map.get(<TKey>key.toLowerCase());
+
 		return found ? found[1] : undefined;
 	}
 
 	// tslint:disable-next-line: no-reserved-keywords
 	public set(key: TKey, value: TValue): CaseInsensitiveMap<TKey, TValue> {
 		this._map.set(<TKey>key.toLowerCase(), [key, value]);
+
 		return this;
 	}
 
@@ -30,7 +32,9 @@ export class CaseInsensitiveMap<TKey extends string, TValue> {
 	 */
 	public keys(): IterableIterator<TKey> {
 		const tuples: [TKey, TValue][] = Array.from(this._map.values());
+
 		const casePreservedKeys: TKey[] = tuples.map((tuple) => tuple[0]);
+
 		return casePreservedKeys.values();
 	}
 

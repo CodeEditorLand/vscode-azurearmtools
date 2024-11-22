@@ -36,7 +36,9 @@ export function sortArray<T, V>(
 ): T[] {
 	return input.sort((a, b) => {
 		const value1 = getSortValue(a);
+
 		const value2 = getSortValue(b);
+
 		return compareForSort(value1, value2, options?.descending);
 	});
 }

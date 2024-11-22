@@ -19,6 +19,7 @@ export async function showAvailableResourceTypesAndVersions(
 
 			for (const entry of map.entries()) {
 				const key = entry[0];
+
 				for (const version of entry[1]) {
 					ext.outputChannel.appendLine(`${key}@${version}`);
 				}

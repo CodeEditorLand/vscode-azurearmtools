@@ -15,6 +15,7 @@ interface ISettings {
 const defaultSettings: ISettings = {
     delayBetweenAttempts: weeksToMs(1),
 };
+
 const debugSettings: ISettings = {
     delayBetweenAttempts: minutesToMs(1),
 };
@@ -48,17 +49,21 @@ export class TimedMessage {
             await this.checkForDebugMode();
 
             const postponeUntilTime: number = ext.context.globalState.get<number>(this._postponeUntilTimeKey) ?? 0;
+
             if (postponeUntilTime < 0) {
                 // This means never show again
                 context.telemetry.properties.status = 'NeverShowAgain';
+
                 return;
             } else if (Date.now() < postponeUntilTime) {
                 context.telemetry.properties.status = "TooEarly";
+
                 return;
             } else if (postponeUntilTime === 0) {
                 // First time - set up initial delay
                 await this.postpone();
                 context.telemetry.properties.status = "FirstDelay";
+
                 return;
             }
 
@@ -68,6 +73,7 @@ export class TimedMessage {
             await this.postpone();
 
             const neverAskAgain: MessageItem = { title: "Never ask again" };
+
             const moreInfo: MessageItem = { title: "More Info" };
 
             const response = await window.showInformationMessage(this._message, moreInfo, neverAskAgain) ?? neverAskAgain;

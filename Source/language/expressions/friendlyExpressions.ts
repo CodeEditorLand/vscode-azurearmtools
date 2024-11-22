@@ -24,6 +24,7 @@ export function getFriendlyExpressionFromJsonString(
 	// If it's an expression - starts and ends with [], but doesn't start with [[, and at least one character inside the []
 	if (isTleExpression(jsonString)) {
 		const quotedBracketedJsonString = `"${jsonString}"`;
+
 		return getFriendlyExpressionFromTleExpressionCore(
 			quotedBracketedJsonString,
 		);
@@ -50,6 +51,7 @@ export function getFriendlyExpressionFromTleExpression(
 
 	// Otherwise it's an expression.  Add brackets so we can parse it.
 	const quotedBracketedJsonString = `"[${tleExpression}]"`;
+
 	return getFriendlyExpressionFromTleExpressionCore(
 		quotedBracketedJsonString,
 	);
@@ -59,8 +61,10 @@ function getFriendlyExpressionFromTleExpressionCore(
 	doubleQuotedBracketedJsonString: string,
 ): string {
 	const pr = Parser.parse(doubleQuotedBracketedJsonString);
+
 	if (pr.expression && pr.errors.length === 0) {
 		const friendlyExpression = pr.expression.format({ friendly: true });
+
 		if (isSingleQuoted(friendlyExpression)) {
 			// Example:
 			//   "'${virtualMachineName}/${diagnosticsExtensionName}'"

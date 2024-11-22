@@ -59,6 +59,7 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 		// To allow the code lens to be collapsed if the resource is collapsed in the editor, we put the
 		//   code lens on the first line *after* the opening brace
 		const resourceSpan = sourceResource.resourceObject.span;
+
 		const resourceFirstLine = scope.document.getDocumentPosition(
 			resourceSpan.startIndex,
 		).line;
@@ -68,6 +69,7 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 			resourceFirstLine + 1,
 			0,
 		);
+
 		const lensEndIndex = resourceSpan.endIndex;
 
 		if (lensStartIndex > lensEndIndex) {
@@ -135,10 +137,13 @@ export class ChildrenCodeLens extends ParentOrChildCodeLens {
 
 	public async resolve(): Promise<boolean> {
 		let title: string;
+
 		const children =
 			<IJsonResourceInfo[]>this.sourceResource?.children ?? [];
+
 		if (children.length > 0) {
 			const countOfChildrenTitle = `${children.length} ${children.length === 1 ? "child" : "children"}`;
+
 			const childrenLabels = children
 				.map((child) =>
 					(<IJsonResourceInfo>child).getFriendlyResourceLabel({}),
@@ -170,6 +175,7 @@ export class ParentCodeLens extends ParentOrChildCodeLens {
 		);
 
 		let title: string;
+
 		if (parent) {
 			title = `Parent: ${parent.getFriendlyResourceLabel({})}`;
 		} else {

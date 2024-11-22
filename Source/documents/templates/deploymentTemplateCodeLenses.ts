@@ -39,6 +39,7 @@ export class ShowCurrentParameterFileCodeLens extends ResolvableCodeLens {
                 command: 'azurerm-vscode-tools.openParameterFile',
                 arguments: [this.scope.document.documentUri] // Template file uri
             };
+
             if (!await pathExistsNoThrow(this.parameterFileUri)) {
                 this.command.title += " $(error) Not found";
             }
@@ -67,6 +68,7 @@ export class SelectParameterFileCodeLens extends ResolvableCodeLens {
 
     public async resolve(): Promise<boolean> {
         let title: string;
+
         if (this.parameterFileUri) {
             title = `Change...`;
         } else {
@@ -105,7 +107,9 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
 
     public async resolve(): Promise<boolean> {
         let paramsSource: IParameterValuesSource | undefined;
+
         let errorMessage: string | undefined;
+
         try {
             paramsSource = await this.parameterValuesSourceProvider.getValuesSource();
         } catch (err) {
@@ -121,11 +125,16 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
         }
 
         let title: string | undefined;
+
         if (paramsSource && !errorMessage) {
             const param = paramsSource.getParameterValue(this.parameterDefinition.nameValue.unquotedValue);
+
             const paramValue = param?.value;
+
             const paramReference = param?.reference;
+
             const givenValueAsString = paramValue?.toFullFriendlyString();
+
             const hasDefaultValue = !!this.parameterDefinition.defaultValue;
 
             if (!!paramReference) {
@@ -149,6 +158,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
         }
 
         let args: IGotoParameterValueArgs;
+
         if (this.parameterValuesSourceProvider.parameterFileUri) {
             // We delay resolving the location if navigating to a parameter file because it could change before the user clicks on the code lens
             args = {
@@ -163,6 +173,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
             let span: Span = paramsSource.getParameterValue(this.parameterDefinition.nameValue.unquotedValue)?.value?.span
                 ?? paramsSource?.parameterValuesProperty?.nameValue.span
                 ?? new Span(0, 0);
+
             const range: Range = getVSCodeRangeFromSpan(paramsSource.document, span);
 
             args = {
@@ -180,6 +191,7 @@ export class ParameterDefinitionCodeLens extends ResolvableCodeLens {
             command: "azurerm-vscode-tools.codeLens.gotoParameterValue",
             arguments: [args]
         };
+
         return true;
     }
 }

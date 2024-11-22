@@ -26,7 +26,9 @@ export class RenameCodeActionProvider implements vscode.CodeActionProvider {
 		let pc = (await this.action(document, range.start)) as
 			| TemplatePositionContext
 			| undefined;
+
 		const referenceSiteInfo = pc && pc.getReferenceSiteInfo(true);
+
 		if (!referenceSiteInfo || getRenameError(referenceSiteInfo)) {
 			return;
 		}
@@ -39,6 +41,7 @@ export class RenameCodeActionProvider implements vscode.CodeActionProvider {
 			vscode.CodeActionKind.RefactorRewrite,
 		);
 		action.command = { command: command, title: "" };
+
 		return action;
 	}
 }

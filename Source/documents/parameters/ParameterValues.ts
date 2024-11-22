@@ -40,6 +40,7 @@ import {
 } from "./parameterFileGeneration";
 
 const EOL: string = ext.EOL;
+
 const newParameterValueSnippetLabel = `new-parameter-value`;
 
 /**
@@ -57,6 +58,7 @@ export function getParameterValuesCodeActions(
 	context: CodeActionContext,
 ): (Command | CodeAction)[] {
 	const actions: (Command | CodeAction)[] = [];
+
 	const parametersProperty = parameterValuesSource.parameterValuesProperty;
 
 	if (parametersProperty) {
@@ -65,6 +67,7 @@ export function getParameterValuesCodeActions(
 			parameterValuesSource.document.getDocumentPosition(
 				parametersProperty.nameValue.span.startIndex,
 			).line;
+
 		if (
 			lineIndexOfParametersProperty >= range.start.line &&
 			lineIndexOfParametersProperty <= range.end.line
@@ -135,11 +138,13 @@ export function getMissingParameters(
 	onlyRequiredParameters: boolean,
 ): IParameterDefinition[] {
 	const results: IParameterDefinition[] = [];
+
 	for (let paramDef of parameterDefinitionsSource?.parameterDefinitions ??
 		[]) {
 		const paramValue = parameterValuesSource.getParameterValue(
 			paramDef.nameValue.unquotedValue,
 		);
+
 		if (!paramValue) {
 			results.push(paramDef);
 		}
@@ -164,8 +169,10 @@ export async function addMissingParameters(
 
 	// Find the location to insert new stuff in the parameters section
 	const parameterValuesDocument = parameterValuesSource.document;
+
 	const parametersObjectValue =
 		parameterValuesSource.parameterValuesProperty?.value?.asObjectValue;
+
 	if (
 		parameterValuesSource.parameterValuesProperty &&
 		parametersObjectValue
@@ -174,7 +181,9 @@ export async function addMissingParameters(
 		// Find last non-whitespace token inside the parameters section
 		const parametersProperty =
 			parameterValuesSource.parameterValuesProperty;
+
 		let lastTokenInParameters: Json.Token | undefined;
+
 		for (
 			let i = parametersProperty.span.endIndex - 1; // Start before the closing "}"
 			i >= parametersProperty.span.startIndex;
@@ -185,6 +194,7 @@ export async function addMissingParameters(
 					i,
 					Json.Comments.includeCommentTokens,
 				);
+
 			if (lastTokenInParameters) {
 				break;
 			}
@@ -192,6 +202,7 @@ export async function addMissingParameters(
 		const insertIndex: number = lastTokenInParameters
 			? lastTokenInParameters.span.afterEndIndex
 			: parametersObjectValue.span.endIndex;
+
 		const insertPosition =
 			parameterValuesDocument.getDocumentPosition(insertIndex);
 
@@ -207,6 +218,7 @@ export async function addMissingParameters(
 
 		// Create insertion text
 		let paramsAsText: string[] = [];
+
 		for (let param of missingParams) {
 			const paramText = createParameterFromTemplateParameter(
 				parameterDefinitionsSource,
@@ -223,6 +235,7 @@ export async function addMissingParameters(
 			parameterValuesDocument.getDocumentPosition(
 				parametersProperty?.nameValue.span.startIndex,
 			).column;
+
 		const lastParameter =
 			parameterValuesSource.parameterValueDefinitions.length > 0
 				? parameterValuesSource.parameterValueDefinitions[
@@ -230,16 +243,20 @@ export async function addMissingParameters(
 							1
 					]
 				: undefined;
+
 		const lastParameterIndent = lastParameter
 			? parameterValuesDocument.getDocumentPosition(
 					lastParameter?.fullSpan.startIndex,
 				).column
 			: undefined;
+
 		const newTextIndent =
 			lastParameterIndent === undefined
 				? parametersObjectIndent + defaultTabSize
 				: lastParameterIndent;
+
 		let indentedText = indentMultilineString(newText, newTextIndent);
+
 		let insertText = EOL + indentedText;
 
 		// If insertion point is on the same line as the end of the parameters object, then add a newline
@@ -259,6 +276,7 @@ export async function addMissingParameters(
 			insertIndex,
 		);
 		assert(!commaEdit || commaEdit.span.endIndex <= insertIndex);
+
 		if (commaEdit?.span.startIndex === insertIndex) {
 			// vscode doesn't like both edits starting at the same location, so
 			//   just add the comma directly to the string (this is the common case)
@@ -271,6 +289,7 @@ export async function addMissingParameters(
 				getVSCodePositionFromPosition(insertPosition),
 				insertText,
 			);
+
 			if (commaEdit) {
 				editBuilder.replace(
 					getVSCodeRangeFromSpan(
@@ -293,6 +312,7 @@ export function createEditToAddCommaBeforePosition(
 		parameterValuesSource.parameterValueDefinitions.filter(
 			(p) => p.fullSpan.endIndex < documentIndex,
 		).length;
+
 	if (newParamIndex > 0) {
 		const prevParameter =
 			parameterValuesSource.parameterValueDefinitions[newParamIndex - 1];
@@ -300,6 +320,7 @@ export function createEditToAddCommaBeforePosition(
 
 		// Is there already a comma after the last parameter?
 		const firstIndexAfterPrev = prevParameter.fullSpan.afterEndIndex;
+
 		const tokensBetweenParams =
 			parameterValuesSource.document.jsonParseResult.getTokensInSpan(
 				new Span(
@@ -308,6 +329,7 @@ export function createEditToAddCommaBeforePosition(
 				),
 				Json.Comments.ignoreCommentTokens,
 			);
+
 		if (tokensBetweenParams.some((t) => t.type === Json.TokenType.Comma)) {
 			// ... yes
 			return undefined;
@@ -315,6 +337,7 @@ export function createEditToAddCommaBeforePosition(
 
 		// Insert a new comma right after last item's full span
 		const insertIndex = prevParameter.fullSpan.afterEndIndex;
+
 		return {
 			insertText: ",",
 			span: new Span(insertIndex, 0),
@@ -329,10 +352,13 @@ export function getCompletionForNewParameter(
 	documentIndex: number,
 ): Completion.Item {
 	const detail = "Insert new parameter";
+
 	let snippet =
 		// tslint:disable-next-line:prefer-template
 		`"\${1:parameter1}": {` + EOL + `\t"value": "\${2:value}"` + EOL + `}`;
+
 	const documentation = "documentation";
+
 	const label = newParameterValueSnippetLabel;
 
 	return createParameterCompletion(
@@ -357,6 +383,7 @@ export function getCompletionsForMissingParameters(
 	documentIndex: number,
 ): Completion.Item[] {
 	const completions: Completion.Item[] = [];
+
 	const paramsInParameterFile: string[] =
 		parameterValuesSource.parameterValueDefinitions.map((pv) =>
 			pv.nameValue.unquotedValue.toLowerCase(),
@@ -366,20 +393,26 @@ export function getCompletionsForMissingParameters(
 	for (let param of parameterDefinitionsSource.parameterDefinitions) {
 		// Is this already in the parameter file?
 		const paramNameLC = param.nameValue.unquotedValue.toLowerCase();
+
 		if (paramsInParameterFile.includes(paramNameLC)) {
 			continue;
 		}
 
 		const isRequired = !param.defaultValue;
+
 		const label = param.nameValue.quotedValue;
+
 		const paramText = createParameterFromTemplateParameter(
 			parameterDefinitionsSource,
 			param,
 			parentParameterDefinitionsSource,
 			tabSize,
 		);
+
 		let replacement = paramText;
+
 		const documentation = `Insert a value for parameter "${param.nameValue.unquotedValue}"`;
+
 		const detail =
 			(isRequired ? "(required parameter)" : "(optional parameter)") +
 			EOL +
@@ -413,6 +446,7 @@ function createParameterCompletion(
 ): Completion.Item {
 	// The completion span is the entire token at the cursor
 	const document = parameterValuesSource.document;
+
 	let token = document.getJSONTokenAtDocumentCharacterIndex(documentIndex);
 
 	if (!token && documentIndex > 0) {
@@ -512,6 +546,7 @@ export function canAddPropertyValueHere(
 ): boolean {
 	const parametersObjectValue =
 		parameterValuesSource.parameterValuesProperty?.value?.asObjectValue;
+
 	if (!parametersObjectValue) {
 		// No "parameters" section
 		return false;
@@ -551,6 +586,7 @@ export function getMissingParameterErrors(
 		parameterValues,
 		true, // onlyRequiredParameters
 	);
+
 	if (missingRequiredParams.length === 0) {
 		return [];
 	}
@@ -558,13 +594,16 @@ export function getMissingParameterErrors(
 	const missingParamNames = missingRequiredParams.map(
 		(param) => `"${param.nameValue.unquotedValue}"`,
 	);
+
 	const message = `The following parameters do not have values: ${missingParamNames.join(", ")}`;
+
 	const span =
 		parameterValues.parameterValuesProperty?.nameValue.span ??
 		(parameterValues.deploymentRootObject
 			? new Span(parameterValues.deploymentRootObject?.startIndex, 0)
 			: undefined) ??
 		new Span(0, 0);
+
 	return [new Issue(span, message, IssueKind.params_missingRequiredParam)];
 }
 
@@ -579,6 +618,7 @@ export function findReferencesToDefinitionInParameterValues(
 		const paramValue = values.getParameterValue(
 			definition.nameValue.unquotedValue,
 		);
+
 		if (paramValue) {
 			results.add({
 				document: values.document,
@@ -615,6 +655,7 @@ export function getReferenceSiteInfoForParameterValue(
 					d.nameValue.unquotedValue.toLowerCase() ===
 					paramValue.nameValue.unquotedValue.toLocaleLowerCase(),
 			);
+
 			if (paramDef) {
 				return {
 					referenceKind: ReferenceSiteKind.reference,

@@ -94,6 +94,7 @@ export class TemplatePositionContext extends PositionContext {
 			documentColumnIndex,
 			allowOutOfBounds,
 		);
+
 		return context;
 	}
 
@@ -111,6 +112,7 @@ export class TemplatePositionContext extends PositionContext {
 			documentCharacterIndex,
 			allowOutOfBounds,
 		);
+
 		return context;
 	}
 
@@ -131,7 +133,9 @@ export class TemplatePositionContext extends PositionContext {
 	public get tleInfo(): TleInfo | undefined {
 		return this._tleInfo.getOrCacheValue(() => {
 			//const tleParseResult = this._deploymentTemplate.getTLEParseResultFromJSONToken(this.jsonToken);
+
 			const jsonToken = this.jsonToken;
+
 			if (
 				jsonToken &&
 				jsonToken.type === Json.TokenType.QuotedString &&
@@ -142,12 +146,15 @@ export class TemplatePositionContext extends PositionContext {
 					this.document.getTLEParseResultFromJsonStringValue(
 						this.jsonValue,
 					);
+
 				const tleCharacterIndex =
 					this.documentCharacterIndex - this.jsonTokenStartIndex;
+
 				const tleValue =
 					tleParseResult.parseResult.getValueAtCharacterIndex(
 						tleCharacterIndex,
 					);
+
 				return new TleInfo(
 					tleParseResult.parseResult,
 					tleCharacterIndex,
@@ -172,14 +179,19 @@ export class TemplatePositionContext extends PositionContext {
 		considerDefinitionItself: boolean,
 	): IReferenceSite | undefined {
 		const tleInfo = this.tleInfo;
+
 		if (tleInfo) {
 			const scope = tleInfo.scope;
+
 			const tleCharacterIndex = tleInfo.tleCharacterIndex;
+
 			const definitionDocument = this.document;
+
 			const referenceDocument = this.document;
 
 			const tleFuncCall: TLE.FunctionCallValue | undefined =
 				TLE.asFunctionCallValue(tleInfo.tleValue);
+
 			if (tleFuncCall) {
 				if (
 					tleFuncCall.namespaceToken &&
@@ -190,13 +202,16 @@ export class TemplatePositionContext extends PositionContext {
 				) {
 					// Inside the namespace of a user-function reference
 					const ns = tleFuncCall.namespaceToken.stringValue;
+
 					const nsDefinition =
 						scope.getFunctionNamespaceDefinition(ns);
+
 					if (nsDefinition) {
 						const unquotedReferenceSpan: Span =
 							tleFuncCall.namespaceToken.span.translate(
 								this.jsonTokenStartIndex,
 							);
+
 						return {
 							referenceKind: ReferenceSiteKind.reference,
 							referenceDocument,
@@ -211,6 +226,7 @@ export class TemplatePositionContext extends PositionContext {
 						tleFuncCall.nameToken.span.translate(
 							this.jsonTokenStartIndex,
 						);
+
 					const referenceKind = ReferenceSiteKind.reference;
 
 					if (
@@ -222,11 +238,15 @@ export class TemplatePositionContext extends PositionContext {
 						if (tleFuncCall.namespaceToken) {
 							// Inside the name of a user-function reference
 							const ns = tleFuncCall.namespaceToken.stringValue;
+
 							const name = tleFuncCall.nameToken.stringValue;
+
 							const nsDefinition =
 								scope.getFunctionNamespaceDefinition(ns);
+
 							const userFunctiondefinition =
 								scope.getUserFunctionDefinition(ns, name);
+
 							if (nsDefinition && userFunctiondefinition) {
 								return {
 									referenceKind,
@@ -245,10 +265,12 @@ export class TemplatePositionContext extends PositionContext {
 							// If it's inside a 'parameters' or 'variables' function call, get a reference to the referenced param/var instead of the parameters/variables built-infunction
 							if (tleFuncCall.argumentExpressions.length === 1) {
 								const arg = tleFuncCall.argumentExpressions[0];
+
 								if (arg instanceof TLE.StringValue) {
 									const argStringValue: string | undefined =
 										tleFuncCall.argumentExpressions[0]
 											?.asStringValue?.unquotedValue;
+
 									if (argStringValue) {
 										if (
 											builtInFuncName ===
@@ -262,6 +284,7 @@ export class TemplatePositionContext extends PositionContext {
 													referenceKind,
 													arg,
 												);
+
 											if (ref) {
 												return ref;
 											}
@@ -277,6 +300,7 @@ export class TemplatePositionContext extends PositionContext {
 													referenceKind,
 													arg,
 												);
+
 											if (ref) {
 												return ref;
 											}
@@ -290,6 +314,7 @@ export class TemplatePositionContext extends PositionContext {
 								AzureRMAssets.getFunctionMetadataFromName(
 									tleFuncCall.nameToken.stringValue,
 								);
+
 							if (functionMetadata) {
 								return {
 									referenceKind,
@@ -307,6 +332,7 @@ export class TemplatePositionContext extends PositionContext {
 
 			const tleStringValue: TLE.StringValue | undefined =
 				TLE.asStringValue(tleInfo.tleValue);
+
 			if (tleStringValue) {
 				const referenceKind = ReferenceSiteKind.reference;
 
@@ -319,6 +345,7 @@ export class TemplatePositionContext extends PositionContext {
 						referenceKind,
 						tleStringValue,
 					);
+
 					if (ref) {
 						return ref;
 					}
@@ -330,6 +357,7 @@ export class TemplatePositionContext extends PositionContext {
 						referenceKind,
 						tleStringValue,
 					);
+
 					if (ref) {
 						return ref;
 					}
@@ -372,6 +400,7 @@ export class TemplatePositionContext extends PositionContext {
 							childScope.parameterValuesSource,
 							this.documentCharacterIndex,
 						);
+
 					if (infoAsParamValue) {
 						return infoAsParamValue;
 					}
@@ -380,6 +409,7 @@ export class TemplatePositionContext extends PositionContext {
 
 			if (considerDefinitionItself) {
 				const definition = this.getDefinitionAtSite();
+
 				if (definition && definition.nameValue) {
 					return {
 						referenceKind: ReferenceSiteKind.definition,
@@ -408,9 +438,11 @@ export class TemplatePositionContext extends PositionContext {
 		) {
 			// Must be a string expression
 			const tleParseResult = this.tleInfo?.tleParseResult;
+
 			if (tleParseResult?.errors.length === 0) {
 				// ... with no errors
 				const expr = tleParseResult.expression;
+
 				if (expr) {
 					infos.push(new FormattedExpressionHoverInfo(expr));
 				}
@@ -421,9 +453,11 @@ export class TemplatePositionContext extends PositionContext {
 		) {
 			// ... or a multi-line string or one containing \r or \n characters
 			const tleParseResult = this.tleInfo?.tleParseResult;
+
 			if (tleParseResult?.errors.length === 0) {
 				// ... with no errors
 				const expr = tleParseResult.expression;
+
 				if (expr) {
 					infos.push(new FormattedStringHoverInfo(this.jsonValue));
 				}
@@ -442,10 +476,12 @@ export class TemplatePositionContext extends PositionContext {
 	): IReferenceSite | undefined {
 		const parameterDefinition: IParameterDefinition | undefined =
 			scope.getParameterDefinition(arg.unquotedValue);
+
 		if (parameterDefinition) {
 			const unquotedReferenceSpan: Span = arg.unquotedSpan.translate(
 				this.jsonTokenStartIndex,
 			);
+
 			return {
 				referenceKind,
 				referenceDocument,
@@ -466,10 +502,12 @@ export class TemplatePositionContext extends PositionContext {
 	): IReferenceSite | undefined {
 		const variableDefinition: IVariableDefinition | undefined =
 			scope.getVariableDefinition(arg.unquotedValue);
+
 		if (variableDefinition) {
 			const unquotedReferenceSpan: Span = arg.unquotedSpan.translate(
 				this.jsonTokenStartIndex,
 			);
+
 			return {
 				referenceKind,
 				referenceDocument,
@@ -606,7 +644,9 @@ export class TemplatePositionContext extends PositionContext {
 		allowInsideJsonString?: boolean;
 	}): InsertionContext {
 		const insertionContext = super.getInsertionContext(options);
+
 		const context = insertionContext.context;
+
 		const parents = insertionContext.parents;
 
 		// We need to make some contexts more specific to the template file.  For instance, a 'parameters' object might be
@@ -641,6 +681,7 @@ export class TemplatePositionContext extends PositionContext {
 		tabSize: number,
 	): Promise<ICompletionItemsResult> {
 		const tleInfo = this.tleInfo;
+
 		const completions: Completion.Item[] = [];
 
 		for (let uniqueScope of this.document.uniqueScopes) {
@@ -663,6 +704,7 @@ export class TemplatePositionContext extends PositionContext {
 			// No JSON string at this location, consider snippet completions
 			const snippets =
 				await this.getSnippetCompletionItems(triggerCharacter);
+
 			if (snippets.triggerSuggest) {
 				return snippets;
 			} else {
@@ -672,6 +714,7 @@ export class TemplatePositionContext extends PositionContext {
 			// The function/string/number/etc at the current position inside the string expression,
 			// or else the JSON string itself even it's not an expression
 			const tleValue: TLE.Value | undefined = tleInfo.tleValue;
+
 			const scope: TemplateScope = tleInfo.scope;
 
 			if (!tleValue || !tleValue.contains(tleInfo.tleCharacterIndex)) {
@@ -684,12 +727,14 @@ export class TemplatePositionContext extends PositionContext {
 				) {
 					// Inside brackets, so complete with all valid functions and namespaces
 					const replaceSpan = this.emptySpanAtDocumentCharacterIndex;
+
 					const functionCompletions =
 						TemplatePositionContext.getFunctionCompletions(
 							scope,
 							undefined,
 							replaceSpan,
 						);
+
 					const namespaceCompletions =
 						TemplatePositionContext.getNamespaceCompletions(
 							scope,
@@ -743,11 +788,13 @@ export class TemplatePositionContext extends PositionContext {
 					?.findLineage(this.jsonValue)
 					?.filter((v) => v instanceof Json.ObjectValue)
 			);
+
 			const scopes = this.document.allScopes; // Note: not unique because resources are unique even when scope is not (see CONSIDER in TemplateScope.ts)
 			for (const parent of objectLineage.reverse()) {
 				const innermostMachingScope = scopes.find(
 					(s) => s.rootObject === parent,
 				);
+
 				if (innermostMachingScope) {
 					return innermostMachingScope;
 				}
@@ -764,6 +811,7 @@ export class TemplatePositionContext extends PositionContext {
 			triggerCharacter,
 			allowInsideJsonString: true,
 		});
+
 		if (insertionContext.context === "dependson") {
 			return getDependsOnCompletions(this);
 		}
@@ -775,17 +823,20 @@ export class TemplatePositionContext extends PositionContext {
 		triggerCharacter: string | undefined,
 	): Promise<ICompletionItemsResult> {
 		const insertionContext = this.getInsertionContext({ triggerCharacter });
+
 		if (insertionContext.triggerSuggest) {
 			return { items: [], triggerSuggest: true };
 		} else if (insertionContext.context) {
 			// Show snippets that match the snippet context at this location
 			let replacementInfo = this.getCompletionReplacementSpanInfo();
+
 			const snippets =
 				await ext.snippetManager.value.getSnippetsAsCompletionItems(
 					insertionContext,
 					replacementInfo.span ??
 						this.emptySpanAtDocumentCharacterIndex,
 				);
+
 			return { items: snippets };
 		}
 
@@ -802,6 +853,7 @@ export class TemplatePositionContext extends PositionContext {
 	): boolean {
 		const leftSquareBracketToken: TLE.Token | undefined =
 			parseResult.leftSquareBracketToken;
+
 		const rightSquareBracketToken: TLE.Token | undefined =
 			parseResult.rightSquareBracketToken;
 
@@ -842,6 +894,7 @@ export class TemplatePositionContext extends PositionContext {
 		}
 
 		const funcCall = tleStringValue.getFunctionCallParentOfArgument();
+
 		if (funcCall) {
 			assert(
 				this.jsonToken &&
@@ -874,8 +927,11 @@ export class TemplatePositionContext extends PositionContext {
 		// Property accesses always start with a function call (might be 'variables'/'parameters')
 		if (functionSource) {
 			let propertyPrefix: string = "";
+
 			let replaceSpan: Span = this.emptySpanAtDocumentCharacterIndex;
+
 			const propertyNameToken: TLE.Token | undefined = tleValue.nameToken;
+
 			if (propertyNameToken) {
 				replaceSpan = propertyNameToken.span.translate(
 					this.jsonTokenStartIndex,
@@ -890,15 +946,19 @@ export class TemplatePositionContext extends PositionContext {
 
 			const variableProperty: IVariableDefinition | undefined =
 				scope.getVariableDefinitionFromFunctionCall(functionSource);
+
 			const parameterProperty: IParameterDefinition | undefined =
 				scope.getParameterDefinitionFromFunctionCall(functionSource);
+
 			const sourcesNameStack: string[] = tleValue.sourcesNameStack;
+
 			if (variableProperty) {
 				// [variables('xxx').prop]
 
 				// Is the variable's value is an object?
 				const sourceVariableDefinition: Json.ObjectValue | undefined =
 					Json.asObjectValue(variableProperty.value);
+
 				if (sourceVariableDefinition) {
 					return this.getDeepPropertyAccessCompletions(
 						propertyPrefix,
@@ -915,6 +975,7 @@ export class TemplatePositionContext extends PositionContext {
 					parameterProperty.defaultValue
 						? Json.asObjectValue(parameterProperty.defaultValue)
 						: undefined;
+
 				if (parameterDefValue) {
 					const sourcePropertyDefinition:
 						| Json.ObjectValue
@@ -923,6 +984,7 @@ export class TemplatePositionContext extends PositionContext {
 							sourcesNameStack,
 						),
 					);
+
 					if (sourcePropertyDefinition) {
 						return this.getDeepPropertyAccessCompletions(
 							propertyPrefix,
@@ -945,10 +1007,12 @@ export class TemplatePositionContext extends PositionContext {
 				if (functionName && !functionSource.namespaceToken) {
 					let functionMetadata: BuiltinFunctionMetadata | undefined =
 						AzureRMAssets.getFunctionMetadataFromName(functionName);
+
 					if (functionMetadata) {
 						// Property completion off of a built-in function. Completions will consist of the
 						//   returnValueMembers of the function, if any.
 						const result: Completion.Item[] = [];
+
 						for (const returnValueMember of functionMetadata.returnValueMembers) {
 							if (
 								propertyPrefix === "" ||
@@ -1007,7 +1071,9 @@ export class TemplatePositionContext extends PositionContext {
 		let tleTokenToComplete: TLE.Token | undefined;
 
 		let completeNamespaces: boolean;
+
 		let completeBuiltinFunctions: boolean;
+
 		let completeUserFunctions: boolean;
 
 		if (
@@ -1112,6 +1178,7 @@ export class TemplatePositionContext extends PositionContext {
 		if (tleTokenToComplete) {
 			const tokenToCompleteStartIndex: number =
 				tleTokenToComplete.span.startIndex;
+
 			const completionLength =
 				tleCharacterIndex - tokenToCompleteStartIndex;
 			assert(completionLength >= 0);
@@ -1130,6 +1197,7 @@ export class TemplatePositionContext extends PositionContext {
 				completeNamespaces,
 			"Should be completing something",
 		);
+
 		if (completeBuiltinFunctions || completeUserFunctions) {
 			if (completeUserFunctions && namespace) {
 				const userFunctionCompletions =
@@ -1182,8 +1250,10 @@ export class TemplatePositionContext extends PositionContext {
 					sourcesNameStack,
 				),
 			);
+
 		if (sourcePropertyDefinitionObject) {
 			let matchingPropertyNames: string[];
+
 			if (!propertyPrefix) {
 				matchingPropertyNames =
 					sourcePropertyDefinitionObject.propertyNames;
@@ -1192,6 +1262,7 @@ export class TemplatePositionContext extends PositionContext {
 				const propertyPrefixLC = propertyPrefix.toLowerCase();
 
 				matchingPropertyNames = [];
+
 				for (const propertyName of sourcePropertyDefinitionObject.propertyNames) {
 					if (
 						propertyName.toLowerCase().startsWith(propertyPrefixLC)
@@ -1227,9 +1298,11 @@ export class TemplatePositionContext extends PositionContext {
 	 */
 	public getReferences(): ReferenceList | undefined {
 		const tleInfo = this.tleInfo;
+
 		if (tleInfo) {
 			// If we're inside a string (whether an expression or not)
 			const refInfo = this.getReferenceSiteInfo(true);
+
 			if (refInfo) {
 				// References in this document
 				const references: ReferenceList =
@@ -1241,6 +1314,7 @@ export class TemplatePositionContext extends PositionContext {
 				let parameterValuesSource: IParameterValuesSource | undefined =
 					refInfo.definitionScope &&
 					this.getParameterValuesSource(refInfo.definitionScope);
+
 				if (parameterValuesSource) {
 					const templateReferences =
 						findReferencesToDefinitionInParameterValues(
@@ -1278,16 +1352,20 @@ export class TemplatePositionContext extends PositionContext {
 	 */
 	private getDefinitionAtSite(): INamedDefinition | undefined {
 		const tleInfo = this.tleInfo;
+
 		if (tleInfo) {
 			const jsonStringValue: Json.StringValue | undefined =
 				Json.asStringValue(this.jsonValue);
+
 			if (jsonStringValue) {
 				const unquotedString = jsonStringValue.unquotedValue;
+
 				const scope = tleInfo.scope;
 
 				// Is it a parameter definition?
 				const parameterDefinition: IParameterDefinition | undefined =
 					scope.getParameterDefinition(unquotedString);
+
 				if (
 					parameterDefinition &&
 					parameterDefinition.nameValue === jsonStringValue
@@ -1298,6 +1376,7 @@ export class TemplatePositionContext extends PositionContext {
 				// Is it a variable definition?
 				const variableDefinition: IVariableDefinition | undefined =
 					scope.getVariableDefinition(unquotedString);
+
 				if (
 					variableDefinition &&
 					variableDefinition.nameValue === jsonStringValue
@@ -1310,6 +1389,7 @@ export class TemplatePositionContext extends PositionContext {
 					| UserFunctionNamespaceDefinition
 					| undefined =
 					scope.getFunctionNamespaceDefinition(unquotedString);
+
 				if (
 					namespaceDefinition &&
 					namespaceDefinition.nameValue === jsonStringValue
@@ -1325,6 +1405,7 @@ export class TemplatePositionContext extends PositionContext {
 						ns.nameValue.unquotedValue,
 						unquotedString,
 					);
+
 					if (
 						userFunctionDefinition &&
 						userFunctionDefinition.nameValue === jsonStringValue
@@ -1339,9 +1420,11 @@ export class TemplatePositionContext extends PositionContext {
 	public getSignatureHelp(): TLE.FunctionSignatureHelp | undefined {
 		const tleValue: TLE.Value | undefined =
 			this.tleInfo && this.tleInfo.tleValue;
+
 		if (this.tleInfo && tleValue) {
 			let functionToHelpWith: TLE.FunctionCallValue | undefined =
 				TLE.asFunctionCallValue(tleValue);
+
 			if (!functionToHelpWith) {
 				functionToHelpWith = TLE.asFunctionCallValue(tleValue.parent);
 			}
@@ -1353,12 +1436,15 @@ export class TemplatePositionContext extends PositionContext {
 					// Call to user-defined function
 					const namespace: string =
 						functionToHelpWith.namespaceToken.stringValue;
+
 					const name: string | undefined = functionToHelpWith.name;
+
 					const udfDefinition: UserFunctionDefinition | undefined =
 						this.tleInfo.scope.getUserFunctionDefinition(
 							namespace,
 							name,
 						);
+
 					functionMetadata = udfDefinition
 						? UserFunctionMetadata.fromDefinition(udfDefinition)
 						: undefined;
@@ -1372,9 +1458,11 @@ export class TemplatePositionContext extends PositionContext {
 				if (functionMetadata) {
 					let currentArgumentIndex =
 						this.getFunctionCallArgumentIndex();
+
 					if (typeof currentArgumentIndex === "number") {
 						const functionMetadataParameters: IFunctionParameterMetadata[] =
 							functionMetadata.parameters;
+
 						if (
 							functionMetadataParameters.length > 0 &&
 							functionMetadataParameters.length <=
@@ -1407,10 +1495,13 @@ export class TemplatePositionContext extends PositionContext {
 		functionCall?: TLE.FunctionCallValue,
 	): number | undefined {
 		const tleInfo = this.tleInfo;
+
 		const tleValue: TLE.Value | undefined = tleInfo?.tleValue;
+
 		if (tleInfo && tleValue) {
 			if (!functionCall) {
 				functionCall = TLE.asFunctionCallValue(tleValue);
+
 				if (!functionCall) {
 					functionCall = TLE.asFunctionCallValue(tleValue.parent);
 				}
@@ -1452,6 +1543,7 @@ export class TemplatePositionContext extends PositionContext {
 		replaceSpan: Span,
 	): Completion.Item[] {
 		let matches: IFunctionMetadata[];
+
 		if (namespace) {
 			// User-defined functions
 			matches = namespace.members.map((fd) =>
@@ -1496,6 +1588,7 @@ export class TemplatePositionContext extends PositionContext {
 			);
 
 		const parameterCompletions: Completion.Item[] = [];
+
 		if (replaceSpanInfo) {
 			for (const parameterDefinition of scope.parameterDefinitionsSource
 				.parameterDefinitions) {
@@ -1530,6 +1623,7 @@ export class TemplatePositionContext extends PositionContext {
 			);
 
 		const variableCompletions: Completion.Item[] = [];
+
 		if (replaceSpanInfo) {
 			for (const variableDefinition of scope.variableDefinitions) {
 				variableCompletions.push(
@@ -1559,16 +1653,21 @@ export class TemplatePositionContext extends PositionContext {
 		// the existing string, not just the part of it before the cursor.
 
 		let includeSingleQuotesInCompletion: boolean;
+
 		let includeRightParenthesisInCompletion: boolean;
+
 		let replaceSpan: Span;
 
 		if (tleValue instanceof TLE.StringValue) {
 			// parameters(<CURSOR> 'xxyy') or parameters('xx<CURSOR>yy')  - tleValue is the string literal
 
 			const stringSpan: Span = tleValue.getSpan();
+
 			const functionValue: TLE.FunctionCallValue | undefined =
 				TLE.asFunctionCallValue(tleValue.parent);
+
 			const stringStartIndex = stringSpan.startIndex;
+
 			let tleReplaceSpan: Span;
 
 			if (tleCharacterIndex <= stringStartIndex) {
@@ -1630,9 +1729,11 @@ export class TemplatePositionContext extends PositionContext {
 				const rightParenthesisIndex: number = tleValue
 					.toString()
 					.indexOf(")");
+
 				const rightSquareBracketIndex: number = tleValue
 					.toString()
 					.indexOf("]");
+
 				if (rightParenthesisIndex >= 0) {
 					// Cut off before the ending parenthesis
 					tleReplaceSpan = new Span(

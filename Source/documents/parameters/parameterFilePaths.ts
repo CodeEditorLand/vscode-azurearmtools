@@ -14,6 +14,7 @@ export function getRelativeParameterFilePath(
 	parameterUri: Uri,
 ): string {
 	const templatePath = normalizeFilePath(templateUri);
+
 	const paramPath = normalizeFilePath(parameterUri);
 
 	return path.relative(path.dirname(templatePath), paramPath);
@@ -24,9 +25,11 @@ export function resolveParameterFilePath(
 	parameterPathRelativeToTemplate: string,
 ): string {
 	assert(path.isAbsolute(templatePath));
+
 	const resolved = path.resolve(
 		path.dirname(templatePath),
 		parameterPathRelativeToTemplate,
 	);
+
 	return resolved;
 }

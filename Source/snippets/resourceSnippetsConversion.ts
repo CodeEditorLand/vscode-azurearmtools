@@ -59,9 +59,13 @@ const nonStringSnippetPlaceholderCommentPatternRegex = new RegExp(
 
 export function createResourceSnippetFromFile(snippetName: string, snippetFileContent: string): ISnippetDefinitionFromFile {
     const json = getJsonFromResourceSnippetFile(snippetName, snippetFileContent);
+
     const body = getBodyFromResourceSnippetJson(json);
+
     const metadata = <{ [key: string]: string | undefined }>json.metadata;
+
     const description = metadata.description;
+
     const prefix = metadata.prefix;
 
     assert(description !== undefined, `Resource snippet "${snippetName}" is missing metadata.description`);
@@ -78,6 +82,7 @@ export function createResourceSnippetFromFile(snippetName: string, snippetFileCo
 // for testing only
 export function getBodyFromResourceSnippetFile(snippetName: string, snippetFileContent: string): string[] {
     const parsed = getJsonFromResourceSnippetFile(snippetName, snippetFileContent);
+
     return getBodyFromResourceSnippetJson(parsed);
 }
 
@@ -99,13 +104,16 @@ function getJsonFromResourceSnippetFile(snippetName: string, snippetFileContent:
 
 function getBodyFromResourceSnippetJson(json: { [key: string]: unknown }): string[] {
     const resources = json.resources;
+
     const resourcesString = JSON.stringify(resources, null, 1);
+
     let lines = resourcesString.split(/\r\n|\r|\n/);
 
     // Remove the beginning '[' and ']'
     lines = lines.slice(1, lines.length - 1);
 
     const body: string[] = [];
+
     for (const line of lines) {
         const tabs = (<string[]>line.match(/^ */))[0].length
             - 1; // Remove the indentation of the '[]' that we removed

@@ -147,7 +147,9 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 	 */
 	public get __debugDisplay(): string {
 		const charactersBeforeCurrent = 25;
+
 		const charactersAfterCurrent = 50;
+
 		return `${this._text.slice(this._textIndex - charactersBeforeCurrent, this._textIndex)}<<${this._currentToken ? this._currentToken.toString() : ""}>>${this._text.slice(this._textIndex + 1, this._textIndex + 1 + charactersAfterCurrent)}`;
 	}
 
@@ -200,91 +202,109 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 				case "{":
 					this._currentToken = LeftCurlyBracket;
 					this.nextCharacter();
+
 					break;
 
 				case "}":
 					this._currentToken = RightCurlyBracket;
 					this.nextCharacter();
+
 					break;
 
 				case "[":
 					this._currentToken = LeftSquareBracket;
 					this.nextCharacter();
+
 					break;
 
 				case "]":
 					this._currentToken = RightSquareBracket;
 					this.nextCharacter();
+
 					break;
 
 				case "(":
 					this._currentToken = LeftParenthesis;
 					this.nextCharacter();
+
 					break;
 
 				case ")":
 					this._currentToken = RightParenthesis;
 					this.nextCharacter();
+
 					break;
 
 				case "_":
 					this._currentToken = Underscore;
 					this.nextCharacter();
+
 					break;
 
 				case ".":
 					this._currentToken = Period;
 					this.nextCharacter();
+
 					break;
 
 				case "-":
 					this._currentToken = Dash;
 					this.nextCharacter();
+
 					break;
 
 				case "+":
 					this._currentToken = Plus;
 					this.nextCharacter();
+
 					break;
 
 				case ",":
 					this._currentToken = Comma;
 					this.nextCharacter();
+
 					break;
 
 				case ":":
 					this._currentToken = Colon;
 					this.nextCharacter();
+
 					break;
 
 				case `'`:
 					this._currentToken = SingleQuote;
 					this.nextCharacter();
+
 					break;
 
 				case `"`:
 					this._currentToken = DoubleQuote;
 					this.nextCharacter();
+
 					break;
 
 				case "\\":
 					this._currentToken = Backslash;
 					this.nextCharacter();
+
 					break;
 
 				case "/":
 					this._currentToken = ForwardSlash;
 					this.nextCharacter();
+
 					break;
 
 				case "*":
 					this._currentToken = Asterisk;
 					this.nextCharacter();
+
 					break;
 
 				case "\n":
 					this._currentToken = NewLine;
 					this.nextCharacter();
+
 					break;
 
 				case "\r":
@@ -304,11 +324,13 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 				case " ":
 					this._currentToken = Space;
 					this.nextCharacter();
+
 					break;
 
 				case "\t":
 					this._currentToken = Tab;
 					this.nextCharacter();
+
 					break;
 
 				default:

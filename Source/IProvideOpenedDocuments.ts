@@ -12,6 +12,7 @@ export interface IProvideOpenedDocuments {
 	getOpenedDeploymentTemplate(
 		documentOrUri: Uri,
 	): DeploymentTemplateDoc | undefined;
+
 	setOpenedDeploymentDocument(
 		documentOrUri: Uri,
 		document: DeploymentDocument,

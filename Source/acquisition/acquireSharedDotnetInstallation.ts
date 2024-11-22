@@ -21,7 +21,9 @@ export async function acquireSharedDotnetInstallation(version: string): Promise<
         actionContext.errorHandling.rethrow = false;
 
         let message: string | undefined;
+
         let result: IDotnetAcquireResult | undefined;
+
         let dotnetPath: string | undefined;
 
         try {
@@ -41,6 +43,7 @@ export async function acquireSharedDotnetInstallation(version: string): Promise<
                 message = "dotnet.acquire failed";
             } else {
                 dotnetPath = result.dotnetPath;
+
                 if (!dotnetPath) {
                     message = "dotnet.acquire returned an undefined dotnetPath";
                 }
@@ -49,11 +52,13 @@ export async function acquireSharedDotnetInstallation(version: string): Promise<
 
         if (message) {
             const linkMessage = `This extension requires .NET Core for full functionality, but we were unable to download and install a local copy for the extension. If this error persists, please see https://aka.ms/vscode-armtools-dotnet for troubleshooting tips.`;
+
             const err = wrapError(linkMessage, `Details: ${message}`);
             ext.outputChannel.appendLog(parseError(err).message);
             ext.outputChannel.appendLog(`See '.NET Runtime' in the output window for more information.`);
             ext.outputChannel.show();
             actionContext.telemetry.properties.dotnetAcquireError = message;
+
             throw err;
         }
 

@@ -10,6 +10,7 @@ export async function pathExistsNoThrow(
 ): Promise<boolean> {
 	try {
 		const localPath = path instanceof Uri ? path.fsPath : path;
+
 		return !!localPath && (await fse.pathExists(localPath));
 	} catch (err) {
 		return false;

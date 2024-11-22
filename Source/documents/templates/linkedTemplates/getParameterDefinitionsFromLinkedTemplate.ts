@@ -14,6 +14,7 @@ export function getParameterDefinitionsFromLinkedTemplate(
 	provideOpenDocuments: IProvideOpenedDocuments,
 ): IParameterDefinition[] {
 	let dt: DeploymentTemplateDoc | undefined;
+
 	try {
 		const uri = parseUri(linkedTemplate.fullUri);
 		dt = provideOpenDocuments.getOpenedDeploymentTemplate(uri);

@@ -37,6 +37,7 @@ export function httpGet(url: string): Promise<string> {
 					response.statusCode < 400
 				) {
 					let responseContent: string = "";
+
 					let encoding: BufferEncoding | undefined;
 
 					response
@@ -45,7 +46,9 @@ export function httpGet(url: string): Promise<string> {
 								dataChunk instanceof Buffer
 									? dataChunk
 									: new Buffer(dataChunk);
+
 							let byteOrderMarkLength: number = 0;
+
 							if (!encoding) {
 								if (
 									dataChunk[0] === 0xff &&
@@ -87,6 +90,7 @@ export function httpGet(url: string): Promise<string> {
 				request = http.get(url, callback);
 			} else {
 				reject(`Unsupported url schema: '${url}`);
+
 				return;
 			}
 

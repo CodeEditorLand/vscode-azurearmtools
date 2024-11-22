@@ -11,6 +11,7 @@ export class Histogram {
 		let result: (string | undefined | null)[] = Object.getOwnPropertyNames(
 			this._counts,
 		);
+
 		if (this._nullCounts > 0) {
 			result.push(null);
 		}
@@ -46,6 +47,7 @@ export class Histogram {
 
 	public getCount(key: string | undefined | null): number {
 		let result: number;
+
 		if (key === null) {
 			result = this._nullCounts;
 		} else if (key === undefined) {

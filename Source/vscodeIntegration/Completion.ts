@@ -140,6 +140,7 @@ export class Item {
 		span: Span,
 	): Item {
 		const label: string = namespace.nameValue.unquotedValue;
+
 		let insertText: string = `${label}`;
 
 		return new Item({
@@ -169,9 +170,11 @@ export class Item {
 		includeSingleQuotesInCompletion: boolean,
 	): Item {
 		const parameterName = parameter.nameValue.unquotedValue;
+
 		const label: string = includeSingleQuotesInCompletion
 			? `'${parameterName}'`
 			: parameterName;
+
 		let insertText: string = label;
 
 		if (includeRightParenthesisInCompletion) {
@@ -199,9 +202,11 @@ export class Item {
 		includeSingleQuotesInCompletion: boolean,
 	): Item {
 		const variableName = variable.nameValue.unquotedValue;
+
 		const label: string = includeSingleQuotesInCompletion
 			? `'${variableName}'`
 			: variableName;
+
 		let insertText: string = label;
 
 		if (includeRightParenthesisInCompletion) {
@@ -226,10 +231,12 @@ export class Item {
 	 */
 	public static dedupeByLabel(items: Item[]): Item[] {
 		const addedLC = new Set<string>();
+
 		const deduped: Item[] = [];
 
 		for (let item of items) {
 			const itemLabelLC = item.label.toLowerCase();
+
 			if (!addedLC.has(itemLabelLC)) {
 				deduped.push(item);
 				addedLC.add(itemLabelLC);

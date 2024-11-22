@@ -75,6 +75,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 		let nameValue: Json.StringValue | undefined = Json.asStringValue(
 			functionValue.getPropertyValue("namespace"),
 		);
+
 		if (nameValue) {
 			return new UserFunctionNamespaceDefinition(
 				parentScope,
@@ -105,10 +106,13 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 			const members: Json.ObjectValue | undefined = Json.asObjectValue(
 				this._value.getPropertyValue(templateKeys.userFunctionMembers),
 			);
+
 			if (members) {
 				for (let member of members.properties) {
 					let name: Json.StringValue = member.nameValue;
+
 					let value = Json.asObjectValue(member.value);
+
 					if (value) {
 						let func = new UserFunctionDefinition(
 							this.parentScope,
@@ -132,6 +136,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 	): UserFunctionDefinition | undefined {
 		if (functionName) {
 			let functionNameLC = functionName.toLowerCase();
+
 			return this.members.find(
 				(fd) =>
 					fd.nameValue.toString().toLowerCase() === functionNameLC,
@@ -143,10 +148,13 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 
 	public get usageInfo(): IUsageInfo {
 		const ns = this.nameValue.unquotedValue;
+
 		const methodsUsage: string[] = this.members.map((md) =>
 			getUserFunctionUsage(md, false),
 		);
+
 		let description: string | undefined;
+
 		if (methodsUsage.length > 0) {
 			description = `Members:${os.EOL}${methodsUsage.map((mu) => `* ${mu}`).join(os.EOL)}`;
 		} else {

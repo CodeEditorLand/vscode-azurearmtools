@@ -36,6 +36,7 @@ export class NormalizedMap<TKey, TValue> implements Map<TKey, TValue> {
 	// tslint:disable-next-line: no-reserved-keywords
 	public set(key: TKey, value: TValue): this {
 		this._map.set(this.normalizeKey(key), value);
+
 		return this;
 	}
 

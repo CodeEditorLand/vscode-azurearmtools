@@ -19,8 +19,10 @@ export const isCaseSensitiveFileSystem: boolean = !isWin32;
 let base = __dirname;
 while (true) {
     let test = path.join(base, "assets");
+
     if (fs.existsSync(test)) {
         base = test;
+
         break;
     }
     base = path.dirname(base);
@@ -65,21 +67,33 @@ export const downloadDotnetVersion = '8.0';
 
 export namespace configKeys {
     export const autoDetectJsonTemplates = 'autoDetectJsonTemplates';
+
     export const dotnetExePath = 'languageServer.dotnetExePath';
+
     export const traceLevel = 'languageServer.traceLevel';
+
     export const waitForDebugger = 'languageServer.waitForDebugger';
+
     export const langServerPath = 'languageServer.path';
+
     export const checkForLatestSchema = 'checkForLatestSchema';
+
     export const checkForMatchingParameterFiles = 'checkForMatchingParameterFiles';
+
     export const parameterFiles = 'parameterFiles';
+
     export const enableCodeLens = 'codelens.enable';
+
     export const codeLensForParameters = 'codelens.parameters';
+
     export const codeLensForResourceParentsAndChildren = 'codelens.resourceChildren';
 }
 
 export namespace notifications {
     export const requestOpenLinkedTemplate = 'arm-template/requestOpenLinkedTemplate';
+
     export const notifyTemplateGraph = 'arm-template/notifyTemplateGraph';
+
     export const schemaValidationNotification = 'arm-template/schemaValidation';
 
     export interface ISchemaValidationNotificationArgs {
@@ -92,6 +106,7 @@ export namespace notifications {
 
         export interface ICodeAnalysisStartingArgs {
             uri: string;
+
             docVersion: number;
             codeAnalysisVersion: number;
 
@@ -107,6 +122,7 @@ export namespace globalStateKeys {
 
     export namespace survey {
         export const neverShowSurvey = 'neverShowSurvey';
+
         export const surveyPostponedUntilTime = 'surveyPostponedUntilTime';
     }
 
@@ -124,41 +140,62 @@ export const isRunningTests: boolean = /^(true|1)$/i.test(process.env.IS_RUNNING
 export namespace templateKeys {
     // Top-level
     export const schema = '$schema';
+
     export const parameters = 'parameters';
+
     export const resources = 'resources';
+
     export const variables = 'variables';
+
     export const functions = 'functions';
+
     export const outputs = 'outputs';
+
     export const apiProfile = 'apiProfile';
 
     // Copy blocks
     export const copyLoop = "copy";
+
     export const copyName = 'name';
+
     export const copyInput = 'input';
+
     export const copyCount = 'count';
 
     // Resources
     export const properties = 'properties';
+
     export const resourceType = 'type';
+
     export const resourceApiVersion = 'apiVersion';
+
     export const resourceDependsOn = 'dependsOn';
+
     export const resourceName = 'name';
+
     export const tags = 'tags';
+
     export const displayNameTag = 'displayName';
 
     // Nested templates
     export const nestedDeploymentExprEvalOptions = 'expressionEvaluationOptions';
+
     export const nestedDeploymentExprEvalScope = 'scope';
+
     export const nestedDeploymentExprEvalScopeInner = 'inner';
+
     export const nestedDeploymentTemplateProperty = 'template';
 
     // Linked templates
     export const linkedDeploymentTemplateLink = 'templateLink';
+
     export const linkedDeploymentTemplateLinkUri = 'uri';
+
     export const linkedDeploymentTemplateLinkRelativePath = 'relativePath';
 
     // User functions
     export const userFunctionNamespace = 'namespace';
+
     export const userFunctionMembers = 'members';
 }
 

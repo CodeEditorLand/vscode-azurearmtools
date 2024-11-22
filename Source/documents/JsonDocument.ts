@@ -60,11 +60,13 @@ export abstract class JsonDocument implements IJsonDocument {
 				positionOrRange.start.character,
 				{ allowOutOfBounds: true },
 			);
+
 			const endIndex = this.getDocumentCharacterIndex(
 				positionOrRange.end.line,
 				positionOrRange.end.character,
 				{ allowOutOfBounds: true },
 			);
+
 			return __debugMarkRangeInString(
 				this.documentText,
 				startIndex,
@@ -76,6 +78,7 @@ export abstract class JsonDocument implements IJsonDocument {
 				positionOrRange.character,
 				{ allowOutOfBounds: true },
 			);
+
 			return __debugMarkPositionInString(this.documentText, index);
 		} else {
 			return __debugMarkPositionInString(
@@ -118,6 +121,7 @@ export abstract class JsonDocument implements IJsonDocument {
 
 	public get schemaUri(): string | undefined {
 		const schema = this.schemaValue;
+
 		return schema ? schema.unquotedValue : undefined;
 	}
 
@@ -130,6 +134,7 @@ export abstract class JsonDocument implements IJsonDocument {
 
 	public getMaxLineLength(): number {
 		let max = 0;
+
 		for (let len of this.jsonParseResult.lineLengths) {
 			if (len > max) {
 				max = len;

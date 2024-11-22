@@ -46,6 +46,7 @@ export class ParametersPositionContext extends PositionContext {
 			documentLineIndex,
 			documentColumnIndex,
 		);
+
 		return context;
 	}
 	public static fromDocumentCharacterIndex(
@@ -58,6 +59,7 @@ export class ParametersPositionContext extends PositionContext {
 			deploymentTemplate,
 		);
 		context.initFromDocumentCharacterIndex(documentCharacterIndex);
+
 		return context;
 	}
 
@@ -91,6 +93,7 @@ export class ParametersPositionContext extends PositionContext {
 	 */
 	public getReferences(): ReferenceList | undefined {
 		const refInfo = this.getReferenceSiteInfo(false);
+
 		if (refInfo) {
 			const references = this.document.findReferencesToDefinition(
 				refInfo.definition,

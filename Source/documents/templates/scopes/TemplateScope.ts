@@ -158,6 +158,7 @@ export abstract class TemplateScope
 
 	public get childScopes(): TemplateScope[] {
 		const scopes: TemplateScope[] = [];
+
 		for (let resource of this.resources ?? []) {
 			if (resource.childDeployment) {
 				scopes.push(resource.childDeployment);
@@ -183,6 +184,7 @@ export abstract class TemplateScope
 		parameterName: string,
 	): IParameterDefinition | undefined {
 		const unquotedParameterName = strings.unquote(parameterName);
+
 		if (unquotedParameterName) {
 			let parameterNameLC = unquotedParameterName.toLowerCase();
 
@@ -196,6 +198,7 @@ export abstract class TemplateScope
 			) {
 				let pd =
 					this.parameterDefinitionsSource.parameterDefinitions[i];
+
 				if (pd.nameValue.toString().toLowerCase() === parameterNameLC) {
 					return pd;
 				}
@@ -214,6 +217,7 @@ export abstract class TemplateScope
 		}
 
 		let namespaceNameLC = namespaceName.toLowerCase();
+
 		return this.namespaceDefinitions.find(
 			(nd: UserFunctionNamespaceDefinition) =>
 				nd.nameValue.toString().toLowerCase() === namespaceNameLC,
@@ -233,8 +237,10 @@ export abstract class TemplateScope
 			typeof namespace === "string"
 				? this.getFunctionNamespaceDefinition(namespace)
 				: namespace;
+
 		if (nd) {
 			let result = nd.getMemberDefinition(functionName);
+
 			return result ? result : undefined;
 		}
 
@@ -246,12 +252,14 @@ export abstract class TemplateScope
 		variableName: string,
 	): IVariableDefinition | undefined {
 		const unquotedVariableName = strings.unquote(variableName);
+
 		if (unquotedVariableName) {
 			const variableNameLC = unquotedVariableName.toLowerCase();
 
 			// Find the last definition that matches, because that's what Azure does
 			for (let i = this.variableDefinitions.length - 1; i >= 0; --i) {
 				let vd = this.variableDefinitions[i];
+
 				if (vd.nameValue.toString().toLowerCase() === variableNameLC) {
 					return vd;
 				}
@@ -273,6 +281,7 @@ export abstract class TemplateScope
 			const variableName: TLE.StringValue | undefined = TLE.asStringValue(
 				tleFunction.argumentExpressions[0],
 			);
+
 			if (variableName) {
 				result = this.getVariableDefinition(variableName.toString());
 			}
@@ -295,6 +304,7 @@ export abstract class TemplateScope
 			const propertyName: TLE.StringValue | undefined = TLE.asStringValue(
 				tleFunction.argumentExpressions[0],
 			);
+
 			if (propertyName) {
 				result = this.getParameterDefinition(propertyName.toString());
 			}
@@ -309,6 +319,7 @@ export abstract class TemplateScope
 
 	public get parentWithUniqueParamsVarsAndFunctions(): TemplateScope {
 		let parent = this.parent;
+
 		while (!parent?.hasUniqueParamsVarsAndFunctions) {
 			parent = parent?.parent;
 		}
@@ -317,6 +328,7 @@ export abstract class TemplateScope
 			parent,
 			"Should have found parent with unique params/vars/functions (top-level should be unique)",
 		);
+
 		return parent;
 	}
 }

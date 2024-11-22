@@ -46,7 +46,9 @@ export class AzureRMAssets {
 	public static getFunctionsMetadata(): FunctionsMetadata {
 		if (!AzureRMAssets._functionsMetadata) {
 			let uri = AzureRMAssets.getFunctionMetadataUri();
+
 			let contents = AzureRMAssets.readFile(uri);
+
 			let array: BuiltinFunctionMetadata[] =
 				BuiltinFunctionMetadata.fromString(contents);
 			AzureRMAssets._functionsMetadata = new FunctionsMetadata(array);
@@ -95,6 +97,7 @@ export class FunctionsMetadata {
 		functionName: string,
 	): BuiltinFunctionMetadata | undefined {
 		const lowerCasedFunctionName: string = functionName.toLowerCase();
+
 		return this.functionMetadata.find(
 			(func) => func.lowerCaseName === lowerCasedFunctionName,
 		);
@@ -104,6 +107,7 @@ export class FunctionsMetadata {
 		functionNamePrefix: string,
 	): BuiltinFunctionMetadata[] {
 		const lowerCasedPrefix: string = functionNamePrefix.toLowerCase();
+
 		return this.functionMetadata.filter((func) =>
 			func.lowerCaseName.startsWith(lowerCasedPrefix),
 		);
@@ -174,14 +178,18 @@ export class BuiltinFunctionMetadata
 
 	public get parameters(): IFunctionParameterMetadata[] {
 		const usage: string = this.usage;
+
 		const leftParenthesisIndex: number = usage.indexOf("(");
+
 		const rightParenthesisIndex: number = usage.indexOf(")");
 
 		const parametersSubstring: string = usage.substr(
 			leftParenthesisIndex + 1,
 			rightParenthesisIndex - leftParenthesisIndex - 1,
 		);
+
 		const result: IFunctionParameterMetadata[] = [];
+
 		if (parametersSubstring) {
 			for (const parameter of parametersSubstring.split(",")) {
 				result.push({ name: parameter.trim(), type: undefined }); // CONSIDER: Our metadata doesn't currently give the parameter types
@@ -220,6 +228,7 @@ export class BuiltinFunctionMetadata
 		metadataString: string,
 	): BuiltinFunctionMetadata[] {
 		let metadataJSON: FunctionMetadataContract;
+
 		try {
 			metadataJSON = <FunctionMetadataContract>JSON.parse(metadataString);
 		} catch (e) {
@@ -239,6 +248,7 @@ export class BuiltinFunctionMetadata
 				// tslint:disable-next-line: strict-boolean-expressions
 				if (functionMetadata) {
 					const returnValueMembers: string[] = [];
+
 					if (functionMetadata.returnValueMembers) {
 						for (const returnValueMember of functionMetadata.returnValueMembers) {
 							returnValueMembers.push(returnValueMember.name);
@@ -273,6 +283,7 @@ interface FunctionMetadataContract {
 		description: string;
 		minimumArguments: number;
 		maximumArguments: number | null;
+
 		returnValueMembers?: {
 			name: string;
 		}[];

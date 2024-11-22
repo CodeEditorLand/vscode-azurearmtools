@@ -44,6 +44,7 @@ export class ParameterDefinition implements IParameterDefinition {
 	public get type(): Json.Value | undefined {
 		const parameterDefinition: Json.ObjectValue | undefined =
 			Json.asObjectValue(this._property.value);
+
 		if (parameterDefinition) {
 			return parameterDefinition.getPropertyValue("type");
 		}
@@ -65,15 +66,18 @@ export class ParameterDefinition implements IParameterDefinition {
 	public get description(): string | undefined {
 		const parameterDefinition: Json.ObjectValue | undefined =
 			Json.asObjectValue(this._property.value);
+
 		if (parameterDefinition) {
 			const metadata: Json.ObjectValue | undefined = Json.asObjectValue(
 				parameterDefinition.getPropertyValue("metadata"),
 			);
+
 			if (metadata) {
 				const description: Json.StringValue | undefined =
 					Json.asStringValue(
 						metadata.getPropertyValue("description"),
 					);
+
 				if (description) {
 					return description.toString();
 				}
@@ -86,6 +90,7 @@ export class ParameterDefinition implements IParameterDefinition {
 	public get defaultValue(): Json.Value | undefined {
 		const parameterDefinition: Json.ObjectValue | undefined =
 			Json.asObjectValue(this._property.value);
+
 		if (parameterDefinition) {
 			return parameterDefinition.getPropertyValue("defaultValue");
 		}

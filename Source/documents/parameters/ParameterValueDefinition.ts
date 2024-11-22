@@ -39,6 +39,7 @@ export class ParameterValueDefinition implements INamedDefinition {
 		const parameterValue: Json.ObjectValue | undefined = Json.asObjectValue(
 			this._property.value,
 		);
+
 		if (parameterValue) {
 			return parameterValue.getPropertyValue("value");
 		}
@@ -50,6 +51,7 @@ export class ParameterValueDefinition implements INamedDefinition {
 		const parameterValue: Json.ObjectValue | undefined = Json.asObjectValue(
 			this._property.value,
 		);
+
 		if (parameterValue) {
 			return parameterValue.getPropertyValue("reference");
 		}

@@ -211,6 +211,7 @@ export class StringValue extends Value {
 	private isBuiltinFunctionArgument(functionName: string): boolean {
 		const funcCall: FunctionCallValue | undefined =
 			this.getFunctionCallParentOfArgument();
+
 		return (
 			!!funcCall &&
 			funcCall.isCallToBuiltinWithName(functionName) &&
@@ -224,6 +225,7 @@ export class StringValue extends Value {
 	 */
 	public getFunctionCallParentOfArgument(): FunctionCallValue | undefined {
 		const parent: Value | undefined = this.parent;
+
 		return parent instanceof FunctionCallValue ? parent : undefined;
 	}
 
@@ -371,6 +373,7 @@ export class ArrayAccessValue extends ParentValue {
 
 	public toString(): string {
 		let result: string = `${this._source.toString()}[`;
+
 		if (!!this._indexValue) {
 			result += this._indexValue.toString();
 		}
@@ -389,6 +392,7 @@ export class ArrayAccessValue extends ParentValue {
 
 		// Format the index expression
 		let indexExpression: string;
+
 		if (
 			!this._indexValue ||
 			this._indexValue instanceof StringValue ||
@@ -401,6 +405,7 @@ export class ArrayAccessValue extends ParentValue {
 			const preTab = " ".repeat(
 				currentIndent + options.multiline.tabSize,
 			);
+
 			const indexExpressionRaw = this._indexValue.formatCore(
 				options,
 				currentIndent + options.multiline.tabSize,
@@ -595,8 +600,10 @@ export class FunctionCallValue extends ParentValue {
 					--i
 				) {
 					let arg = this._argumentExpressions[i];
+
 					if (!!arg) {
 						result = result.union(arg.getSpan());
+
 						break;
 					}
 				}
@@ -643,6 +650,7 @@ export class FunctionCallValue extends ParentValue {
 
 		if (options.friendly) {
 			const fullNameLC = this.fullName.toLowerCase();
+
 			switch (fullNameLC) {
 				case "concat":
 					// Coalesce adjacent string arguments
@@ -657,6 +665,7 @@ export class FunctionCallValue extends ParentValue {
 					// Use ${name} format for variables/parameters call
 					if (this.argumentExpressions.length === 1) {
 						const arg1 = this.argumentExpressions[0];
+
 						if (arg1 instanceof StringValue) {
 							return `\${${arg1.unquotedValue}}`;
 						}
@@ -666,6 +675,7 @@ export class FunctionCallValue extends ParentValue {
 		}
 
 		let multiline = !!options.multiline;
+
 		const tabSize = options.multiline?.tabSize ?? 0;
 		// If there are no arguments or a single simple-valued argument, always put expression on single line
 		if (
@@ -741,13 +751,16 @@ export class FunctionCallValue extends ParentValue {
 
 		// Coalesce adjacent string literals
 		const coalescedExpressions: string[] = [];
+
 		const expressionsLength = expressions.length;
+
 		for (let i = 0; i < expressionsLength; ++i) {
 			let currentExpression =
 				expressions[i]?.formatCore(options, currentIndent) ?? "";
 
 			const prevCoalescedExpression =
 				coalescedExpressions[coalescedExpressions.length - 1];
+
 			if (prevCoalescedExpression) {
 				// Merge with last coalesced expression if it and the current one are both strings
 				if (
@@ -761,10 +774,12 @@ export class FunctionCallValue extends ParentValue {
 					// Example: "'${vmProperties}.property'"
 					const previousContainsPropertyIndex =
 						prevCoalescedExpression.match(/[\]})]\.[a-zA-Z0-9]/);
+
 					if (!previousContainsPropertyIndex) {
 						// Merge previous and current expressions into a single-quoted string
 						coalescedExpressions[coalescedExpressions.length - 1] =
 							`'${Utilities.removeSingleQuotes(prevCoalescedExpression)}${Utilities.removeSingleQuotes(currentExpression)}'`;
+
 						continue;
 					}
 				}
@@ -833,6 +848,7 @@ export class PropertyAccess extends ParentValue {
 
 		let propertyAccessSource: PropertyAccess | undefined =
 			asPropertyAccessValue(this._source);
+
 		while (propertyAccessSource && propertyAccessSource.nameToken) {
 			result.push(propertyAccessSource.nameToken.stringValue);
 			propertyAccessSource = asPropertyAccessValue(
@@ -848,6 +864,7 @@ export class PropertyAccess extends ParentValue {
 	 */
 	public get functionSource(): FunctionCallValue | undefined {
 		let currentSource: Value = this._source;
+
 		while (currentSource instanceof PropertyAccess) {
 			const propertyAccess: PropertyAccess | undefined =
 				asPropertyAccessValue(currentSource);
@@ -891,6 +908,7 @@ export class PropertyAccess extends ParentValue {
 
 	public toString(): string {
 		let result = `${this._source.toString()}.`;
+
 		if (!!this._nameToken) {
 			result += this._nameToken.stringValue;
 		}
@@ -902,6 +920,7 @@ export class PropertyAccess extends ParentValue {
 		currentIndent: number,
 	): string {
 		let result = `${this._source.formatCore(options, currentIndent)}.`;
+
 		if (!!this._nameToken) {
 			result += this._nameToken.stringValue;
 		}
@@ -922,6 +941,7 @@ export class BraceHighlighter {
 
 		if (context.tleInfo) {
 			let tleParseResult = context.tleInfo.tleParseResult;
+
 			let tleCharacterIndex = context.tleInfo.tleCharacterIndex;
 
 			if (
@@ -936,6 +956,7 @@ export class BraceHighlighter {
 			} else {
 				let tleValue: Value | undefined =
 					tleParseResult.getValueAtCharacterIndex(tleCharacterIndex);
+
 				if (tleValue instanceof FunctionCallValue) {
 					if (
 						!!tleValue.leftParenthesisToken &&
@@ -961,6 +982,7 @@ export class BraceHighlighter {
 			}
 
 			let leftOfTLECharacterIndex = tleCharacterIndex - 1;
+
 			if (
 				!!tleParseResult.rightSquareBracketToken &&
 				tleParseResult.rightSquareBracketToken.span.startIndex ===
@@ -975,6 +997,7 @@ export class BraceHighlighter {
 					tleParseResult.getValueAtCharacterIndex(
 						leftOfTLECharacterIndex,
 					);
+
 				if (tleValue instanceof FunctionCallValue) {
 					if (
 						!!tleValue.rightParenthesisToken &&
@@ -1015,6 +1038,7 @@ export class BraceHighlighter {
 		highlightCharacterIndexes.push(
 			tleParseResult.leftSquareBracketToken!.span.startIndex,
 		);
+
 		if (!!tleParseResult.rightSquareBracketToken) {
 			highlightCharacterIndexes.push(
 				tleParseResult.rightSquareBracketToken.span.startIndex,
@@ -1033,6 +1057,7 @@ export class BraceHighlighter {
 		highlightCharacterIndexes.push(
 			tleFunction.leftParenthesisToken!.span.startIndex,
 		);
+
 		if (!!tleFunction.rightParenthesisToken) {
 			highlightCharacterIndexes.push(
 				tleFunction.rightParenthesisToken.span.startIndex,
@@ -1050,6 +1075,7 @@ export class BraceHighlighter {
 		highlightCharacterIndexes.push(
 			tleArrayAccess.leftSquareBracketToken.span.startIndex,
 		);
+
 		if (!!tleArrayAccess.rightSquareBracketToken) {
 			highlightCharacterIndexes.push(
 				tleArrayAccess.rightSquareBracketToken.span.startIndex,
@@ -1068,6 +1094,7 @@ export abstract class TleVisitor {
 		if (tleArrayAccess) {
 			assert(tleArrayAccess.source);
 			tleArrayAccess.source.accept(this);
+
 			if (tleArrayAccess.indexValue) {
 				tleArrayAccess.indexValue.accept(this);
 			}
@@ -1141,8 +1168,11 @@ export class Parser {
 		);
 
 		let leftSquareBracketToken: Token | undefined;
+
 		let expression: Value | undefined;
+
 		let rightSquareBracketToken: Token | undefined;
+
 		let errors: Issue[] = [];
 
 		if (
@@ -1193,6 +1223,7 @@ export class Parser {
 					) {
 						rightSquareBracketToken = tokenizer.current;
 						tokenizer.next();
+
 						break;
 					} else {
 						errors.push(
@@ -1229,6 +1260,7 @@ export class Parser {
 
 				if (!expression) {
 					let errorSpan: Span = leftSquareBracketToken.span;
+
 					if (!!rightSquareBracketToken) {
 						errorSpan = errorSpan.union(
 							rightSquareBracketToken.span,
@@ -1258,11 +1290,14 @@ export class Parser {
 		errors: Issue[],
 	): Value | undefined {
 		let expression: Value;
+
 		if (tokenizer.current) {
 			let rootExpression: Value | undefined; // Initial expression
 
 			let token = tokenizer.current;
+
 			let tokenType = token.getType();
+
 			if (tokenType === TokenType.Literal) {
 				rootExpression = Parser.parseFunctionCall(tokenizer, errors);
 			} else if (tokenType === TokenType.QuotedString) {
@@ -1310,6 +1345,7 @@ export class Parser {
 				tokenizer.next();
 
 				let propertyNameToken: Token | undefined;
+
 				let errorSpan: Span | undefined;
 
 				if (<Token | undefined>tokenizer.current) {
@@ -1320,6 +1356,7 @@ export class Parser {
 						errorSpan = tokenizer.current.span;
 
 						let tokenType = tokenizer.current.getType();
+
 						if (
 							tokenType !== TokenType.RightParenthesis &&
 							tokenType !== TokenType.RightSquareBracket &&
@@ -1363,6 +1400,7 @@ export class Parser {
 				);
 
 				let rightSquareBracketToken: Token | undefined;
+
 				if (
 					<Token | undefined>tokenizer.current &&
 					tokenizer.current.getType() === TokenType.RightSquareBracket
@@ -1401,7 +1439,9 @@ export class Parser {
 		assert(errors);
 
 		let namespaceToken: Token | undefined;
+
 		let nameToken: Token | undefined;
+
 		let periodToken: Token | undefined;
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted
@@ -1440,8 +1480,11 @@ export class Parser {
 		}
 
 		let leftParenthesisToken: Token | undefined;
+
 		let rightParenthesisToken: Token | undefined;
+
 		let commaTokens: Token[] = [];
+
 		let argumentExpressions: (Value | undefined)[] = [];
 
 		// tslint:disable-next-line: strict-boolean-expressions
@@ -1451,6 +1494,7 @@ export class Parser {
 				if (tokenizer.current.getType() === TokenType.LeftParenthesis) {
 					leftParenthesisToken = tokenizer.current;
 					tokenizer.next();
+
 					break;
 				} else if (
 					tokenizer.current.getType() === TokenType.RightSquareBracket
@@ -1463,6 +1507,7 @@ export class Parser {
 							IssueKind.tleSyntax,
 						),
 					);
+
 					break;
 				} else {
 					errors.push(
@@ -1498,6 +1543,7 @@ export class Parser {
 					break;
 				} else if (expectingArgument) {
 					let expression = Parser.parseExpression(tokenizer, errors);
+
 					if (
 						!expression &&
 						tokenizer.hasCurrent() &&
@@ -1538,6 +1584,7 @@ export class Parser {
 				)
 			) {
 				argumentExpressions.push(undefined);
+
 				let errorSpan: Span;
 				// tslint:disable-next-line: strict-boolean-expressions
 				if (tokenizer.current) {
@@ -1571,6 +1618,7 @@ export class Parser {
 				case TokenType.RightParenthesis:
 					rightParenthesisToken = tokenizer.current;
 					tokenizer.next();
+
 					break;
 
 				case TokenType.RightSquareBracket:
@@ -1591,6 +1639,7 @@ export class Parser {
 			namespaceToken || nameToken,
 			"Should have had a namespace or a name",
 		);
+
 		return new FunctionCallValue(
 			namespaceToken,
 			periodToken,
@@ -1676,17 +1725,21 @@ export class TleParseResult {
 		let result: Value | undefined;
 
 		let current: Value | undefined = this._expression;
+
 		if (current && current.contains(characterIndex)) {
 			while (!result) {
 				const currentValue: Value = current;
+
 				if (currentValue instanceof FunctionCallValue) {
 					assert(currentValue.argumentExpressions);
+
 					for (const argumentExpression of currentValue.argumentExpressions) {
 						if (
 							argumentExpression &&
 							argumentExpression.contains(characterIndex)
 						) {
 							current = argumentExpression;
+
 							break;
 						}
 					}
@@ -1742,15 +1795,18 @@ export class Tokenizer {
 		assert(Utilities.isQuoteCharacter(stringValue[0]));
 
 		const initialQuoteCharacter: string = stringValue[0];
+
 		const trimmedLength: number =
 			stringValue.length -
 			(stringValue.endsWith(initialQuoteCharacter) ? 2 : 1);
+
 		const trimmedString: string = stringValue.substr(1, trimmedLength);
 
 		const tt = new Tokenizer(
 			new basic.Tokenizer(trimmedString),
 			stringValue,
 		);
+
 		return tt;
 	}
 
@@ -1793,7 +1849,9 @@ export class Tokenizer {
 		}
 
 		this._current = undefined;
+
 		const currentBasicToken = this.currentBasicToken;
+
 		if (currentBasicToken) {
 			switch (currentBasicToken.getType()) {
 				case basic.TokenType.LeftParenthesis:
@@ -1801,6 +1859,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
+
 					break;
 
 				case basic.TokenType.RightParenthesis:
@@ -1808,6 +1867,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
+
 					break;
 
 				case basic.TokenType.LeftSquareBracket:
@@ -1815,6 +1875,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
+
 					break;
 
 				case basic.TokenType.RightSquareBracket:
@@ -1822,6 +1883,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
+
 					break;
 
 				case basic.TokenType.Comma:
@@ -1829,6 +1891,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
+
 					break;
 
 				case basic.TokenType.Period:
@@ -1836,6 +1899,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 					);
 					this.nextBasicToken();
+
 					break;
 
 				case basic.TokenType.Space:
@@ -1849,6 +1913,7 @@ export class Tokenizer {
 							Json.readWhitespace(this._basicTokenizer),
 						),
 					);
+
 					break;
 
 				case basic.TokenType.DoubleQuote:
@@ -1858,6 +1923,7 @@ export class Tokenizer {
 							Json.readQuotedString(this._basicTokenizer),
 						),
 					);
+
 					break;
 
 				case basic.TokenType.SingleQuote:
@@ -1867,6 +1933,7 @@ export class Tokenizer {
 							readQuotedTLEString(this._basicTokenizer),
 						),
 					);
+
 					break;
 
 				case basic.TokenType.Dash:
@@ -1877,6 +1944,7 @@ export class Tokenizer {
 							Json.readNumber(this._basicTokenizer),
 						),
 					);
+
 					break;
 
 				default:
@@ -1900,6 +1968,7 @@ export class Tokenizer {
 						this._currentTokenStartIndex,
 						Utilities.getCombinedText(literalTokens),
 					);
+
 					break;
 			}
 		}
@@ -1910,6 +1979,7 @@ export class Tokenizer {
 	public next(): boolean {
 		const result = !!this.readToken();
 		this.skipWhitespace();
+
 		return result;
 	}
 
@@ -2060,6 +2130,7 @@ export function readQuotedTLEString(
 	iterator.moveNext();
 
 	let escaped: boolean = false;
+
 	while (iterator.current()) {
 		// tslint:disable-next-line:no-non-null-assertion // guaranteed by while
 		const current = iterator.current()!;
@@ -2074,13 +2145,16 @@ export function readQuotedTLEString(
 				// If the next token is also a single quote, it's escaped, otherwise it's the
 				// end of the string.
 				iterator.moveNext();
+
 				const afterCurrent = iterator.current();
+
 				if (!afterCurrent) {
 					break;
 				}
 
 				if (afterCurrent.getType() === basic.TokenType.SingleQuote) {
 					escaped = true;
+
 					continue;
 				} else {
 					break;

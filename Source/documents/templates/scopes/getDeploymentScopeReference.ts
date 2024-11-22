@@ -11,7 +11,9 @@ export function getDeploymentScopeReference(
 	schemaStringValue: Json.StringValue | undefined,
 ): IDeploymentSchemaReference {
 	const schemaUri = schemaStringValue?.unquotedValue;
+
 	const matchingInfo = schemaUri ? findSchemaInfo(schemaUri) : undefined;
+
 	return {
 		//schemaUri: schemaUri ?? '',
 		schemaStringValue,

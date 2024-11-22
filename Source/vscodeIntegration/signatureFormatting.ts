@@ -17,10 +17,13 @@ export function getUserFunctionUsage(
 	const name = includeNamespaceName
 		? func.fullName
 		: func.nameValue.unquotedValue;
+
 	const params: UserFunctionParameterDefinition[] = func.parameterDefinitions;
+
 	const outputType: ExpressionType | undefined = func.output
 		? func.output.validOutputType
 		: undefined;
+
 	return getFunctionUsage(name, params, outputType);
 }
 
@@ -30,8 +33,10 @@ export function getFunctionUsage(
 	outputTypeAsString: string | null | undefined,
 ): string {
 	let usage: string = `${name}(${params.map((p) => getFunctionParamUsage(p.nameValue.unquotedValue, p.validType)).join(", ")})`;
+
 	let outputType: ExpressionType | undefined =
 		toValidExpressionType(outputTypeAsString);
+
 	if (outputType) {
 		usage += ` [${outputType}]`;
 	}
@@ -44,5 +49,6 @@ export function getFunctionParamUsage(
 ): string {
 	const paramType: ExpressionType | undefined =
 		toValidExpressionType(typeAsString);
+
 	return paramType ? `${name} [${paramType}]` : name;
 }

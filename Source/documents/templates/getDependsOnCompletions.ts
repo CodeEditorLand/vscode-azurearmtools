@@ -25,7 +25,9 @@ export function getDependsOnCompletions(
 	pc: TemplatePositionContext,
 ): Completion.Item[] {
 	const completions: Completion.Item[] = [];
+
 	let span: Span;
+
 	if (pc.jsonToken?.type === Json.TokenType.QuotedString) {
 		// We're already inside a JSON string.  The completion should replace the entire string because it's
 		// not likely the user would want anything else
@@ -41,7 +43,9 @@ export function getDependsOnCompletions(
 	}
 
 	const scope = pc.getScope();
+
 	const infos = getResourcesInfo({ scope, recognizeDecoupledChildren: true });
+
 	if (infos.length === 0) {
 		return completions;
 	}
@@ -89,13 +93,17 @@ function getDependsOnCompletionsForResource(
 		const friendlyNameExpression = resource.getFriendlyNameExpression({
 			fullName: false,
 		});
+
 		let friendlyTypeExpression = resource.getFriendlyTypeExpression({
 			fullType: false,
 		});
 
 		const label = friendlyNameExpression;
+
 		const insertText = `"[${resourceIdExpression}]"`;
+
 		const detail = friendlyTypeExpression;
+
 		const documentation = `Inserts this resourceId reference:\n\`\`\`arm-template\n"[${resourceIdExpression}]"\n\`\`\`\n<br/>`;
 
 		const item = new Completion.Item({
@@ -116,12 +124,16 @@ function getDependsOnCompletionsForResource(
 		const copyName = resource.copyBlockElement?.getPropertyValue(
 			templateKeys.copyName,
 		)?.asStringValue?.unquotedValue;
+
 		if (copyName) {
 			const copyNameExpression = jsonStringToTleExpression(copyName);
+
 			const copyLabel = `Loop ${getFriendlyExpressionFromTleExpression(copyNameExpression)}`;
+
 			const copyInsertText = isTleExpression(copyName)
 				? `"[${copyNameExpression}]"`
 				: `"${copyName}"`;
+
 			const copyDetail = detail;
 			// tslint:disable-next-line: prefer-template
 			const copyDocumentation = `Inserts this COPY element reference:
@@ -160,6 +172,7 @@ function findClosestEnclosingResource(
 	const firstMatch = infos.find((info) =>
 		info.resourceObject.span.contains(documentIndex, containsBehavior),
 	);
+
 	if (firstMatch) {
 		// We found an arbitrary resource that contains this position.  Find the deepest child that still contains it
 		let deepestMatch = firstMatch;
@@ -176,6 +189,7 @@ function findClosestEnclosingResource(
 				childrenContainingResource.length <= 1,
 				"Shouldn't find multiple children containing the document position",
 			);
+
 			if (childrenContainingResource.length > 0) {
 				deepestMatch = <IJsonResourceInfo>childrenContainingResource[0];
 			} else {
@@ -193,6 +207,7 @@ function findDescendentsIncludingSelf(
 	const descendentsIncludingSelf: Set<IResourceInfo> =
 		new Set<IResourceInfo>();
 	visit(resource);
+
 	return descendentsIncludingSelf;
 
 	function visit(res: IResourceInfo | undefined): void {

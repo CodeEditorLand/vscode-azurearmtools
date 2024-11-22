@@ -16,12 +16,15 @@ export function __debugMarkPositionInString(
 ): string {
 	if (position >= text.length) {
 		const textAtEnd = `${text.slice(text.length - charactersAfterPosition)}<END(${text.length})>`;
+
 		return `${textAtEnd}...<CURSOR=${position}>`;
 	}
 	const preTextIndex = position - charactersBeforePosition;
+
 	const preText = `${preTextIndex > 0 ? "..." : ""}${text.slice(preTextIndex >= 0 ? preTextIndex : 0, position)}`;
 
 	const postStart = position;
+
 	const postTextIndex =
 		text.slice(postStart, postStart + charactersAfterPosition) +
 		(postStart > charactersAfterPosition ? "..." : "");
@@ -52,9 +55,11 @@ export function __debugMarkRangeInString(
 		);
 	}
 	const preTextIndex = position - charactersBeforePosition;
+
 	const preText = `${preTextIndex > 0 ? "..." : ""}${text.slice(preTextIndex >= 0 ? preTextIndex : 0, position)}`;
 
 	const postTextIndex = position + length;
+
 	const postText =
 		text.slice(postTextIndex, postTextIndex + charactersAfterPosition) +
 		(postTextIndex > charactersAfterPosition ? "..." : "");

@@ -17,9 +17,12 @@ export function normalizeFilePath(filePath: Uri | string): string {
 		typeof filePath === "string" || !filePath.query
 			? ""
 			: `?${filePath.query}`;
+
 	const fsPath: string =
 		typeof filePath === "string" ? filePath : filePath.fsPath;
+
 	let normalizedPath = path.normalize(fsPath);
+
 	if (isWin32) {
 		normalizedPath = normalizedPath.toLowerCase();
 	}
@@ -37,6 +40,7 @@ export function normalizeUri(pathOrUri: Uri | string): string {
 
 	if (typeof pathOrUri === "string") {
 		let normalizedPath = path.normalize(pathOrUri);
+
 		if (isWin32) {
 			normalizedPath = normalizedPath.toLowerCase();
 		}

@@ -17,6 +17,7 @@ import { parseUri } from './util/uri';
 //
 
 const linkToSurvey = 'https://aka.ms/arm-tools-survey';
+
 const surveyPrompt = "Could you please take 2 minutes to tell us how well the Azure Resource Manager Tools extension is working for you?";
 
 const stateKeys = globalStateKeys.survey;
@@ -40,6 +41,7 @@ const defaultSurveyConstants: ISurveyConstants = {
     msToPostponeAfterNotSelected: weeksToMs(12),
     msToPostponeAfterNotAccessible: hoursToMs(1)
 };
+
 const debugSurveyConstants: ISurveyConstants = {
     activeUsageMsBeforeSurvey: minutesToMs(1),
     percentageOfUsersToSurvey: 0.5,
@@ -55,7 +57,9 @@ let surveyConstants: ISurveyConstants = defaultSurveyConstants;
 let usageSessionStart: number | undefined;
 
 let isReentrant = false;
+
 let surveyDisabled = false;
+
 let isDebugMode = false;
 
 export namespace survey {
@@ -73,6 +77,7 @@ export namespace survey {
                 return;
             }
             isReentrant = true;
+
             try {
                 await checkForDebugMode(context);
 
@@ -82,6 +87,7 @@ export namespace survey {
 
                 const neverShowSurvey = getShouldNeverShowSurvey();
                 context.telemetry.properties.neverShowSurvey = String(neverShowSurvey);
+
                 if (neverShowSurvey) {
                     surveyDisabled = true;
                     context.telemetry.suppressIfSuccessful = false; // Allow this single telemetry event
@@ -90,6 +96,7 @@ export namespace survey {
 
                 const sessionLengthMs = getSessionLengthMs(context);
                 context.telemetry.properties.sessionLength = String(sessionLengthMs);
+
                 if (sessionLengthMs < surveyConstants.activeUsageMsBeforeSurvey) {
                     return;
                 }
@@ -103,14 +110,17 @@ export namespace survey {
 
                 const accessible = await getIsSurveyAccessible();
                 context.telemetry.properties.accessible = String(accessible);
+
                 if (!accessible) {
                     // Try again after a while
                     await postponeSurvey(context, surveyConstants.msToPostponeAfterNotAccessible);
+
                     return;
                 }
 
                 const isSelected = getIsUserSelected();
                 context.telemetry.properties.isSelected = String(isSelected);
+
                 if (isSelected) {
                     await requestTakeSurvey(context);
                 } else {
@@ -144,8 +154,11 @@ async function checkForDebugMode(context: IActionContext): Promise<void> {
 
 async function requestTakeSurvey(context: IActionContext): Promise<void> {
     const neverAsk: MessageItem = { title: "Never ask again" };
+
     const later: MessageItem = { title: "Later" };
+
     const yes: MessageItem = { title: "Yes" };
+
     const dismissed: MessageItem = { title: "(dismissed)" };
 
     const response = await window.showInformationMessage(surveyPrompt, neverAsk, later, yes)
@@ -176,9 +189,11 @@ function getIsUserSelected(): boolean {
 
 async function postponeSurvey(context: IActionContext, milliseconds: number): Promise<void> {
     assert(milliseconds > 0);
+
     let untilTimeMs = Date.now() + milliseconds;
 
     const currentPostpone = ext.context.globalState.get<number>(stateKeys.surveyPostponedUntilTime, 0);
+
     if (Number.isInteger(currentPostpone)) {
         untilTimeMs = Math.max(currentPostpone, untilTimeMs);
     }
@@ -190,6 +205,7 @@ async function postponeSurvey(context: IActionContext, milliseconds: number): Pr
 async function getIsSurveyAccessible(): Promise<boolean> {
     try {
         const response = await httpGet(linkToSurvey);
+
         return !!response;
     } catch (err) {
         return false;
@@ -202,6 +218,7 @@ function getShouldNeverShowSurvey(): boolean {
 
 function getIsSurveyPostponed(): boolean {
     const postponedUntilTime = ext.context.globalState.get<number>(stateKeys.surveyPostponedUntilTime, 0);
+
     return postponedUntilTime > Date.now();
 }
 
@@ -209,6 +226,7 @@ function getSessionLengthMs(context: IActionContext): number {
     if (usageSessionStart === undefined) {
         // Session just started
         usageSessionStart = Date.now();
+
         return 0;
     } else {
         return Date.now() - usageSessionStart;

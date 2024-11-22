@@ -35,11 +35,13 @@ export class ReferenceInVariableDefinitionsVisitor extends Json.Visitor {
 			this._deploymentTemplate.getTLEParseResultFromJsonStringValue(
 				value,
 			);
+
 		if (tleParseResult.parseResult.expression) {
 			const tleVisitor = new ReferenceInVariableDefinitionTLEVisitor();
 			tleParseResult.parseResult.expression.accept(tleVisitor);
 
 			const jsonValueStartIndex: number = value.startIndex;
+
 			for (const tleReferenceSpan of tleVisitor.referenceSpans) {
 				this._referenceSpans.push(
 					tleReferenceSpan.translate(jsonValueStartIndex),
