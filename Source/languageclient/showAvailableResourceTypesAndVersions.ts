@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 import { callWithTelemetryAndErrorHandlingSync } from "@microsoft/vscode-azext-utils";
+
 import { ext } from "../extensionVariables";
 import { CaseInsensitiveMap } from "../util/CaseInsensitiveMap";
 import { getAvailableResourceTypesAndVersionsNoThrow } from "./getAvailableResourceTypesAndVersionsNoThrow";

@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 import { callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
+
 import { ext } from "../extensionVariables";
 import { assert } from "../fixed_assert";
 import { CaseInsensitiveMap } from "../util/CaseInsensitiveMap";
