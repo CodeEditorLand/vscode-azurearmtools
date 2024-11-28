@@ -83,26 +83,47 @@ export class Token {
 }
 
 export const LeftCurlyBracket = new Token("{", TokenType.LeftCurlyBracket);
+
 export const RightCurlyBracket = new Token("}", TokenType.RightCurlyBracket);
+
 export const LeftSquareBracket = new Token("[", TokenType.LeftSquareBracket);
+
 export const RightSquareBracket = new Token("]", TokenType.RightSquareBracket);
+
 export const LeftParenthesis = new Token("(", TokenType.LeftParenthesis);
+
 export const RightParenthesis = new Token(")", TokenType.RightParenthesis);
+
 export const Underscore = new Token("_", TokenType.Underscore);
+
 export const Period = new Token(".", TokenType.Period);
+
 export const Dash = new Token("-", TokenType.Dash);
+
 export const Plus = new Token("+", TokenType.Plus);
+
 export const Comma = new Token(",", TokenType.Comma);
+
 export const Colon = new Token(":", TokenType.Colon);
+
 export const SingleQuote = new Token(`'`, TokenType.SingleQuote);
+
 export const DoubleQuote = new Token(`"`, TokenType.DoubleQuote);
+
 export const Backslash = new Token("\\", TokenType.Backslash);
+
 export const ForwardSlash = new Token("/", TokenType.ForwardSlash);
+
 export const Asterisk = new Token("*", TokenType.Asterisk);
+
 export const Space = new Token(" ", TokenType.Space);
+
 export const Tab = new Token("\t", TokenType.Tab);
+
 export const NewLine = new Token("\n", TokenType.NewLine);
+
 export const CarriageReturn = new Token("\r", TokenType.CarriageReturn);
+
 export const CarriageReturnNewLine = new Token(
 	"\r\n",
 	TokenType.CarriageReturnNewLine,

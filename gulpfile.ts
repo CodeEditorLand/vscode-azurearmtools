@@ -591,20 +591,28 @@ exports["webpack-dev"] = gulp.series(
 	() => gulp_webpack("development"),
 	buildGrammars,
 );
+
 exports["webpack-prod"] = gulp.series(
 	() => gulp_webpack("production"),
 	buildGrammars,
 );
+
 exports.pretest = gulp.series(pretest);
+
 exports["build-grammars"] = buildGrammars;
+
 exports["watch-grammars"] = (): unknown =>
 	gulp.watch("grammars/**", buildGrammars);
+
 exports["get-language-server"] = getLanguageServer;
+
 exports.package = packageVsix;
+
 exports["error-vsce-package"] = (): never => {
 	throw new Error(
 		`Please do not run vsce package, instead use 'npm run package`,
 	);
 };
+
 exports["verify-test-uses-extension-bundle"] = (): Promise<void> =>
 	verifyTestsReferenceOnlyExtensionBundle(path.resolve("test"));

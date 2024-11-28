@@ -16,6 +16,7 @@ export const isWebpack: boolean = !!/^(false|0)?$/i.test(
 console.log(`isWebpack: ${isWebpack}`);
 
 export const isWin32: boolean = os.platform() === "win32";
+
 export const isCaseSensitiveFileSystem: boolean = !isWin32;
 
 let base = __dirname;
@@ -31,7 +32,9 @@ while (true) {
 	assert(base != "", "Could not find base project path");
 }
 export const assetsPath = base;
+
 export const basePath = path.join(assetsPath, "..");
+
 export const iconsPath = path.join(basePath, "icons");
 assert(fs.existsSync(assetsPath), "Assets path does not exist: " + assetsPath);
 
@@ -45,14 +48,20 @@ export namespace documentSchemes {
 }
 
 export const languageServerName = "ARM Template Language Server";
+
 export const languageFriendlyName = "Azure Resource Manager Template";
+
 export const armTemplateLanguageId = "arm-template";
+
 export const languageServerFolderName = "languageServer";
+
 export const extensionName = "Azure Resource Manager Tools";
+
 export const outputChannelName = extensionName;
 
 // String that shows up in our errors as the source in parentheses
 export const expressionsDiagnosticsSource = "arm-template (expressions)";
+
 export const backendValidationDiagnosticsSource = "arm-template (validation)";
 
 // Source string for errors related to the language server starting up or failing
@@ -139,6 +148,7 @@ export namespace globalStateKeys {
 
 // For testing: We create a diagnostic with this message during testing to indicate when all (expression) diagnostics have been calculated
 export const diagnosticsCompletePrefix = "Diagnostics complete: ";
+
 export const expressionsDiagnosticsCompletionMessage =
 	diagnosticsCompletePrefix + expressionsDiagnosticsSource;
 
