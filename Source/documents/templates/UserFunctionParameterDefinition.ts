@@ -74,6 +74,7 @@ export class UserFunctionParameterDefinition implements IParameterDefinition {
 	}
 
 	public readonly description: string | undefined;
+
 	public readonly defaultValue: Json.Value | undefined;
 
 	public get usageInfo(): IUsageInfo {

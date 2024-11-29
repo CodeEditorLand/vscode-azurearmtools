@@ -39,6 +39,7 @@ export class AzureRMAssets {
 			AzureRMAssets._functionsMetadata = undefined;
 		} else {
 			let array = BuiltinFunctionMetadata.fromString(metadataString);
+
 			AzureRMAssets._functionsMetadata = new FunctionsMetadata(array);
 		}
 	}
@@ -51,6 +52,7 @@ export class AzureRMAssets {
 
 			let array: BuiltinFunctionMetadata[] =
 				BuiltinFunctionMetadata.fromString(contents);
+
 			AzureRMAssets._functionsMetadata = new FunctionsMetadata(array);
 		}
 
@@ -123,10 +125,13 @@ export class BuiltinFunctionMetadata
 {
 	// tslint:disable-next-line: no-unnecessary-field-initialization
 	public readonly nameValue: StringValue | undefined = undefined;
+
 	public definitionKind: DefinitionKind = DefinitionKind.BuiltinFunction;
 
 	private readonly _name: string;
+
 	private readonly _lowerCaseName: string;
+
 	private readonly _returnType: ExpressionType | undefined;
 
 	constructor(
@@ -142,6 +147,7 @@ export class BuiltinFunctionMetadata
 
 		// tslint:disable-next-line: strict-boolean-expressions
 		this._name = name || "";
+
 		this._lowerCaseName = this._name.toLowerCase();
 
 		// CONSIDER: Our metadata doesn't currently give the return type
@@ -234,6 +240,7 @@ export class BuiltinFunctionMetadata
 		} catch (e) {
 			metadataJSON = { functionSignatures: [] };
 		}
+
 		return BuiltinFunctionMetadata.fromJSON(metadataJSON);
 	}
 
@@ -254,6 +261,7 @@ export class BuiltinFunctionMetadata
 							returnValueMembers.push(returnValueMember.name);
 						}
 					}
+
 					returnValueMembers.sort();
 
 					result.push(
@@ -279,14 +287,19 @@ interface FunctionMetadataContract {
 	functionSignatures: {
 		// These are validated via the ExpressionMetadata.schema.json file when editing ExpressionMetadata.json
 		name: string;
+
 		expectedUsage: string;
+
 		description: string;
+
 		minimumArguments: number;
+
 		maximumArguments: number | null;
 
 		returnValueMembers?: {
 			name: string;
 		}[];
+
 		behaviors: FunctionBehaviors[] | null;
 	}[];
 }

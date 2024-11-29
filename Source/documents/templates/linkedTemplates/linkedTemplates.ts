@@ -38,8 +38,11 @@ import { ILinkedTemplateReference } from "./ILinkedTemplateReference";
  */
 export interface IRequestOpenLinkedFileArgs {
 	sourceTemplateUri: string;
+
 	requestedLinkOriginalUri: string;
+
 	requestedLinkResolvedUri: string;
+
 	pathType: PathType;
 }
 
@@ -49,6 +52,7 @@ export interface IRequestOpenLinkedFileArgs {
 export interface IRequestOpenLinkedFileResult {
 	// Corresonds to OpenLinkedFileRequest.Result in language server
 	loadErrorMessage?: string;
+
 	content?: string;
 }
 
@@ -60,15 +64,21 @@ enum PathType {
 
 export interface IFullValidationStatus {
 	fullValidationEnabled: boolean;
+
 	allParametersHaveDefaults: boolean;
+
 	hasParameterFile: boolean;
 }
 
 export interface INotifyTemplateGraphArgs {
 	rootTemplateUri: string;
+
 	rootTemplateDocVersion: number;
+
 	linkedTemplates: ILinkedTemplateReference[];
+
 	fullValidationStatus: IFullValidationStatus;
+
 	isComplete: boolean; // If there were validation errors, the graph might not be complete
 }
 
@@ -100,13 +110,19 @@ export async function onRequestOpenLinkedFile({
 			const properties = <
 				TelemetryProperties & {
 					openResult: "Loaded" | "Error";
+
 					openErrorType: string;
+
 					fileScheme: string;
+
 					hasQuery: string;
+
 					uriHasSas: string;
 				}
 			>context.telemetry.properties;
+
 			properties.openErrorType = "";
+
 			properties.openResult = "Error";
 
 			let requestedLinkUri: Uri;
@@ -118,7 +134,9 @@ export async function onRequestOpenLinkedFile({
 			}
 
 			properties.fileScheme = requestedLinkUri.scheme;
+
 			properties.hasQuery = String(!!requestedLinkUri.query);
+
 			properties.uriHasSas = String(
 				!!requestedLinkUri.query.match("[&?]sig="),
 			);
@@ -148,6 +166,7 @@ export async function onRequestOpenLinkedFile({
 					properties.openResult = "Loaded";
 				} else {
 					const parsedError = parseError(result.loadError);
+
 					properties.openErrorType = parsedError.errorType;
 				}
 
@@ -164,11 +183,13 @@ export async function onRequestOpenLinkedFile({
 						context,
 						true,
 					);
+
 					properties.openResult = "Loaded";
 
 					return { content };
 				} catch (error) {
 					const parsedError = parseError(error);
+
 					properties.openErrorType = parsedError.errorType;
 
 					return { loadErrorMessage: parsedError.message };
@@ -194,6 +215,7 @@ export async function tryLoadNonLocalLinkedFile(
 		const error = <
 			Errorish & { statusMessage?: string; statusCode?: number }
 		>err;
+
 		error.message = String(
 			error.message ?? error.statusMessage ?? error.statusCode,
 		);
@@ -208,6 +230,7 @@ export async function tryLoadNonLocalLinkedFile(
 	// We need to place it into our docs immediately because our text document content provider will be queried
 	// for content before we get the document open event
 	const dt = new DeploymentTemplateDoc(content, newUri, 0);
+
 	ext.provideOpenedDocuments.setOpenedDeploymentDocument(newUri, dt);
 
 	if (open) {
@@ -250,6 +273,7 @@ async function tryOpenLocalLinkedFile(
 
 		if (document.languageId !== armTemplateLanguageId) {
 			// ext.outputChannel.appendLine(`... Setting langid to ${armTemplateLanguageId}`);
+
 			context.telemetry.properties.isLinkedTemplate = "true";
 
 			setLangIdToArm(document, context);
@@ -327,16 +351,20 @@ export async function openLinkedTemplateFileCommand(
 	actionContext: IActionContext,
 ): Promise<void> {
 	let targetUri: Uri;
+
 	actionContext.telemetry.properties.scheme = linkedTemplateUri.scheme;
+
 	actionContext.telemetry.properties.uriHasQuery = String(
 		!!linkedTemplateUri.query,
 	);
+
 	actionContext.telemetry.properties.uriHasSas = String(
 		!!linkedTemplateUri.query.match("[&?]sig="),
 	);
 
 	if (linkedTemplateUri.scheme === documentSchemes.file) {
 		const exists = await pathExistsNoThrow(linkedTemplateUri);
+
 		actionContext.telemetry.properties.exists = String(exists);
 
 		if (!exists) {
@@ -350,6 +378,7 @@ export async function openLinkedTemplateFileCommand(
 
 			if (response === DialogResponses.yes) {
 				await fse.mkdirs(path.dirname(fsPath));
+
 				await fse.writeFile(fsPath, "", {});
 			} else {
 				return;
@@ -364,6 +393,7 @@ export async function openLinkedTemplateFileCommand(
 	const doc = await workspace.openTextDocument(targetUri);
 
 	setLangIdToArm(doc, actionContext);
+
 	await window.showTextDocument(doc);
 }
 
@@ -372,10 +402,12 @@ export async function reloadLinkedTemplateFileCommand(
 	actionContext: IActionContext,
 ): Promise<void> {
 	let targetUri: Uri;
+
 	actionContext.telemetry.properties.scheme = linkedTemplateUri.scheme;
 
 	if (linkedTemplateUri.scheme === documentSchemes.file) {
 		const exists = await pathExistsNoThrow(linkedTemplateUri);
+
 		actionContext.telemetry.properties.exists = String(exists);
 
 		if (!exists) {
@@ -402,6 +434,7 @@ export async function reloadLinkedTemplateFileCommand(
 	const doc = await workspace.openTextDocument(targetUri);
 
 	setLangIdToArm(doc, actionContext);
+
 	await window.showTextDocument(doc);
 }
 

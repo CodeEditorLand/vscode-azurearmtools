@@ -19,6 +19,7 @@ export interface IParameterDefinition extends INamedDefinition {
 
 	// tslint:disable-next-line:no-reserved-keywords
 	type: Json.Value | undefined;
+
 	validType: ExpressionType | undefined;
 
 	/**

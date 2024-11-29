@@ -32,18 +32,23 @@ class ExtensionVariables {
 
 	private _context: InitializeBeforeUse<vscode.ExtensionContext> =
 		new InitializeBeforeUse<vscode.ExtensionContext>("_context");
+
 	private _jsonOutlineProvider: InitializeBeforeUse<JsonOutlineProvider> =
 		new InitializeBeforeUse<JsonOutlineProvider>("_jsonOutlineProvider");
+
 	private _outputChannel: InitializeBeforeUse<IAzExtOutputChannel> =
 		new InitializeBeforeUse<IAzExtOutputChannel>("_outputChannel");
+
 	private _languageServerState: LanguageServerState =
 		LanguageServerState.NotStarted;
+
 	private _languageServerStateEmitter: vscode.EventEmitter<void> =
 		new vscode.EventEmitter<void>();
 
 	public set context(context: vscode.ExtensionContext) {
 		this._context.value = context;
 	}
+
 	public get context(): vscode.ExtensionContext {
 		return this._context.value;
 	}
@@ -51,6 +56,7 @@ class ExtensionVariables {
 	public set jsonOutlineProvider(context: JsonOutlineProvider) {
 		this._jsonOutlineProvider.value = context;
 	}
+
 	public get jsonOutlineProvider(): JsonOutlineProvider {
 		return this._jsonOutlineProvider.value;
 	}
@@ -58,26 +64,33 @@ class ExtensionVariables {
 	public set outputChannel(outputChannel: IAzExtOutputChannel) {
 		this._outputChannel.value = outputChannel;
 	}
+
 	public get outputChannel(): IAzExtOutputChannel {
 		return this._outputChannel.value;
 	}
 
 	public EOL: string = os.EOL;
+
 	public pathSeparator: string = path.sep;
+
 	public provideOpenedDocuments: IProvideOpenedDocuments | undefined;
 
 	public readonly ignoreBundle: boolean = !isWebpack;
 
 	public languageServerClient: LanguageClient | undefined;
+
 	public set languageServerState(value: LanguageServerState) {
 		if (this._languageServerState !== value) {
 			this._languageServerState = value;
+
 			this._languageServerStateEmitter.fire();
 		}
 	}
+
 	public get languageServerState(): LanguageServerState {
 		return this._languageServerState;
 	}
+
 	public get languageServerStateChanged(): vscode.Event<void> {
 		return this._languageServerStateEmitter.event;
 	}
@@ -87,6 +100,7 @@ class ExtensionVariables {
 	public isLoadingSchema: boolean = false;
 
 	public extensionStartupComplete: boolean | undefined;
+
 	public extensionStartupError: string | undefined;
 
 	// Suite support - lets us know when diagnostics have been completely published for a file
@@ -102,8 +116,10 @@ class ExtensionVariables {
 	);
 
 	public readonly completionItemsSpy: CompletionsSpy = new CompletionsSpy();
+
 	public deploymentFileMapping: InitializeBeforeUse<DeploymentFileMapping> =
 		new InitializeBeforeUse<DeploymentFileMapping>("deploymentFileMapping");
+
 	public snippetManager: InitializeBeforeUse<ISnippetManager> =
 		new InitializeBeforeUse<ISnippetManager>("snippetManager", true);
 }

@@ -21,6 +21,7 @@ export function wrapError(outerMessage: string, innerError: unknown): Error {
 
 	if (innerError instanceof Error) {
 		const copy = cloneError(innerError);
+
 		copy.message = newMessage;
 
 		return copy;
@@ -40,5 +41,6 @@ function cloneError(error: Error): Error {
 			// Ignore
 		}
 	}
+
 	return copy;
 }

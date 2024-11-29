@@ -16,9 +16,11 @@ import { getChildTemplateForResourceObject } from "./scopes/templateScopes";
 export class Resource implements IResource {
 	private readonly _childTemplate: CachedValue<TemplateScope | undefined> =
 		new CachedValue<TemplateScope | undefined>();
+
 	private readonly _nameValueCache: CachedValue<
 		Json.StringValue | undefined
 	> = new CachedValue<Json.StringValue | undefined>();
+
 	private readonly _resTypeCache: CachedValue<Json.StringValue | undefined> =
 		new CachedValue<Json.StringValue | undefined>();
 

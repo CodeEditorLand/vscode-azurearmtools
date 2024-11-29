@@ -31,10 +31,15 @@ const stateKeys = globalStateKeys.survey;
 // considering asking the survey (only if still interacting with extension)
 interface ISurveyConstants {
 	activeUsageMsBeforeSurvey: number;
+
 	percentageOfUsersToSurvey: number;
+
 	msToPostponeAfterYes: number;
+
 	msToPostponeAfterLater: number;
+
 	msToPostponeAfterNotSelected: number;
+
 	msToPostponeAfterNotAccessible: number;
 }
 
@@ -83,6 +88,7 @@ export namespace survey {
 				if (isReentrant) {
 					return;
 				}
+
 				isReentrant = true;
 
 				try {
@@ -93,16 +99,19 @@ export namespace survey {
 					}
 
 					const neverShowSurvey = getShouldNeverShowSurvey();
+
 					context.telemetry.properties.neverShowSurvey =
 						String(neverShowSurvey);
 
 					if (neverShowSurvey) {
 						surveyDisabled = true;
+
 						context.telemetry.suppressIfSuccessful = false; // Allow this single telemetry event
 						return;
 					}
 
 					const sessionLengthMs = getSessionLengthMs(context);
+
 					context.telemetry.properties.sessionLength =
 						String(sessionLengthMs);
 
@@ -121,6 +130,7 @@ export namespace survey {
 					context.telemetry.suppressIfSuccessful = false;
 
 					const accessible = await getIsSurveyAccessible();
+
 					context.telemetry.properties.accessible =
 						String(accessible);
 
@@ -135,6 +145,7 @@ export namespace survey {
 					}
 
 					const isSelected = getIsUserSelected();
+
 					context.telemetry.properties.isSelected =
 						String(isSelected);
 
@@ -162,10 +173,12 @@ async function checkForDebugMode(context: IActionContext): Promise<void> {
 	if (!isDebugMode) {
 		if (ext.configuration.get<boolean>("debugSurvey")) {
 			isDebugMode = true;
+
 			surveyConstants = debugSurveyConstants;
 
 			// Turn off the never show flag (until user selects it again)
 			surveyDisabled = false;
+
 			await ext.context.globalState.update(
 				stateKeys.neverShowSurvey,
 				false,
@@ -194,6 +207,7 @@ async function requestTakeSurvey(context: IActionContext): Promise<void> {
 			later,
 			yes,
 		)) ?? dismissed;
+
 	context.telemetry.properties.response = String(response.title);
 
 	if (response === neverAsk) {
@@ -202,12 +216,14 @@ async function requestTakeSurvey(context: IActionContext): Promise<void> {
 		await postponeSurvey(context, surveyConstants.msToPostponeAfterLater);
 	} else if (response === yes) {
 		await postponeSurvey(context, surveyConstants.msToPostponeAfterYes);
+
 		await launchSurvey(context);
 	} else {
 		assert(
 			response === dismissed,
 			`Unexpected response: ${response.title}`,
 		);
+
 		await postponeSurvey(context, surveyConstants.msToPostponeAfterLater);
 	}
 }
@@ -239,6 +255,7 @@ async function postponeSurvey(
 	}
 
 	context.telemetry.properties.postpone = String(untilTimeMs - Date.now());
+
 	await ext.context.globalState.update(
 		stateKeys.surveyPostponedUntilTime,
 		untilTimeMs,

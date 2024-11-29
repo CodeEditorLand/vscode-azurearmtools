@@ -32,6 +32,7 @@ export class RenameCodeActionProvider implements vscode.CodeActionProvider {
 		if (!referenceSiteInfo || getRenameError(referenceSiteInfo)) {
 			return;
 		}
+
 		return [this.createCommand()];
 	}
 
@@ -40,6 +41,7 @@ export class RenameCodeActionProvider implements vscode.CodeActionProvider {
 			"Rename...",
 			vscode.CodeActionKind.RefactorRewrite,
 		);
+
 		action.command = { command: command, title: "" };
 
 		return action;

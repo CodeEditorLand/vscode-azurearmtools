@@ -33,6 +33,7 @@ export function getParentAndChildCodeLenses(
 		if (!!resource.parent) {
 			lenses.push(new ParentCodeLens(scope, resource));
 		}
+
 		if (resource.children.length > 0) {
 			lenses.push(new ChildrenCodeLens(scope, resource));
 		}
@@ -75,8 +76,10 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 		if (lensStartIndex > lensEndIndex) {
 			// The entire resource must be on a single line - start at the opening brace after all
 			lensStartIndex = resourceSpan.startIndex;
+
 			assert(lensStartIndex <= lensEndIndex);
 		}
+
 		return new Span(lensStartIndex, lensEndIndex - lensStartIndex);
 	}
 
@@ -96,6 +99,7 @@ export abstract class ParentOrChildCodeLens extends ResolvableCodeLens {
 						),
 					),
 			);
+
 			this.command = {
 				title: title,
 				command: "azurerm-vscode-tools.codeLens.gotoResources",
@@ -149,6 +153,7 @@ export class ChildrenCodeLens extends ParentOrChildCodeLens {
 					(<IJsonResourceInfo>child).getFriendlyResourceLabel({}),
 				)
 				.join(", ");
+
 			title = `${countOfChildrenTitle}: ${childrenLabels}`;
 		} else {
 			title = "No children";

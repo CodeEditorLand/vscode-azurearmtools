@@ -30,7 +30,9 @@ export class FormattedExpressionHoverInfo implements IHoverInfo {
 		formattedExpression = indentMultilineString(formattedExpression, 4);
 
 		const markdown = new MarkdownString();
+
 		markdown.appendMarkdown("Full expression:");
+
 		markdown.appendCodeblock(
 			`"[\n${formattedExpression}\n]"`,
 			"arm-template",

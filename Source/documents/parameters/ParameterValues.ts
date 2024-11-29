@@ -85,6 +85,7 @@ export function getParameterValuesCodeActions(
 					"Add missing required parameters",
 					CodeActionKind.QuickFix,
 				);
+
 				action.command = {
 					command:
 						"azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
@@ -98,6 +99,7 @@ export function getParameterValuesCodeActions(
 						},
 					],
 				};
+
 				actions.push(action);
 			}
 
@@ -107,6 +109,7 @@ export function getParameterValuesCodeActions(
 					"Add all missing parameters",
 					CodeActionKind.QuickFix,
 				);
+
 				action.command = {
 					command:
 						"azurerm-vscode-tools.codeAction.addAllMissingParameters",
@@ -120,6 +123,7 @@ export function getParameterValuesCodeActions(
 						},
 					],
 				};
+
 				actions.push(action);
 			}
 		}
@@ -199,6 +203,7 @@ export async function addMissingParameters(
 				break;
 			}
 		}
+
 		const insertIndex: number = lastTokenInParameters
 			? lastTokenInParameters.span.afterEndIndex
 			: parametersObjectValue.span.endIndex;
@@ -226,8 +231,10 @@ export async function addMissingParameters(
 				parentParameterDefinitions,
 				defaultTabSize,
 			);
+
 			paramsAsText.push(paramText);
 		}
+
 		let newText = paramsAsText.join(`,${EOL}`);
 
 		// Determine indentation
@@ -275,12 +282,14 @@ export async function addMissingParameters(
 			parameterValuesSource,
 			insertIndex,
 		);
+
 		assert(!commaEdit || commaEdit.span.endIndex <= insertIndex);
 
 		if (commaEdit?.span.startIndex === insertIndex) {
 			// vscode doesn't like both edits starting at the same location, so
 			//   just add the comma directly to the string (this is the common case)
 			commaEdit = undefined;
+
 			insertText = `,${insertText}`;
 		}
 
@@ -316,6 +325,7 @@ export function createEditToAddCommaBeforePosition(
 	if (newParamIndex > 0) {
 		const prevParameter =
 			parameterValuesSource.parameterValueDefinitions[newParamIndex - 1];
+
 		assert(prevParameter);
 
 		// Is there already a comma after the last parameter?
@@ -530,6 +540,7 @@ export function getPropertyValueCompletionItems(
 				),
 			);
 		}
+
 		completions.push(
 			getCompletionForNewParameter(parameterValuesSource, documentIndex),
 		);

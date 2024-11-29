@@ -22,20 +22,33 @@ export enum CompletionPriority {
  */
 export class Item {
 	public readonly label: string;
+
 	public readonly insertText: string;
+
 	public readonly span: Span;
+
 	public readonly kind: CompletionKind;
+
 	public readonly detail: string | undefined;
+
 	public readonly documention: string | vscode.MarkdownString | undefined;
+
 	public readonly snippetName: string | undefined;
+
 	public readonly additionalEdits:
 		| { span: Span; insertText: string }[]
 		| undefined;
+
 	public readonly sortText: string | undefined;
+
 	public readonly commitCharacters: string[] | undefined;
+
 	public readonly priority: CompletionPriority;
+
 	public readonly preselect: boolean;
+
 	public readonly filterText?: string;
+
 	public readonly telemetryProperties: { [key: string]: string } | undefined;
 
 	constructor(options: {
@@ -43,8 +56,11 @@ export class Item {
 		 * Main text to display in the completion list
 		 */
 		label: string;
+
 		insertText: string;
+
 		span: Span;
+
 		kind: CompletionKind;
 		/**
 		 * A human-readable string with additional information
@@ -60,6 +76,7 @@ export class Item {
 		 * The snippet name if this is a snippet
 		 */
 		snippetName?: string;
+
 		additionalEdits?: { span: Span; insertText: string }[];
 		/**
 		 * A string that should be used when comparing this item
@@ -95,18 +112,31 @@ export class Item {
 		telemetryProperties?: { [key: string]: string };
 	}) {
 		this.label = options.label;
+
 		this.insertText = options.insertText;
+
 		this.span = options.span;
+
 		this.kind = options.kind;
+
 		this.detail = options.detail;
+
 		this.documention = options.documentation;
+
 		this.snippetName = options.snippetName;
+
 		this.additionalEdits = options.additionalEdits;
+
 		this.sortText = options.sortText;
+
 		this.filterText = options.filterText;
+
 		this.commitCharacters = options.commitCharacters;
+
 		this.priority = options.priority ?? CompletionPriority.normal;
+
 		this.preselect = !!options.preselect;
+
 		this.telemetryProperties = options.telemetryProperties;
 	}
 
@@ -182,6 +212,7 @@ export class Item {
 				includeSingleQuotesInCompletion,
 				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion",
 			);
+
 			insertText = `${insertText})`;
 		}
 
@@ -214,6 +245,7 @@ export class Item {
 				includeSingleQuotesInCompletion,
 				"includeSingleQuotesInCompletion required if includeRightParenthesisInCompletion",
 			);
+
 			insertText = `${insertText})`;
 		}
 
@@ -239,6 +271,7 @@ export class Item {
 
 			if (!addedLC.has(itemLabelLC)) {
 				deduped.push(item);
+
 				addedLC.add(itemLabelLC);
 			}
 		}

@@ -13,6 +13,7 @@ import * as path from "path";
 export const isWebpack: boolean = !!/^(false|0)?$/i.test(
 	process.env.AZCODE_ARM_IGNORE_BUNDLE ?? "",
 );
+
 console.log(`isWebpack: ${isWebpack}`);
 
 export const isWin32: boolean = os.platform() === "win32";
@@ -28,7 +29,9 @@ while (true) {
 
 		break;
 	}
+
 	base = path.dirname(base);
+
 	assert(base != "", "Could not find base project path");
 }
 export const assetsPath = base;
@@ -112,6 +115,7 @@ export namespace notifications {
 
 	export interface ISchemaValidationNotificationArgs {
 		uri: string;
+
 		completed: boolean;
 	}
 
@@ -123,6 +127,7 @@ export namespace notifications {
 			uri: string;
 
 			docVersion: number;
+
 			codeAnalysisVersion: number;
 		}
 	}

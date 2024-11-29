@@ -41,6 +41,7 @@ export abstract class JsonDocument implements IJsonDocument {
 		nonNullValue(_documentUri, "_documentUri");
 
 		this._jsonParseResult = Json.parse(_documentText);
+
 		this._topLevelValue = Json.asObjectValue(this._jsonParseResult.value);
 	}
 

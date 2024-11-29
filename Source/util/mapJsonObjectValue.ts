@@ -33,6 +33,7 @@ export function mapJsonObjectValue(
 			for (let propElement of newProperties) {
 				modifiedProps.push(propElement);
 			}
+
 			changed = true;
 		}
 	}

@@ -4,7 +4,9 @@
 
 export class Histogram {
 	private _nullCounts: number = 0;
+
 	private _undefinedCounts: number = 0;
+
 	private _counts: { [key: string]: number } = {};
 
 	public get keys(): (string | undefined | null)[] {
@@ -15,9 +17,11 @@ export class Histogram {
 		if (this._nullCounts > 0) {
 			result.push(null);
 		}
+
 		if (this._undefinedCounts > 0) {
 			result.push(undefined);
 		}
+
 		return result;
 	}
 
@@ -57,6 +61,7 @@ export class Histogram {
 		} else {
 			result = 0;
 		}
+
 		return result;
 	}
 }

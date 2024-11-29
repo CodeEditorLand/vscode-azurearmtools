@@ -122,6 +122,7 @@ export class UserFunctionNamespaceDefinition implements INamedDefinition {
 							value,
 							member.span,
 						);
+
 						membersResult.push(func);
 					}
 				}

@@ -46,6 +46,7 @@ export async function queryCreateParameterFile(
 	});
 
 	const onlyRequiredParams = whichParams === required;
+
 	actionContext.telemetry.properties.onlyRequiredParams =
 		String(onlyRequiredParams);
 
@@ -74,6 +75,7 @@ export async function queryCreateParameterFile(
 		tabSize,
 		onlyRequiredParams,
 	);
+
 	await fse.writeFile(newUri.fsPath, paramsObj, {
 		encoding: "utf8",
 	});
@@ -177,9 +179,11 @@ export function createParameterFromTemplateParameter(
 				defValueSpan.startIndex,
 				defValueSpan.afterEndIndex,
 			);
+
 			value = unindentMultilineString(defValue, true);
 		}
 	}
+
 	if (value === undefined) {
 		value = getDefaultValueFromType(parameter.validType, tabSize);
 	}

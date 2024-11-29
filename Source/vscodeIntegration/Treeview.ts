@@ -287,11 +287,13 @@ export class JsonOutlineProvider
 	implements vscode.TreeDataProvider<IElementInfo>
 {
 	private tree: Json.ParseResult | undefined;
+
 	private text: string | undefined;
 
 	public readonly onDidChangeTreeDataEmitter: vscode.EventEmitter<
 		IElementInfo | undefined
 	> = new vscode.EventEmitter<IElementInfo | undefined>();
+
 	public readonly onDidChangeTreeData: vscode.Event<
 		IElementInfo | undefined
 	> = this.onDidChangeTreeDataEmitter.event;
@@ -302,11 +304,13 @@ export class JsonOutlineProvider
 				this.updateTreeState(),
 			),
 		);
+
 		context.subscriptions.push(
 			vscode.workspace.onDidChangeTextDocument(() =>
 				this.updateTreeState(),
 			),
 		);
+
 		context.subscriptions.push(
 			vscode.workspace.onDidOpenTextDocument(() =>
 				this.updateTreeState(),
@@ -345,12 +349,15 @@ export class JsonOutlineProvider
 						// tslint:disable-next-line:one-variable-per-declaration
 						for (
 							let i = 0, il = this.tree.value.properties.length;
+
 							i < il;
+
 							i++
 						) {
 							let item = this.getElementInfo(
 								this.tree.value.properties[i],
 							);
+
 							result.push(item);
 						}
 					}
@@ -371,13 +378,16 @@ export class JsonOutlineProvider
 						// tslint:disable-next-line:one-variable-per-declaration
 						for (
 							let i = 0, il = valueNode.properties.length;
+
 							i < il;
+
 							i++
 						) {
 							let item = this.getElementInfo(
 								valueNode.properties[i],
 								elementInfo,
 							);
+
 							result.push(item);
 						}
 					} else if (
@@ -394,6 +404,7 @@ export class JsonOutlineProvider
 									valueElement,
 									elementInfo,
 								);
+
 								result.push(item);
 							}
 						}
@@ -465,6 +476,7 @@ export class JsonOutlineProvider
 	private parseTree(document?: vscode.TextDocument): void {
 		if (document && this.shouldShowTreeForDocument(document)) {
 			this.text = document.getText();
+
 			this.tree = Json.parse(this.text);
 		}
 	}
@@ -490,6 +502,7 @@ export class JsonOutlineProvider
 		if (keyNode instanceof Json.StringValue) {
 			return `${keyNode.unquotedValue}@${elementInfo.current.level}`;
 		}
+
 		return undefined;
 	}
 
@@ -571,6 +584,7 @@ export class JsonOutlineProvider
 				return shortenTreeLabel(name);
 			}
 		}
+
 		return undefined;
 	}
 
@@ -651,26 +665,36 @@ export class JsonOutlineProvider
 			result.current.value.start = childElement.value
 				? childElement.value.startIndex
 				: undefined;
+
 			result.current.value.end = childElement.value
 				? childElement.value.span.afterEndIndex
 				: undefined;
+
 			result.current.value.kind = childElement.value
 				? childElement.value.valueKind
 				: undefined;
 		} else {
 			result.current.key.kind = childElement.valueKind;
+
 			result.current.value.start = childElement.startIndex;
+
 			result.current.value.end = childElement.span.afterEndIndex;
+
 			result.current.value.kind = childElement.valueKind;
 		}
 
 		// Not a root element
 		if (elementInfo) {
 			result.parent.key.start = elementInfo.current.key.start;
+
 			result.parent.key.end = elementInfo.current.key.end;
+
 			result.parent.key.kind = elementInfo.current.key.kind;
+
 			result.parent.value.start = elementInfo.current.value.start;
+
 			result.parent.value.end = elementInfo.current.value.end;
+
 			result.root.key.start = elementInfo.root.key.start;
 			// tslint:disable-next-line: strict-boolean-expressions
 			result.current.level = (elementInfo.current.level || 0) + 1;
@@ -747,7 +771,9 @@ export class JsonOutlineProvider
 				// tslint:disable-next-line:one-variable-per-declaration
 				for (
 					var i = 0, il = keyOrResourceNode.properties.length;
+
 					i < il;
+
 					i++
 				) {
 					const name = keyOrResourceNode.properties[i].nameValue;
@@ -759,6 +785,7 @@ export class JsonOutlineProvider
 
 						if (value) {
 							let resourceType = value.toString().toUpperCase();
+
 							icon = this.getIcon(
 								resourceIcons,
 								resourceType,
@@ -793,6 +820,7 @@ export class JsonOutlineProvider
 		if (!node || level === undefined) {
 			return undefined;
 		}
+
 		if (level === 5) {
 			return this.getIcon(
 				functionIcons,
@@ -800,15 +828,19 @@ export class JsonOutlineProvider
 				"",
 			);
 		}
+
 		if (!elementInfo.current.collapsible) {
 			return undefined;
 		}
+
 		if (level < 5) {
 			return this.getIcon(topLevelIcons, templateKeys.functions, "");
 		}
+
 		if (elementInfo.current.level === 6) {
 			return this.getIcon(functionIcons, "parameters", "");
 		}
+
 		return undefined;
 	}
 
@@ -819,6 +851,7 @@ export class JsonOutlineProvider
 		const document: vscode.TextDocument | undefined = !!activeEditor
 			? activeEditor.document
 			: undefined;
+
 		this.parseTree(document);
 
 		const showTreeView =
@@ -849,29 +882,43 @@ export interface IElementInfo {
 	current: {
 		key: {
 			start: number;
+
 			end: number;
+
 			kind?: Json.ValueKind;
 		};
+
 		value: {
 			start?: number;
+
 			end?: number;
+
 			kind?: Json.ValueKind;
 		};
+
 		level?: number;
+
 		collapsible: boolean;
 	};
+
 	parent: {
 		key: {
 			start?: number;
+
 			end?: number;
+
 			kind?: Json.ValueKind;
 		};
+
 		value: {
 			start?: number;
+
 			end?: number;
+
 			kind?: Json.ValueKind;
 		};
 	};
+
 	root: {
 		key: {
 			start: number;

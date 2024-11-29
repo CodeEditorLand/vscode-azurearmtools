@@ -117,19 +117,27 @@ interface IExpressionMetadata {
 async function pretest(): Promise<void> {
 	env.DEBUGTELEMETRY = "0"; // 1=quiet; verbose=see telemetry in console; 0=send telemetry
 	env.CODE_TESTS_PATH = path.join(__dirname, "dist/test");
+
 	env.IS_RUNNING_TESTS = "1";
 	// This is the timeout for individual tests
 	env.MOCHA_timeout = String(DEFAULT_TESTCASE_TIMEOUT_MS);
+
 	env.MOCHA_enableTimeouts = "1";
+
 	env.DISABLE_SLOW_TESTS = "";
+
 	env.ALWAYS_ECHO_TEST_LOG = "";
 
 	console.log("");
+
 	console.log("*******");
+
 	console.log(
 		"******* NOTE: After the tests run, see testlogs-<platform>/logs/testlog.txt under artifacts for full test log",
 	);
+
 	console.log("*******");
+
 	console.log("");
 
 	const vscodeExecutablePath = await downloadAndUnzipVSCode();
@@ -164,12 +172,15 @@ async function pretest(): Promise<void> {
 					"Unknown error"),
 		);
 	}
+
 	console.log("Installed extensions:");
+
 	result = cp.spawnSync(cliPath, [...cliArguments, "--list-extensions"], {
 		encoding: "utf-8",
 		stdio: "inherit",
 		shell: true,
 	});
+
 	console.log(result.error ?? result.output?.filter((o) => !!o).join("\n"));
 
 	if (result.error) {
@@ -198,6 +209,7 @@ function buildTLEGrammar(): void {
 	);
 
 	let grammarAsObject = <IGrammar>JSON.parse(grammar);
+
 	grammarAsObject.preprocess = {
 		"builtin-functions": `(?:(?i)${builtinFunctions.join("|")})`,
 		// tslint:disable-next-line: strict-boolean-expressions
@@ -231,15 +243,19 @@ function buildTLEGrammar(): void {
 				`WARNING: Preprocess key ${replacementKey} is never referenced in ${tleGrammarSourcePath}`,
 			);
 		}
+
 		grammar = grammar.replace(new RegExp(replacementKey, "g"), valueString);
 	}
 
 	// Remove preprocess section from the output grammar file
 	let outputGrammarAsObject = <IGrammar>JSON.parse(grammar);
+
 	delete outputGrammarAsObject.preprocess;
+
 	grammar = JSON.stringify(outputGrammarAsObject, null, 4);
 
 	fse.writeFileSync(tleGrammarBuiltPath, grammar);
+
 	console.log(`Built ${tleGrammarBuiltPath}`);
 
 	if (grammar.includes("{{")) {
@@ -251,13 +267,17 @@ function buildTLEGrammar(): void {
 
 async function buildGrammars(): Promise<void> {
 	fse.ensureDirSync("dist");
+
 	fse.ensureDirSync("dist/grammars");
 
 	buildTLEGrammar();
 
 	fse.copyFileSync(jsonArmGrammarSourcePath, jsonArmGrammarDestPath);
+
 	console.log(`Copied ${jsonArmGrammarDestPath}`);
+
 	fse.copyFileSync(armConfigurationSourcePath, armConfigurationDestPath);
+
 	console.log(`Copied ${armConfigurationDestPath}`);
 }
 
@@ -265,7 +285,9 @@ function executeInShell(command: string): void {
 	console.log(command);
 
 	const result = shelljs.exec(command);
+
 	console.log(result.stdout);
+
 	console.log(result.stderr);
 
 	if (result.code !== 0) {
@@ -301,6 +323,7 @@ async function getLanguageServer(): Promise<void> {
 			);
 
 		const configPath = getTempFilePath("nuget", ".config");
+
 		fse.writeFileSync(configPath, withCreds);
 
 		// Nuget install to pkgs folder
@@ -329,21 +352,28 @@ async function getLanguageServer(): Promise<void> {
 
 		if (os.platform() === "linux") {
 			app = "mono";
+
 			args.unshift("nuget.exe");
 		}
+
 		const command = `${app} ${args.join(" ")}`;
 
 		const languageServerPackageFolderName = path.join(
 			pkgsPath,
 			languageServerNugetPackage,
 		);
+
 		console.log(`Deleting ${languageServerPackageFolderName}`);
+
 		rimraf.sync(languageServerPackageFolderName);
+
 		executeInShell(command);
+
 		fse.unlinkSync(configPath);
 
 		// Copy binaries and license into dist\languageServer
 		console.log(`Deleting ${destPath}`);
+
 		rimraf.sync(destPath);
 
 		console.log(
@@ -358,7 +388,9 @@ async function getLanguageServer(): Promise<void> {
 		);
 
 		fse.mkdirpSync(destPath);
+
 		console.log(`  ${langServerSourcePath} -> ${destPath}`);
+
 		copyFolder(langServerSourcePath, destPath);
 
 		const licenseSourcePath = path.join(
@@ -371,9 +403,11 @@ async function getLanguageServer(): Promise<void> {
 			languageServerFolderName,
 			languageServerLicenseFileName,
 		);
+
 		console.log(
 			`Copying language server license ${licenseSourcePath} to ${licenseDest}`,
 		);
+
 		fse.copyFileSync(licenseSourcePath, licenseDest);
 
 		console.log(
@@ -400,6 +434,7 @@ function copyFolder(
 
 		if (fse.statSync(src).isFile()) {
 			// console.log(`Copying file ${src} to ${dest}`);
+
 			fse.copyFileSync(src, dest);
 		} else if (fse.statSync(src).isDirectory()) {
 			copyFolder(src, dest, sourceRoot);
@@ -421,22 +456,28 @@ async function packageVsix(): Promise<void> {
 
 		if (fse.statSync(absSource).isDirectory()) {
 			console.log(`Copying folder ${absSource} to staging folder`);
+
 			copyFolder(absSource, absDest);
 		} else {
 			console.log(`Copying file ${absSource} to staging folder`);
+
 			fse.copyFileSync(absSource, absDest);
 		}
 	}
 
 	let stagingFolder = getTempFilePath("staging", "");
+
 	console.log(`Staging folder: ${stagingFolder}`);
+
 	fse.mkdirpSync(stagingFolder);
 
 	// Copy files/folders to staging
 	for (let p of filesAndFoldersToPackage) {
 		copyToStagingFolder(p, p);
 	}
+
 	let filesInStaging = fse.readdirSync(stagingFolder);
+
 	filesInStaging.forEach((fn) =>
 		assert(
 			!/license/i.test(fn),
@@ -455,7 +496,9 @@ async function packageVsix(): Promise<void> {
 			console.warn(
 				`========== WARNING ==========: Packaging language server from local path instead of NuGet location`,
 			);
+
 			languageServerSourcePath = languageServerPackagingPath;
+
 			licenseSourcePath = path.join(
 				languageServerPackagingPath,
 				"../../../../..",
@@ -466,15 +509,18 @@ async function packageVsix(): Promise<void> {
 				__dirname,
 				languageServerFolderName,
 			);
+
 			licenseSourcePath = path.join(
 				__dirname,
 				languageServerFolderName,
 				languageServerLicenseFileName,
 			);
 		}
+
 		console.warn(
 			`  Language server source path: ${languageServerSourcePath}`,
 		);
+
 		console.warn(`  License source path: ${licenseSourcePath}`);
 
 		// Copy language server bits
@@ -482,10 +528,12 @@ async function packageVsix(): Promise<void> {
 
 		// Copy license to staging main folder
 		copyToStagingFolder(licenseSourcePath, languageServerLicenseFileName);
+
 		expectedLicenseFileName = languageServerLicenseFileName;
 	} else {
 		// No language server available - jusy copy license.md to staging main folder
 		copyToStagingFolder(publicLicenseFileName, languageServerFolderName);
+
 		expectedLicenseFileName = publicLicenseFileName;
 	}
 
@@ -493,6 +541,7 @@ async function packageVsix(): Promise<void> {
 	let packageContents = fse.readJsonSync(
 		path.join(__dirname, "package.json"),
 	);
+
 	assert(
 		packageContents.license,
 		"package.json doesn't contain a license field?",
@@ -501,10 +550,12 @@ async function packageVsix(): Promise<void> {
 	packageContents.license = `SEE LICENSE IN ${expectedLicenseFileName}`;
 	// ... remove vscode:prepublish script from package, since everything's already built
 	delete packageContents.scripts["vscode:prepublish"];
+
 	fse.writeFileSync(
 		path.join(stagingFolder, "package.json"),
 		JSON.stringify(packageContents, null, 2),
 	);
+
 	assert(
 		fse
 			.readFileSync(path.join(stagingFolder, "package.json"))
@@ -515,7 +566,9 @@ async function packageVsix(): Promise<void> {
 
 	try {
 		console.log(`Running vsce package in staging folder ${stagingFolder}`);
+
 		shelljs.cd(stagingFolder);
+
 		executeInShell("vsce package --githubBranch main");
 	} finally {
 		shelljs.cd(__dirname);
@@ -529,14 +582,17 @@ async function packageVsix(): Promise<void> {
 	if (!vsixName) {
 		throw new Error("Couldn't find a .vsix file");
 	}
+
 	let vsixDestPath = path.join(__dirname, vsixName);
 
 	if (!languageServerAvailable) {
 		vsixDestPath = vsixDestPath.replace(".vsix", "-no-languageserver.vsix");
 	}
+
 	if (fse.existsSync(vsixDestPath)) {
 		fse.unlinkSync(vsixDestPath);
 	}
+
 	fse.copyFileSync(path.join(stagingFolder, vsixName), vsixDestPath);
 
 	// Remove staging folder since packaging was a success
@@ -575,6 +631,7 @@ async function verifyTestsReferenceOnlyExtensionBundle(
 								`${path.relative(__dirname, file)}: error: Test code may not import from the src folder, it should import from '../extension.bundle'${os.EOL}` +
 								`  Error is here: ===> ${match}${os.EOL}`,
 						);
+
 						console.error(match);
 					}
 				}

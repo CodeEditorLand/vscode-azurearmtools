@@ -29,6 +29,7 @@ export class ParametersPositionContext extends PositionContext {
 		associatedTemplate: DeploymentTemplateDoc | undefined,
 	) {
 		super(deploymentParameters, associatedTemplate);
+
 		this._associatedTemplate = associatedTemplate;
 	}
 
@@ -42,6 +43,7 @@ export class ParametersPositionContext extends PositionContext {
 			deploymentParameters,
 			associatedTemplate,
 		);
+
 		context.initFromDocumentLineAndColumnIndices(
 			documentLineIndex,
 			documentColumnIndex,
@@ -49,6 +51,7 @@ export class ParametersPositionContext extends PositionContext {
 
 		return context;
 	}
+
 	public static fromDocumentCharacterIndex(
 		deploymentParameters: DeploymentParametersDoc,
 		documentCharacterIndex: number,
@@ -58,6 +61,7 @@ export class ParametersPositionContext extends PositionContext {
 			deploymentParameters,
 			deploymentTemplate,
 		);
+
 		context.initFromDocumentCharacterIndex(documentCharacterIndex);
 
 		return context;
@@ -104,6 +108,7 @@ export class ParametersPositionContext extends PositionContext {
 					this.associatedDocument.findReferencesToDefinition(
 						refInfo.definition,
 					);
+
 				references.addAll(associatedDocRefs);
 			}
 

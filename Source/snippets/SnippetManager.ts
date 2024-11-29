@@ -27,12 +27,14 @@ import { createResourceSnippetFromFile } from "./resourceSnippetsConversion";
 export interface ISnippetDefinitionFromFile {
 	prefix: string; // e.g. "arm!"
 	body: string[];
+
 	description: string; // e.g. "Resource Group Template"
 	context: string;
 }
 
 interface ISnippetInternal extends ISnippetDefinitionFromFile {
 	name: string;
+
 	hasCurlyBraces: boolean; // Are the first and last lines the beginning and ending curly braces?s
 }
 
@@ -71,10 +73,12 @@ export class SnippetManager implements ISnippetManager {
 					const key = snippet[0];
 
 					const value = snippet[1];
+
 					assert(
 						!map.has(key),
 						`Resource snippet ${key} already has an entry in the main snippet file`,
 					);
+
 					map.set(key, value);
 				}
 			}
@@ -102,11 +106,14 @@ export class SnippetManager implements ISnippetManager {
 			const snippetFromFile = snippets[name];
 
 			const snippet = convertToInternalSnippet(name, snippetFromFile);
+
 			validateSnippet(snippet);
+
 			assert(
 				snippet.context !== KnownContexts.resources,
 				`Resource snippet "${snippet.name}" should be placed in the resourceSnippets folder instead of "${filePath}"`,
 			);
+
 			map.set(name, snippet);
 		}
 
@@ -127,6 +134,7 @@ export class SnippetManager implements ISnippetManager {
 				/(.*)\.snippet\.json$/,
 				"$1",
 			);
+
 			assert(
 				snippetName !== relativePath,
 				`Resource snippet ${snippetName} should have this filename: ${relativePath}`,
@@ -142,7 +150,9 @@ export class SnippetManager implements ISnippetManager {
 				snippetName,
 				snippet,
 			);
+
 			validateSnippet(internalSnippet);
+
 			map.set(snippetName, internalSnippet);
 		}
 
@@ -285,6 +295,7 @@ function validateSnippet(snippet: ISnippetInternal): ISnippetInternal {
 				`Snippet "${snippet.name}" is marked with the resources context but doesn't look like a resource`,
 			);
 		}
+
 		if (!snippet.hasCurlyBraces) {
 			window.showWarningMessage(
 				`Snippet "${snippet.name}" is marked with the resources context but doesn't begin and end with curly braces`,

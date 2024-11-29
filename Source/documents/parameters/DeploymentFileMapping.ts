@@ -23,17 +23,20 @@ interface IMapping {
 	normalizedTemplate: Uri;
 
 	resolvedParams: Uri;
+
 	normalizedParams: Uri;
 }
 
 export class DeploymentFileMapping {
 	private _mapToParams: Map<string, IMapping> | undefined;
+
 	private _mapToTemplates: Map<string, IMapping> | undefined;
 
 	public constructor(private configuration: IConfiguration) {}
 
 	public resetCache(): void {
 		this._mapToParams = undefined;
+
 		this._mapToTemplates = undefined;
 	}
 
@@ -43,6 +46,7 @@ export class DeploymentFileMapping {
 		}
 
 		this._mapToParams = new Map<string, IMapping>();
+
 		this._mapToTemplates = new Map<string, IMapping>();
 
 		const paramFiles: { [key: string]: unknown } | undefined =
@@ -62,6 +66,7 @@ export class DeploymentFileMapping {
 				) {
 					continue;
 				}
+
 				const paramPath: string = <string>paramPathObject;
 
 				const resolvedTemplatePath = path.resolve(templatePath);
@@ -100,6 +105,7 @@ export class DeploymentFileMapping {
 		// Create reverse mapping
 		for (let entry of this._mapToParams) {
 			const mapping: IMapping = entry[1];
+
 			this._mapToTemplates.set(mapping.normalizedParams.fsPath, mapping);
 		}
 	}
@@ -174,6 +180,7 @@ export class DeploymentFileMapping {
 			newMap,
 			ConfigurationTarget.Global,
 		);
+
 		this.resetCache();
 	}
 }

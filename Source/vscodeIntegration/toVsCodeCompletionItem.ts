@@ -20,15 +20,23 @@ export function toVsCodeCompletionItem(
 	const range: vscode.Range = getVSCodeRangeFromSpan(jsonDocument, item.span);
 
 	const vscodeItem = new vscode.CompletionItem(item.label);
+
 	vscodeItem.range = range;
 
 	const insertText = item.insertText;
+
 	vscodeItem.insertText = new vscode.SnippetString(insertText);
+
 	vscodeItem.detail = item.detail;
+
 	vscodeItem.documentation = item.documention;
+
 	vscodeItem.commitCharacters = item.commitCharacters;
+
 	vscodeItem.preselect = item.preselect;
+
 	vscodeItem.filterText = item.filterText;
+
 	vscodeItem.kind = toVsCodeCompletionItemKind(item.kind);
 
 	let sortPriorityPrefix: string;
@@ -81,6 +89,7 @@ export function toVsCodeCompletionItem(
 	)) {
 		telemetryArgs[key] = item.telemetryProperties?.[key];
 	}
+
 	vscodeItem.command = {
 		command: "azurerm-vscode-tools.completion-activated",
 		title: "completion activated", // won't ever be shown to the user

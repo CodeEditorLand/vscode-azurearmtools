@@ -47,6 +47,7 @@ export class WrappedErrorHandler implements ErrorHandler {
 				context.telemetry.properties.jsonrpcMessage = message
 					? message.jsonrpc
 					: "";
+
 				context.telemetry.measurements.secondsSinceStart =
 					(Date.now() - this._serverStartTime) / 1000;
 

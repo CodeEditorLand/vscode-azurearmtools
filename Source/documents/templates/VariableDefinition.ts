@@ -19,8 +19,11 @@ import { IUsageInfo } from "../../vscodeIntegration/UsageInfoHoverInfo";
  */
 export interface IVariableDefinition extends INamedDefinition {
 	nameValue: Json.StringValue;
+
 	value: Json.Value | undefined;
+
 	span: Span;
+
 	usageInfo: IUsageInfo;
 }
 
@@ -34,8 +37,11 @@ abstract class VariableDefinition implements IVariableDefinition {
 	public readonly definitionKind: DefinitionKind = DefinitionKind.Variable;
 
 	public abstract nameValue: Json.StringValue;
+
 	public abstract value: Json.Value | undefined;
+
 	public abstract span: Span;
+
 	public abstract usageInfo: IUsageInfo;
 }
 
@@ -45,6 +51,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 
 	constructor(private readonly _property: Json.Property) {
 		super();
+
 		assert(_property);
 	}
 
@@ -168,6 +175,7 @@ export class TopLevelVariableDefinition extends VariableDefinition {
 								name,
 								array,
 							);
+
 							loopVarProperties.push(loopValueProperty);
 						}
 					}

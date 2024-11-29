@@ -15,6 +15,7 @@ export function getVSCodeRangeFromSpan(
 	span: Span,
 ): vscode.Range {
 	assert(span);
+
 	assert(deploymentDocument);
 
 	const startPosition: LineColPos = deploymentDocument.getDocumentPosition(

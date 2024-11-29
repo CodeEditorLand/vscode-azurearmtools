@@ -7,10 +7,12 @@ import { Duration } from "./Duration";
 
 export class Stopwatch {
 	private _startTimeMilliseconds: number | undefined;
+
 	private _stopTimeMilliseconds: number | undefined;
 
 	public start(): void {
 		assert(this._startTimeMilliseconds === undefined);
+
 		assert(this._stopTimeMilliseconds === undefined);
 
 		this._startTimeMilliseconds = Date.now();
@@ -18,6 +20,7 @@ export class Stopwatch {
 
 	public stop(): void {
 		assert(this._startTimeMilliseconds !== undefined);
+
 		assert(this._stopTimeMilliseconds === undefined);
 
 		this._stopTimeMilliseconds = Date.now();

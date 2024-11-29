@@ -21,6 +21,7 @@ export class FunctionCountVisitor extends TleVisitor {
 	public get functionCounts(): Histogram {
 		return this._functionCounts;
 	}
+
 	public visitFunctionCall(tleFunction: FunctionCallValue): void {
 		assert(tleFunction.argumentExpressions);
 		// Log count for both "func" and "func(<args-count>)"
@@ -33,17 +34,21 @@ export class FunctionCountVisitor extends TleVisitor {
 		let functionName = tleFunction.fullName;
 
 		let functionNameWithArgs = `${functionName}(${argsCount})`;
+
 		this._functionCounts.add(functionName);
+
 		this._functionCounts.add(functionNameWithArgs);
 
 		super.visitFunctionCall(tleFunction);
 	}
+
 	public static visit(tleValue: Value | undefined): FunctionCountVisitor {
 		let visitor = new FunctionCountVisitor();
 
 		if (tleValue) {
 			tleValue.accept(visitor);
 		}
+
 		return visitor;
 	}
 }

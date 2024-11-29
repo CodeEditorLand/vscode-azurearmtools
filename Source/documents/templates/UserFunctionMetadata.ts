@@ -28,6 +28,7 @@ export class UserFunctionMetadata implements IFunctionMetadata {
 	}
 
 	public readonly minimumArguments: number;
+
 	public readonly maximumArguments: number;
 
 	public static fromDefinition(

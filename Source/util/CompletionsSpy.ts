@@ -9,18 +9,22 @@ import { IJsonDocument } from "../documents/templates/IJsonDocument";
 
 export interface ICompletionsSpyResult {
 	document: IJsonDocument;
+
 	completionItems: Completion.Item[];
+
 	vsCodeCompletionItems: CompletionItem[];
 }
 
 export class CompletionsSpy {
 	private readonly _completionsEmitter: EventEmitter<ICompletionsSpyResult> =
 		new EventEmitter<ICompletionsSpyResult>();
+
 	private readonly _resolveEmitter: EventEmitter<CompletionItem> =
 		new EventEmitter<CompletionItem>();
 
 	public readonly onCompletionItems: Event<ICompletionsSpyResult> =
 		this._completionsEmitter.event;
+
 	public readonly onCompletionItemResolved: Event<CompletionItem> =
 		this._resolveEmitter.event;
 

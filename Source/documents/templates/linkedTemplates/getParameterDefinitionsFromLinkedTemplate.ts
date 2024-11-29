@@ -17,6 +17,7 @@ export function getParameterDefinitionsFromLinkedTemplate(
 
 	try {
 		const uri = parseUri(linkedTemplate.fullUri);
+
 		dt = provideOpenDocuments.getOpenedDeploymentTemplate(uri);
 	} catch (error) {
 		// Ignore poorly-formed URIs

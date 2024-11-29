@@ -30,6 +30,7 @@ export class ExtractItem {
 			template,
 			editor,
 		);
+
 		editor.selection = selection;
 
 		let selectedText = editor.document.getText(selection);
@@ -43,6 +44,7 @@ export class ExtractItem {
 
 			throw new UserCancelledError();
 		}
+
 		const leaveEmpty =
 			"Press 'Enter' if you do not want to add a description.";
 
@@ -65,6 +67,7 @@ export class ExtractItem {
 			template,
 			selection,
 		);
+
 		await new InsertItem(this.ui).insertParameterWithDefaultValue(
 			owningRootObject,
 			editor,
@@ -74,10 +77,12 @@ export class ExtractItem {
 			description,
 			{ undoStopBefore: true, undoStopAfter: false },
 		);
+
 		await editor.edit(
 			(builder) => builder.replace(editor.selection, texts.insertText),
 			{ undoStopBefore: false, undoStopAfter: true },
 		);
+
 		editor.revealRange(
 			new vscode.Range(editor.selection.start, editor.selection.end),
 			vscode.TextEditorRevealType.Default,
@@ -111,6 +116,7 @@ export class ExtractItem {
 			template,
 			editor,
 		);
+
 		editor.selection = selection;
 
 		let selectedText = editor.document.getText(selection);
@@ -124,6 +130,7 @@ export class ExtractItem {
 
 			throw new UserCancelledError();
 		}
+
 		let insertText = `[variables('${name}')]`;
 
 		const texts = this.fixExtractTexts(
@@ -135,6 +142,7 @@ export class ExtractItem {
 		);
 
 		let topLevel = this.getVarsParamsOwningRootObject(template, selection);
+
 		await new InsertItem(this.ui).insertVariableWithValue(
 			topLevel,
 			editor,
@@ -143,10 +151,12 @@ export class ExtractItem {
 			texts.selectedText,
 			{ undoStopBefore: true, undoStopAfter: false },
 		);
+
 		await editor.edit(
 			(builder) => builder.replace(editor.selection, texts.insertText),
 			{ undoStopBefore: false, undoStopAfter: true },
 		);
+
 		editor.revealRange(
 			new vscode.Range(editor.selection.start, editor.selection.end),
 			vscode.TextEditorRevealType.Default,
@@ -179,6 +189,7 @@ export class ExtractItem {
 				selectedText = this.addSquareBrackets(selectedText);
 			}
 		}
+
 		return { selectedText: selectedText, insertText: insertText };
 	}
 
@@ -191,6 +202,7 @@ export class ExtractItem {
 		if (selection.start.character === 0) {
 			return selection;
 		}
+
 		if (selection.start.character === selection.end.character) {
 			let pc = template.getContextFromDocumentLineAndColumnIndexes(
 				selection.start.line,
@@ -207,6 +219,7 @@ export class ExtractItem {
 				);
 			}
 		}
+
 		const startPos = new vscode.Position(
 			selection.anchor.line,
 			selection.anchor.character - 1,
@@ -231,6 +244,7 @@ export class ExtractItem {
 		) {
 			return new vscode.Selection(startPos, endPos);
 		}
+
 		return selection;
 	}
 
@@ -271,8 +285,10 @@ export class ExtractItem {
 			if (selectedText === pc.jsonValue.asStringValue.unquotedValue) {
 				return false;
 			}
+
 			return isTleExpression(pc.jsonValue.asStringValue?.unquotedValue);
 		}
+
 		return false;
 	}
 }

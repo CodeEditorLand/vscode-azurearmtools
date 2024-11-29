@@ -140,6 +140,7 @@ import { getVSCodeRangeFromSpan } from "./vscodeIntegration/vscodePosition";
 
 interface IErrorsAndWarnings {
 	errors: Issue[];
+
 	warnings: Issue[];
 }
 
@@ -171,8 +172,11 @@ export async function activateInternal(
 		if (echoOutputChannelToConsole) {
 			outputChannel = new ConsoleOutputChannelWrapper(outputChannel);
 		}
+
 		ext.outputChannel = outputChannel;
+
 		writeToLog(">>> registerUIExtensionVariables", true);
+
 		registerUIExtensionVariables(ext);
 
 		context.subscriptions.push(ext.completionItemsSpy);
@@ -189,6 +193,7 @@ export async function activateInternal(
 			"activate",
 			async (actionContext: IActionContext): Promise<void> => {
 				actionContext.telemetry.properties.isActivationEvent = "true";
+
 				actionContext.telemetry.measurements.mainFileLoad =
 					(perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
@@ -199,7 +204,9 @@ export async function activateInternal(
 		);
 	} catch (err) {
 		const msg = parseError(err).message;
+
 		ext.extensionStartupError = msg;
+
 		console.error(msg);
 
 		throw err;
@@ -208,22 +215,28 @@ export async function activateInternal(
 	if (!ext.extensionStartupError) {
 		ext.extensionStartupComplete = true;
 	}
+
 	writeToLog(">>> activateInternal end", true);
 }
 
 function recordConfigValuesToTelemetry(actionContext: IActionContext): void {
 	const config = ext.configuration;
+
 	actionContext.telemetry.properties.autoDetectJsonTemplates = String(
 		config.get<boolean>(configKeys.autoDetectJsonTemplates),
 	);
 
 	const paramFiles = config.get<unknown[]>(configKeys.parameterFiles);
+
 	actionContext.telemetry.properties[`${configKeys.parameterFiles}.length`] =
 		String(paramFiles ? Object.keys(paramFiles).length : 0);
 
 	recordConfigValue<boolean>(configKeys.checkForLatestSchema);
+
 	recordConfigValue<boolean>(configKeys.checkForMatchingParameterFiles);
+
 	recordConfigValue<boolean>(configKeys.enableCodeLens);
+
 	recordConfigValue<boolean>(configKeys.codeLensForParameters);
 
 	function recordConfigValue<T>(key: string): void {
@@ -246,16 +259,24 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		string,
 		INotifyTemplateGraphArgs
 	> = new Map<string, INotifyTemplateGraphArgs>();
+
 	private readonly _filesAskedToUpdateSchemaThisSession: Set<string> =
 		new Set<string>();
+
 	private readonly _paramsStatusBarItem: vscode.StatusBarItem;
+
 	private _areDeploymentTemplateEventsHookedUp: boolean = false;
+
 	private _diagnosticsVersion: number = 0;
+
 	private _mapping: DeploymentFileMapping = ext.deploymentFileMapping.value;
+
 	private _codeLensChangedEmitter: vscode.EventEmitter<void> =
 		new vscode.EventEmitter<void>();
+
 	private _linkedTemplateDocProviderChangedEmitter: vscode.EventEmitter<vscode.Uri> =
 		new vscode.EventEmitter<vscode.Uri>();
+
 	private _bicepMessage: TimedMessage = new TimedMessage(
 		globalStateKeys.messages.bicepMessagePostponedUntilTime,
 		"debugBicepMessage",
@@ -286,7 +307,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		const jsonOutline: JsonOutlineProvider = new JsonOutlineProvider(
 			context,
 		);
+
 		ext.jsonOutlineProvider = jsonOutline;
+
 		context.subscriptions.push(
 			vscode.window.createTreeView(
 				"azurerm-vscode-tools.template-outline",
@@ -296,6 +319,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				},
 			),
 		);
+
 		context.subscriptions.push(
 			this.getRegisteredRenameCodeActionProvider(),
 		);
@@ -309,12 +333,14 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.treeview.goto",
 			(_actionContext: IActionContext, range: vscode.Range) => {
 				jsonOutline.revealRangeInEditor(range);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.sortTemplate",
 			async (
@@ -323,38 +349,48 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				editor?: vscode.TextEditor,
 			) => {
 				editor = editor || vscode.window.activeTextEditor;
+
 				uri = uri || vscode.window.activeTextEditor?.document.uri;
 				// If "Sort template..." was called from the context menu for ARM template outline
 				if (typeof uri === "string") {
 					uri = vscode.window.activeTextEditor?.document.uri;
 				}
+
 				if (uri && editor) {
 					const sectionType = await actionContext.ui.showQuickPick(
 						getQuickPickItems(),
 						{ placeHolder: "What do you want to sort?" },
 					);
+
 					await this.sortTemplate(sectionType.value, uri, editor);
 				}
 			},
 		);
+
 		registerCommand("azurerm-vscode-tools.sortFunctions", async () => {
 			await this.sortTemplate(TemplateSectionType.Functions);
 		});
+
 		registerCommand("azurerm-vscode-tools.sortOutputs", async () => {
 			await this.sortTemplate(TemplateSectionType.Outputs);
 		});
+
 		registerCommand("azurerm-vscode-tools.sortParameters", async () => {
 			await this.sortTemplate(TemplateSectionType.Parameters);
 		});
+
 		registerCommand("azurerm-vscode-tools.sortResources", async () => {
 			await this.sortTemplate(TemplateSectionType.Resources);
 		});
+
 		registerCommand("azurerm-vscode-tools.sortVariables", async () => {
 			await this.sortTemplate(TemplateSectionType.Variables);
 		});
+
 		registerCommand("azurerm-vscode-tools.sortTopLevel", async () => {
 			await this.sortTemplate(TemplateSectionType.TopLevel);
 		});
+
 		registerCommand(
 			"azurerm-vscode-tools.selectParameterFile",
 			async (
@@ -368,6 +404,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.openParameterFile",
 			async (
@@ -377,6 +414,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				sourceTemplateUri =
 					sourceTemplateUri ??
 					vscode.window.activeTextEditor?.document.uri;
+
 				await openParameterFile(
 					this._mapping,
 					sourceTemplateUri,
@@ -384,6 +422,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.openTemplateFile",
 			async (
@@ -393,6 +432,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				sourceParamUri =
 					sourceParamUri ??
 					vscode.window.activeTextEditor?.document.uri;
+
 				await openTemplateFile(
 					actionContext,
 					this._mapping,
@@ -401,6 +441,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.codeLens.openLinkedTemplateFile",
 			async (
@@ -413,6 +454,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.codeLens.reloadLinkedTemplateFile",
 			async (
@@ -420,11 +462,13 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				linkedTemplateUri: vscode.Uri,
 			) => {
 				this.closeDeploymentFile(linkedTemplateUri);
+
 				this._linkedTemplateDocProviderChangedEmitter.fire(
 					prependLinkedTemplateScheme(linkedTemplateUri),
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.insertItem",
 			async (
@@ -433,16 +477,19 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				editor?: vscode.TextEditor,
 			) => {
 				editor = editor || vscode.window.activeTextEditor;
+
 				uri = uri || vscode.window.activeTextEditor?.document.uri;
 				// If "Sort template..." was called from the context menu for ARM template outline
 				if (typeof uri === "string") {
 					uri = vscode.window.activeTextEditor?.document.uri;
 				}
+
 				if (uri && editor) {
 					const sectionType = await actionContext.ui.showQuickPick(
 						getItemTypeQuickPicks(),
 						{ placeHolder: "What do you want to insert?" },
 					);
+
 					await this.insertItem(
 						sectionType.value,
 						actionContext,
@@ -452,6 +499,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				}
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.insertParameter",
 			async (actionContext: IActionContext) => {
@@ -461,6 +509,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.insertVariable",
 			async (actionContext: IActionContext) => {
@@ -470,6 +519,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.insertOutput",
 			async (actionContext: IActionContext) => {
@@ -479,6 +529,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.insertFunction",
 			async (actionContext: IActionContext) => {
@@ -488,6 +539,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.insertResource",
 			async (actionContext: IActionContext) => {
@@ -514,6 +566,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.codeAction.addMissingRequiredParameters",
 			async (
@@ -529,6 +582,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				);
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.codeAction.extractParameter",
 			async (
@@ -537,6 +591,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				editor?: vscode.TextEditor,
 			) => {
 				editor = editor || vscode.window.activeTextEditor;
+
 				uri = uri || vscode.window.activeTextEditor?.document.uri;
 
 				if (editor) {
@@ -547,6 +602,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					if (!deploymentTemplate) {
 						return;
 					}
+
 					await new ExtractItem(actionContext.ui).extractParameter(
 						editor,
 						deploymentTemplate,
@@ -555,6 +611,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				}
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.codeAction.extractVariable",
 			async (
@@ -563,6 +620,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				editor?: vscode.TextEditor,
 			) => {
 				editor = editor || vscode.window.activeTextEditor;
+
 				uri = uri || vscode.window.activeTextEditor?.document.uri;
 
 				if (editor) {
@@ -573,6 +631,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					if (!deploymentTemplate) {
 						return;
 					}
+
 					await new ExtractItem(actionContext.ui).extractVariable(
 						editor,
 						deploymentTemplate,
@@ -593,6 +652,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				await this.onGotoParameterValue(actionContext, args);
 			},
 		);
+
 		registerCommand(
 			// Executed when the user clicks on a code lens that shows the children or parent of a resource
 			"azurerm-vscode-tools.codeLens.gotoResources",
@@ -606,6 +666,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"azurerm-vscode-tools.developer.resetGlobalState",
 			resetGlobalState,
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.developer.showAvailableResourceTypesAndVersions",
 			async (
@@ -614,6 +675,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				editor?: vscode.TextEditor,
 			) => {
 				editor = editor || vscode.window.activeTextEditor;
+
 				uri = uri || vscode.window.activeTextEditor?.document.uri;
 
 				if (editor) {
@@ -626,17 +688,20 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 						return;
 					}
+
 					const schema = deploymentTemplate.schemaUri;
 
 					if (schema) {
 						ext.outputChannel.appendLine(
 							`Retrieving available resource types and apiVersions for ${schema}...`,
 						);
+
 						await showAvailableResourceTypesAndVersions(schema);
 					}
 				}
 			},
 		);
+
 		registerCommand(
 			"azurerm-vscode-tools.developer.showInsertionContext",
 			async (actionContext: IActionContext) => {
@@ -663,6 +728,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		this._paramsStatusBarItem = vscode.window.createStatusBarItem(
 			vscode.StatusBarAlignment.Left,
 		);
+
 		ext.context.subscriptions.push(this._paramsStatusBarItem);
 
 		vscode.window.onDidChangeActiveTextEditor(
@@ -670,25 +736,31 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			this,
 			context.subscriptions,
 		);
+
 		vscode.workspace.onDidOpenTextDocument(
 			this.onDocumentOpened,
 			this,
 			context.subscriptions,
 		);
+
 		vscode.workspace.onDidChangeTextDocument(
 			this.onDocumentChanged,
 			this,
 			context.subscriptions,
 		);
+
 		vscode.workspace.onDidCloseTextDocument(
 			this.onDocumentClosed,
 			this,
 			ext.context.subscriptions,
 		);
+
 		vscode.workspace.onDidChangeConfiguration(
 			async () => {
 				this._mapping.resetCache();
+
 				this.updateEditorStateInBackground();
+
 				this._codeLensChangedEmitter.fire();
 			},
 			this,
@@ -699,6 +771,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			vscode.languages.createDiagnosticCollection(
 				"azurerm-tools-expressions",
 			);
+
 		context.subscriptions.push(this._diagnosticsCollection);
 
 		// Hook up completion provider immediately because it also handles unsupported JSON files (for non-template JSON files)
@@ -723,6 +796,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				return this.onResolveCompletionItem(item, token);
 			},
 		};
+
 		ext.context.subscriptions.push(
 			vscode.languages.registerCompletionItemProvider(
 				templateOrParameterDocumentSelector,
@@ -743,6 +817,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 		if (activeEditor) {
 			const activeDocument = activeEditor.document;
+
 			this.updateOpenedDocument(activeDocument);
 		}
 
@@ -815,6 +890,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				if (doc instanceof DeploymentParametersDoc) {
 					// Do completions for top-level parameters
 					parameterValues = doc.topLevelParameterValuesSource;
+
 					parameterDefinitions =
 						expectTemplateDocument(template).topLevelScope
 							.parameterDefinitionsSource;
@@ -822,7 +898,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			} else {
 				// Called from a code action, we should already have the parameter sources in the arguments
 				parameterValues = args.parameterValuesSource;
+
 				parameterDefinitions = args.parameterDefinitionsSource;
+
 				parentParameterDefinitions =
 					args.parentParameterDefinitionsSource;
 			}
@@ -856,6 +934,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			let deploymentTemplate = this.getOpenedDeploymentTemplate(
 				editor.document,
 			);
+
 			await sortTemplate(deploymentTemplate, sectionType, editor);
 		}
 	}
@@ -878,6 +957,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			let deploymentTemplate = this.getOpenedDeploymentTemplate(
 				editor.document,
 			);
+
 			await new InsertItem(actionContext.ui).insertItem(
 				deploymentTemplate,
 				sectionType,
@@ -892,6 +972,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"dispose",
 			(actionContext: IActionContext): void => {
 				actionContext.telemetry.properties.isActivationEvent = "true";
+
 				actionContext.errorHandling.suppressDisplay = true;
 			},
 		);
@@ -979,8 +1060,11 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"updateDeploymentDocument",
 			(actionContext: IActionContext): void => {
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
+
 				actionContext.telemetry.properties.isActivationEvent = "true";
+
 				actionContext.telemetry.properties.fileExt = path.extname(
 					textDocument.fileName,
 				);
@@ -991,6 +1075,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					vscode.window.activeTextEditor;
 
 				const stopwatch = new Stopwatch();
+
 				stopwatch.start();
 
 				let treatAsDeploymentTemplate = false;
@@ -1029,6 +1114,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					if (deploymentTemplate.hasArmSchemaUri()) {
 						treatAsDeploymentTemplate = true;
 					}
+
 					actionContext.telemetry.measurements.parseDurationInMilliseconds =
 						stopwatch.duration.totalMilliseconds;
 
@@ -1039,6 +1125,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 							documentUri,
 							deploymentTemplate,
 						);
+
 						this.registerActiveUse();
 
 						if (isNewlyOpened) {
@@ -1119,10 +1206,12 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 						if (treatAsDeploymentParameters) {
 							this.ensureDeploymentDocumentEventsHookedUp();
+
 							this.setOpenedDeploymentDocument(
 								documentUri,
 								deploymentParameters,
 							);
+
 							this.registerActiveUse();
 
 							this.reportDeploymentParametersErrorsNoThrow(
@@ -1185,9 +1274,12 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					document,
 					stopwatch,
 				);
+
 				await this.logFunctionCounts(deploymentTemplate);
+
 				await this.logResourceUsage(deploymentTemplate);
 			};
+
 			backgroundTask().catch((err) => {
 				// Ignore
 				assert.fail(
@@ -1228,12 +1320,15 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				for (const error of errorsWarnings.errors) {
 					issuesHistograph.add(`extErr:${error.kind}`);
 				}
+
 				for (const warning of errorsWarnings.warnings) {
 					issuesHistograph.add(`extWarn:${warning.kind}`);
 				}
 
 				const props = actionContext.telemetry.properties;
+
 				props.docLangId = document.languageId;
+
 				props.docExtension = path.extname(document.fileName);
 
 				const schemaUri = deploymentTemplate.schemaUri;
@@ -1241,6 +1336,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				const schemaVersionAndScope = (schemaUri?.match(
 					/([-0-9a-zA-Z]+\/[a-zA-Z]+\.json)#?$/,
 				) ?? [])[1];
+
 				props.schema = escapeNonPaths(
 					restrictToAllowedListLC<allSchemas>(schemaVersionAndScope, [
 						"2019-08-01/tenantDeploymentTemplate.json",
@@ -1252,40 +1348,56 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						"2019-08-01/tenantDeploymentTemplate.json",
 					]),
 				);
+
 				props.schemaScheme = restrictToAllowedListLC(
 					(schemaUri?.match(/^https?/) ?? [])[0],
 					["http", "https"],
 				);
 
 				props.apiProfile = deploymentTemplate.apiProfile ?? "";
+
 				props.issues =
 					this.histogramToTelemetryString(issuesHistograph);
 
 				const measurements = actionContext.telemetry.measurements;
+
 				measurements.documentSizeInCharacters =
 					document.getText().length;
+
 				measurements.parseDurationInMilliseconds =
 					stopwatch.duration.totalMilliseconds;
+
 				measurements.lineCount = deploymentTemplate.lineCount;
+
 				measurements.maxLineLength =
 					deploymentTemplate.getMaxLineLength();
+
 				measurements.paramsCount =
 					deploymentTemplate.topLevelScope.parameterDefinitionsSource?.parameterDefinitions.length;
+
 				measurements.paramsWithDefaultCount =
 					deploymentTemplate.topLevelScope.parameterDefinitionsSource?.parameterDefinitions.filter(
 						(pd) => pd.defaultValue,
 					).length;
+
 				measurements.varsCount =
 					deploymentTemplate.topLevelScope.variableDefinitions.length;
+
 				measurements.namespacesCount =
 					deploymentTemplate.topLevelScope.namespaceDefinitions.length;
+
 				measurements.userFunctionsCount = totalUserFunctionsCount;
+
 				measurements.multilineStringCount =
 					deploymentTemplate.getMultilineStringCount();
+
 				measurements.commentCount =
 					deploymentTemplate.getCommentCount();
+
 				measurements.extErrorsCount = errorsWarnings.errors.length;
+
 				measurements.extWarnCount = errorsWarnings.warnings.length;
+
 				measurements.parameterFiles = this._mapping.getParameterFile(
 					document.uri,
 				)
@@ -1294,15 +1406,19 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 				const getChildTemplatesInfo =
 					deploymentTemplate.getChildTemplatesInfo();
+
 				measurements.linkedTemplatesCount =
 					getChildTemplatesInfo.linkedTemplatesCount;
+
 				measurements.linkedTemplatesUriCount =
 					getChildTemplatesInfo.linkedTemplatesUriCount;
+
 				measurements.linkedTemplatesRelativePathCount =
 					getChildTemplatesInfo.linkedTemplatesRelativePathCount;
 
 				measurements.nestedInnerCount =
 					getChildTemplatesInfo.nestedInnerCount;
+
 				measurements.nestedOuterCount =
 					getChildTemplatesInfo.nestedOuterCount;
 			},
@@ -1333,6 +1449,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		for (const error of errorsWarnings.errors) {
 			issuesHistograph.add(`extErr:${error.kind}`);
 		}
+
 		for (const warning of errorsWarnings.warnings) {
 			issuesHistograph.add(`extWarn:${warning.kind}`);
 		}
@@ -1343,26 +1460,38 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				actionContext.errorHandling.suppressDisplay = true;
 
 				const props = actionContext.telemetry.properties;
+
 				props.docLangId = document.languageId;
+
 				props.docExtension = path.extname(document.fileName);
+
 				props.schema = parameters.schemaUri ?? "";
 
 				const measurements = actionContext.telemetry.measurements;
+
 				measurements.documentSizeInCharacters =
 					document.getText().length;
+
 				measurements.parseDurationInMilliseconds =
 					stopwatch.duration.totalMilliseconds;
+
 				measurements.lineCount = parameters.lineCount;
+
 				measurements.maxLineLength = parameters.getMaxLineLength();
+
 				measurements.paramsCount =
 					parameters.parameterValueDefinitions.length;
+
 				measurements.commentCount = parameters.getCommentCount();
+
 				measurements.templateFiles = this._mapping.getTemplateFile(
 					document.uri,
 				)
 					? 1
 					: 0;
+
 				measurements.extErrorsCount = errorsWarnings.errors.length;
+
 				measurements.extWarnCount = errorsWarnings.warnings.length;
 			},
 		);
@@ -1384,6 +1513,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				error.severity === IssueSeverity.Error,
 				"Errors should have severity of Error",
 			);
+
 			diagnostics.push(
 				toVSCodeDiagnosticFromIssue(
 					deploymentDocument,
@@ -1406,6 +1536,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				warning.severity === IssueSeverity.Information
 					? vscode.DiagnosticSeverity.Information
 					: vscode.DiagnosticSeverity.Warning;
+
 			diagnostics.push(
 				toVSCodeDiagnosticFromIssue(
 					deploymentDocument,
@@ -1477,6 +1608,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					if (templateUri) {
 						const templateFileExists =
 							await pathExistsNoThrow(templateUri);
+
 						actionContext.telemetry.properties.templateFileExists =
 							String(templateFileExists);
 
@@ -1546,8 +1678,10 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				async (actionContext: IActionContext): Promise<void> => {
 					actionContext.telemetry.properties.currentSchema =
 						schemaUri;
+
 					actionContext.telemetry.properties.preferredSchema =
 						preferredSchemaUri;
+
 					actionContext.telemetry.properties.checkForLatestSchema =
 						String(checkForLatestSchema);
 
@@ -1586,6 +1720,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						notNow,
 						neverForThisFile,
 					);
+
 					actionContext.telemetry.properties.response =
 						response.title;
 
@@ -1597,6 +1732,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 								schemaValue.unquotedValue,
 								preferredSchemaUri,
 							);
+
 							actionContext.telemetry.properties.replacedSchema =
 								"true";
 
@@ -1607,6 +1743,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 						case neverForThisFile.title:
 							dontAskFiles.push(documentPath);
+
 							await ext.context.globalState.update(
 								globalStateKeys.dontAskAboutSchemaFiles,
 								dontAskFiles,
@@ -1655,6 +1792,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				currentTemplate,
 				currentSchemaValue.unquotedSpan,
 			);
+
 			await editor.edit((edit) => {
 				// Replace $schema value
 				edit.replace(range, newSchema);
@@ -1662,6 +1800,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 			// Select what we just replaced
 			editor.selection = new vscode.Selection(range.start, range.end);
+
 			editor.revealRange(range, vscode.TextEditorRevealType.Default);
 		} else {
 			throw new Error(
@@ -1695,6 +1834,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		if (this._areDeploymentTemplateEventsHookedUp) {
 			return;
 		}
+
 		this._areDeploymentTemplateEventsHookedUp = true;
 
 		// tslint:disable-next-line: no-suspicious-comment
@@ -1723,6 +1863,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerHoverProvider(
 						templateDocumentSelector,
@@ -1745,6 +1886,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						return await this.onResolveCodeLens(codeLens, token);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerCodeLensProvider(
 						templateDocumentSelector,
@@ -1770,6 +1912,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerCodeActionsProvider(
 						templateOrParameterDocumentSelector,
@@ -1797,6 +1940,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerDefinitionProvider(
 						templateOrParameterDocumentSelector,
@@ -1819,6 +1963,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerReferenceProvider(
 						templateOrParameterDocumentSelector,
@@ -1839,6 +1984,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerSignatureHelpProvider(
 						templateDocumentSelector,
@@ -1879,6 +2025,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerRenameProvider(
 						templateOrParameterDocumentSelector,
@@ -1894,6 +2041,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						return await this.provideDocumentLinks(document, token);
 					},
 				};
+
 				ext.context.subscriptions.push(
 					vscode.languages.registerDocumentLinkProvider(
 						templateDocumentSelector,
@@ -1912,6 +2060,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 							return await this.provideContentForNonlocalUri(uri);
 						},
 					};
+
 				ext.context.subscriptions.push(
 					vscode.workspace.registerTextDocumentContentProvider(
 						documentSchemes.linkedTemplate,
@@ -1925,6 +2074,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						this,
 					),
 				);
+
 				ext.context.subscriptions.push(
 					ext.languageServerStateChanged(
 						this.onLanguageServerStateChanged,
@@ -1951,12 +2101,14 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"provideContentForNonlocalUris",
 			async (context: IActionContext) => {
 				context.errorHandling.rethrow = true;
+
 				context.errorHandling.suppressDisplay = true;
 
 				let dt = this.getOpenedDeploymentDocument(uri);
 
 				if (!dt) {
 					await tryLoadNonLocalLinkedFile(uri, context, false);
+
 					dt = this.getOpenedDeploymentDocument(uri);
 				}
 
@@ -1997,9 +2149,13 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 									state === LanguageServerState.Failed
 										? "$(error) ARM language server failed to start."
 										: "$(error) ARM language server stopped.";
+
 								this._paramsStatusBarItem.text = statusBarText;
+
 								this._paramsStatusBarItem.command = undefined;
+
 								this._paramsStatusBarItem.color = undefined;
+
 								this._paramsStatusBarItem.show();
 
 								return;
@@ -2031,6 +2187,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 								const doesParamFileExist =
 									await pathExistsNoThrow(paramFileUri);
+
 								statusBarText = `Parameter file: ${getFriendlyPathToFile(paramFileUri)}`;
 
 								if (!doesParamFileExist) {
@@ -2047,13 +2204,16 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 									?.fullValidationStatus
 									.fullValidationEnabled ??
 								templateFileHasParamFile;
+
 							isWarning = !fullValidationOn;
+
 							statusBarText = isWarning
 								? `$(warning) WARNING: Full template validation off. Add param file or top-level param defaults to enable.`
 								: statusBarText;
 
 							this._paramsStatusBarItem.command =
 								"azurerm-vscode-tools.selectParameterFile";
+
 							this._paramsStatusBarItem.text = statusBarText;
 						} else if (
 							deploymentTemplate instanceof
@@ -2072,6 +2232,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 								const doesTemplateFileExist =
 									await pathExistsNoThrow(templateFileUri);
+
 								statusBarText = `Template file: ${getFriendlyPathToFile(templateFileUri)}`;
 
 								if (!doesTemplateFileExist) {
@@ -2083,6 +2244,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 							this._paramsStatusBarItem.command =
 								"azurerm-vscode-tools.openTemplateFile";
+
 							this._paramsStatusBarItem.text = statusBarText;
 						}
 
@@ -2126,7 +2288,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 				let properties: {
 					functionCounts?: string;
+
 					unrecognized?: string;
+
 					incorrectArgs?: string;
 				} & TelemetryProperties = actionContext.telemetry.properties;
 
@@ -2142,6 +2306,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					functionsData[<string>functionName] =
 						functionCounts.getCount(functionName);
 				}
+
 				properties.functionCounts = JSON.stringify(functionsData);
 
 				// Missing function names and functions with incorrect number of arguments (useful for knowing
@@ -2156,11 +2321,14 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					} else if (issue instanceof IncorrectArgumentsCountIssue) {
 						// Encode function name as "funcname(<actual-args>)[<min-expected>..<max-expected>]"
 						let encodedName = `${issue.functionName}(${issue.actual})[${issue.minExpected}..${issue.maxExpected}]`;
+
 						incorrectArgCounts.add(encodedName);
 					}
 				}
+
 				properties.unrecognized =
 					AzureRMToolsExtension.convertSetToJson(unrecognized);
+
 				properties.incorrectArgs =
 					AzureRMToolsExtension.convertSetToJson(incorrectArgCounts);
 			},
@@ -2196,12 +2364,15 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				] = deploymentTemplate.getResourceUsage(
 					availableResourceTypesAndVersions,
 				);
+
 				properties.resourceCounts = escapeNonPaths(
 					this.histogramToTelemetryString(resourceCounts),
 				);
+
 				properties.invalidResources = escapeNonPaths(
 					this.histogramToTelemetryString(invalidResourceCounts),
 				);
+
 				properties.invalidVersions = escapeNonPaths(
 					this.histogramToTelemetryString(invalidVersionCounts),
 				);
@@ -2215,6 +2386,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		for (const key of histogram.keys) {
 			data[<string>key] = histogram.getCount(key);
 		}
+
 		return JSON.stringify(data);
 	}
 
@@ -2229,6 +2401,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		for (let item of s) {
 			array.push(item);
 		}
+
 		return JSON.stringify(array);
 	}
 
@@ -2241,7 +2414,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			documentOrUri instanceof vscode.Uri
 				? documentOrUri
 				: documentOrUri.uri;
+
 		this._diagnosticsCollection.delete(uri);
+
 		this.setOpenedDeploymentDocument(uri, undefined);
 	}
 
@@ -2257,6 +2432,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"ProvideCodeLenses",
 			(actionContext: IActionContext): vscode.CodeLens[] | undefined => {
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
 
 				const doc = this.getOpenedDeploymentDocument(textDocument.uri);
@@ -2368,11 +2544,13 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				actionContext: IActionContext,
 			): Promise<vscode.Hover | undefined> => {
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
 
 				const properties = <
 					TelemetryProperties & {
 						hoverType?: string;
+
 						tleFunctionName: string;
 					}
 				>actionContext.telemetry.properties;
@@ -2425,7 +2603,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				actionContext: IActionContext,
 			): Promise<vscode.CompletionList | undefined> => {
 				actionContext.telemetry.suppressIfSuccessful = true;
+
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.properties.langId = document.languageId;
 
 				const cancel = new Cancellation(token, actionContext);
@@ -2461,6 +2641,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 								await vscode.commands.executeCommand("type", {
 									text: "\n",
 								});
+
 								vscode.commands.executeCommand(
 									"editor.action.triggerSuggest",
 								);
@@ -2479,7 +2660,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						document,
 						position,
 					);
+
 					jsonDocument = result.jsonDocument;
+
 					items = result.items;
 				}
 
@@ -2488,6 +2671,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 					const vsCodeItems = items.map((c) =>
 						toVsCodeCompletionItem(jsonDocument!, c, position),
 					);
+
 					ext.completionItemsSpy.postCompletionItemsResult(
 						jsonDocument,
 						items,
@@ -2519,6 +2703,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			// Limit size of strings we trim
 			return {};
 		}
+
 		text = text.trim();
 
 		if (
@@ -2572,6 +2757,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 		const uri =
 			args.inParameterFile?.parameterFileUri ??
 			args.inTemplateFile?.documentUri;
+
 		assert(uri);
 
 		let textDocument: vscode.TextDocument =
@@ -2601,6 +2787,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				parameterValues.parameterValuesProperty?.nameValue.span ??
 				// Third choice: top of the file
 				new Span(0, 0);
+
 			range = getVSCodeRangeFromSpan(doc, span);
 		} else if (
 			args.inTemplateFile &&
@@ -2611,6 +2798,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 		if (range) {
 			editor.selection = new vscode.Selection(range.start, range.end);
+
 			editor.revealRange(range);
 		}
 	}
@@ -2627,10 +2815,12 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 	): Promise<
 		| {
 				doc?: DeploymentTemplateDoc;
+
 				associatedDoc?: DeploymentParametersDoc;
 		  }
 		| {
 				doc?: DeploymentParametersDoc;
+
 				associatedDoc?: DeploymentTemplateDoc;
 		  }
 	> {
@@ -2659,10 +2849,12 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 			if (paramsUri) {
 				params = await this.getOrReadParametersFile(paramsUri);
+
 				cancel.throwIfCancelled();
 			}
 
 			assert(doc instanceof DeploymentTemplateDoc);
+
 			assert(!params || params instanceof DeploymentParametersDoc);
 
 			return { doc: template, associatedDoc: params };
@@ -2676,6 +2868,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 			if (templateUri) {
 				template = await this.getOrReadDeploymentTemplate(templateUri);
+
 				cancel.throwIfCancelled();
 			}
 
@@ -2796,7 +2989,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 							docType?: string;
 						}
 					>actionContext.telemetry.properties;
+
 					actionContext.errorHandling.suppressDisplay = true;
+
 					properties.docType = this.getDocTypeForTelemetry(
 						pc.document,
 					);
@@ -2858,6 +3053,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 							const referenceRange: vscode.Range =
 								getVSCodeRangeFromSpan(ref.document, ref.span);
+
 							results.push(
 								new vscode.Location(
 									locationUri,
@@ -2896,6 +3092,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				actionContext: IActionContext,
 			): Promise<(vscode.Command | vscode.CodeAction)[]> => {
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
 
 				const cancel = new Cancellation(token, actionContext);
@@ -2926,6 +3123,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				actionContext: IActionContext,
 			): Promise<vscode.SignatureHelp | undefined> => {
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
 
 				const cancel = new Cancellation(token, actionContext);
@@ -2950,6 +3148,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 								functionSignatureHelp.functionMetadata.usage,
 								functionSignatureHelp.functionMetadata.description,
 							);
+
 						signatureInformation.parameters = [];
 
 						for (const param of functionSignatureHelp
@@ -2961,6 +3160,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 							);
 
 							const paramDocumentation = "";
+
 							signatureInformation.parameters.push(
 								new vscode.ParameterInformation(
 									paramUsage,
@@ -2970,9 +3170,12 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						}
 
 						signatureHelp = new vscode.SignatureHelp();
+
 						signatureHelp.activeParameter =
 							functionSignatureHelp.activeParameterIndex;
+
 						signatureHelp.activeSignature = 0;
+
 						signatureHelp.signatures = [signatureInformation];
 					}
 
@@ -3121,6 +3324,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 						for (const ref of referenceList.references) {
 							const referenceRange: vscode.Range =
 								getVSCodeRangeFromSpan(ref.document, ref.span);
+
 							result.replace(
 								ref.document.documentUri,
 								referenceRange,
@@ -3145,6 +3349,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"provideDocumentLinks",
 			async (actionContext) => {
 				actionContext.errorHandling.rethrow = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
 
 				const dt = this.getOpenedDeploymentTemplate(textDocument);
@@ -3165,7 +3370,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"onActiveTextEditorChanged",
 			(actionContext: IActionContext): void => {
 				actionContext.telemetry.properties.isActivationEvent = "true";
+
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
 
 				let activeDocument: vscode.TextDocument | undefined =
@@ -3187,7 +3394,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"onTextSelectionChanged",
 			async (actionContext: IActionContext): Promise<void> => {
 				actionContext.telemetry.properties.isActivationEvent = "true";
+
 				actionContext.errorHandling.suppressDisplay = true;
+
 				actionContext.telemetry.suppressIfSuccessful = true;
 
 				let editor: vscode.TextEditor | undefined =
@@ -3216,6 +3425,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 								tleHighlightIndex + pc.jsonTokenStartIndex,
 								1,
 							);
+
 							braceHighlightRanges.push(
 								getVSCodeRangeFromSpan(
 									pc.document,
@@ -3247,7 +3457,9 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 			"onDocumentClosed",
 			(actionContext: IActionContext): void => {
 				actionContext.telemetry.properties.isActivationEvent = "true";
+
 				actionContext.telemetry.suppressIfSuccessful = true;
+
 				actionContext.errorHandling.suppressDisplay = true;
 
 				this.closeDeploymentFile(closedDocument);
@@ -3284,6 +3496,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 				const rootTemplateKey = getNormalizedDocumentKey(
 					parseUri(e.rootTemplateUri),
 				);
+
 				this._cachedTemplateGraphs.set(rootTemplateKey, e);
 
 				if (rootTemplate) {
@@ -3319,6 +3532,7 @@ export class AzureRMToolsExtension implements IProvideOpenedDocuments {
 
 	private onLanguageServerStateChanged(): void {
 		this._codeLensChangedEmitter.fire();
+
 		this.updateEditorStateInBackground();
 	}
 

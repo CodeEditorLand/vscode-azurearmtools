@@ -12,11 +12,13 @@ export interface IGotoParameterValueArgs {
 		// Can't guarantee parameter file doesn't change since the code lens was created, so resolve the parameter
 		//   location only when needed
 		parameterFileUri: Uri;
+
 		parameterName: string | undefined; // If no parameter name, just navigate to the parameters property or the top of the file
 	};
 
 	inTemplateFile?: {
 		documentUri: Uri;
+
 		range: Range;
 	};
 
@@ -25,12 +27,16 @@ export interface IGotoParameterValueArgs {
 
 export interface IAddMissingParametersArgs {
 	parameterDefinitionsSource: IParameterDefinitionsSource;
+
 	parameterValuesSource: IParameterValuesSource;
+
 	parentParameterDefinitionsSource: IParameterDefinitionsSource | undefined;
 }
 
 export interface IGotoResourcesArgs {
 	source: Location;
+
 	targets: Location[];
+
 	telemetryProperties?: { [key: string]: string };
 }

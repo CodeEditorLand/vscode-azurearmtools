@@ -44,6 +44,7 @@ export function normalizeUri(pathOrUri: Uri | string): string {
 		if (isWin32) {
 			normalizedPath = normalizedPath.toLowerCase();
 		}
+
 		pathOrUri = Uri.file(normalizedPath);
 	}
 

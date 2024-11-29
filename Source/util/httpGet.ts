@@ -55,6 +55,7 @@ export function httpGet(url: string): Promise<string> {
 									dataChunk[1] === 0xfe
 								) {
 									byteOrderMarkLength = 2;
+
 									encoding = "utf16le";
 								} else {
 									if (
@@ -64,9 +65,11 @@ export function httpGet(url: string): Promise<string> {
 									) {
 										byteOrderMarkLength = 3;
 									}
+
 									encoding = "utf8";
 								}
 							}
+
 							responseContent += buffer
 								.slice(byteOrderMarkLength)
 								.toString(encoding);

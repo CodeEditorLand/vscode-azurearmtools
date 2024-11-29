@@ -38,6 +38,7 @@ export class ShowCurrentParameterFileCodeLens extends ResolvableCodeLens {
 				this.scope.document.documentUri,
 				this.parameterFileUri,
 			);
+
 			this.command = {
 				title: `Parameter file: "${paramFile}"`,
 				command: "azurerm-vscode-tools.openParameterFile",
@@ -47,6 +48,7 @@ export class ShowCurrentParameterFileCodeLens extends ResolvableCodeLens {
 			if (!(await pathExistsNoThrow(this.parameterFileUri))) {
 				this.command.title += " $(error) Not found";
 			}
+
 			return true;
 		}
 
@@ -64,6 +66,7 @@ export class SelectParameterFileCodeLens extends ResolvableCodeLens {
 		private parameterFileUri: Uri | undefined,
 		private _options: {
 			isForLinkedOrNestedTemplate?: true;
+
 			fullValidationStatus: IFullValidationStatus | undefined;
 		},
 	) {

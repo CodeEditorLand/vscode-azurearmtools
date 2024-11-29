@@ -44,6 +44,7 @@ export function areDecoupledChildAndParent(
 		// malformed
 		return false;
 	}
+
 	if (!(childNameSegments.length === parentNameSegments.length + 1)) {
 		// Child should have exactly one more segment than the parent
 		return false;
@@ -58,6 +59,7 @@ export function areDecoupledChildAndParent(
 	if (!childMatchesParentSegments(childNameSegments, parentNameSegments)) {
 		return false;
 	}
+
 	if (!childMatchesParentSegments(childTypeSegments, parentTypeSegments)) {
 		return false;
 	}

@@ -43,9 +43,11 @@ export abstract class TemplateScope
 	private _variableDefinitions: CachedValue<
 		IVariableDefinition[] | undefined
 	> = new CachedValue<IVariableDefinition[] | undefined>();
+
 	private _functionDefinitions: CachedValue<
 		UserFunctionNamespaceDefinition[] | undefined
 	> = new CachedValue<UserFunctionNamespaceDefinition[] | undefined>();
+
 	private _resources: CachedValue<IResource[] | undefined> = new CachedValue<
 		IResource[] | undefined
 	>();
@@ -100,12 +102,14 @@ export abstract class TemplateScope
 		// undefined means not supported in this context
 		return undefined;
 	}
+
 	protected getNamespaceDefinitions():
 		| UserFunctionNamespaceDefinition[]
 		| undefined {
 		// undefined means not supported in this context
 		return undefined;
 	}
+
 	protected getResources(): IResource[] | undefined {
 		// undefined means not supported in this context
 		return undefined;
@@ -193,6 +197,7 @@ export abstract class TemplateScope
 				let i =
 					this.parameterDefinitionsSource.parameterDefinitions
 						.length - 1;
+
 				i >= 0;
 				--i
 			) {

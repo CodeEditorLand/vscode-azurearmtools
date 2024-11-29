@@ -58,6 +58,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 
 		if (!list) {
 			list = new Reference.ReferenceList(definition.definitionKind);
+
 			this._referenceListsMap.set(definition, list);
 		}
 
@@ -152,6 +153,7 @@ export class FindReferencesAndErrorsVisitor extends TleVisitor {
 		if (!namespaceName) {
 			const metadata: BuiltinFunctionMetadata | undefined =
 				this._functionsMetadata.findbyName(tleFunctionCall.name);
+
 			this.addBuiltFunctionRefOrError(
 				metadata,
 				name,

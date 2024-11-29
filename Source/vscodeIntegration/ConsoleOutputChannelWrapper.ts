@@ -19,6 +19,7 @@ export class ConsoleOutputChannelWrapper implements IAzExtOutputChannel {
 			| undefined,
 	): void {
 		console.log(value);
+
 		this.outputChannel.appendLog(value, options);
 	}
 
@@ -28,11 +29,13 @@ export class ConsoleOutputChannelWrapper implements IAzExtOutputChannel {
 
 	public append(value: string): void {
 		console.log(value);
+
 		this.outputChannel.append(value);
 	}
 
 	public appendLine(value: string): void {
 		console.log(value);
+
 		this.outputChannel.appendLine(value);
 	}
 
@@ -55,12 +58,14 @@ export class ConsoleOutputChannelWrapper implements IAzExtOutputChannel {
 
 	public replace(value: string): void {
 		console.log(value);
+
 		this.outputChannel.replace(value);
 	}
 
 	public hide(): void {
 		this.outputChannel.hide();
 	}
+
 	public dispose(): void {
 		this.outputChannel.dispose();
 	}

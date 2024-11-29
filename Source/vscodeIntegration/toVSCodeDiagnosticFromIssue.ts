@@ -23,7 +23,9 @@ export function toVSCodeDiagnosticFromIssue(
 	const message: string = issue.message;
 
 	let diagnostic = new vscode.Diagnostic(range, message, severity);
+
 	diagnostic.source = expressionsDiagnosticsSource;
+
 	diagnostic.code = "";
 
 	if (issue.isUnnecessaryCode) {

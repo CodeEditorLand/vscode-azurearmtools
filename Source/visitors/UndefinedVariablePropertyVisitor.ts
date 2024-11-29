@@ -23,9 +23,11 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 	constructor(private _scope: TemplateScope) {
 		super();
 	}
+
 	public get errors(): Issue[] {
 		return this._errors;
 	}
+
 	public visitPropertyAccess(tlePropertyAccess: PropertyAccess): void {
 		if (tlePropertyAccess.nameToken) {
 			const functionSource: FunctionCallValue | undefined =
@@ -68,8 +70,10 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 				}
 			}
 		}
+
 		super.visitPropertyAccess(tlePropertyAccess);
 	}
+
 	private addIssue(tlePropertyAccess: PropertyAccess): void {
 		const nameToken = tlePropertyAccess.nameToken;
 
@@ -80,6 +84,7 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 		const sourceString: string = tlePropertyAccess.source.toString();
 
 		const span = nameToken ? nameToken.span : tlePropertyAccess.getSpan();
+
 		this._errors.push(
 			new Issue(
 				span,
@@ -88,6 +93,7 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 			),
 		);
 	}
+
 	public static visit(
 		tleValue: Value | undefined,
 		scope: TemplateScope,
@@ -97,6 +103,7 @@ export class UndefinedVariablePropertyVisitor extends TleVisitor {
 		if (tleValue) {
 			tleValue.accept(visitor);
 		}
+
 		return visitor;
 	}
 }

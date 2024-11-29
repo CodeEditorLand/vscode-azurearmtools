@@ -32,6 +32,7 @@ export async function gotoResources(
 				target.range,
 				vscode.TextEditorRevealType.Default,
 			);
+
 			editor.selection = new vscode.Selection(
 				target.range.start,
 				target.range.start,

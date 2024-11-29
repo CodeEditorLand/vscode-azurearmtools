@@ -20,5 +20,6 @@ export function getRenameError(
 	) {
 		return "Built-in functions cannot be renamed.";
 	}
+
 	return undefined;
 }

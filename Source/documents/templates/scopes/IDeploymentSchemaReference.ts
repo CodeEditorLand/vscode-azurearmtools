@@ -8,5 +8,6 @@ import { ISchemaInfo } from "../ISchemaInfo";
 
 export interface IDeploymentSchemaReference {
 	schemaStringValue: Json.StringValue | undefined;
+
 	matchingInfo: ISchemaInfo | undefined;
 }

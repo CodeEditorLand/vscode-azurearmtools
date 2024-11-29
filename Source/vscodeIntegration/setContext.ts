@@ -19,13 +19,17 @@ const hasParameterFileContextName = `azurerm-vscode-tools-hasParamFile`;
 
 export function setContext(value: {
 	isTemplateFile: boolean;
+
 	hasParamFile: boolean;
 
 	isParamFile: boolean;
+
 	hasTemplateFile: boolean;
 }): void {
 	assert(!(value.isTemplateFile && value.isParamFile));
+
 	assert(!(!value.isTemplateFile && value.hasParamFile));
+
 	assert(!(!value.isParamFile && value.hasTemplateFile));
 
 	// Don't wait for return for any of these...
@@ -44,6 +48,7 @@ export function setContext(value: {
 		isParameterFileContextName,
 		value.isParamFile,
 	);
+
 	commands.executeCommand(
 		"setContext",
 		hasTemplateFileContextName,

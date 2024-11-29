@@ -31,9 +31,11 @@ export function isUserFunctionDefinition(
 export class UserFunctionDefinition implements INamedDefinition {
 	private readonly _output: CachedValue<OutputDefinition | undefined> =
 		new CachedValue<OutputDefinition | undefined>();
+
 	private readonly _parameterDefinitions: CachedValue<
 		UserFunctionParameterDefinition[]
 	> = new CachedValue<UserFunctionParameterDefinition[]>();
+
 	private readonly _scope: CachedValue<TemplateScope> =
 		new CachedValue<TemplateScope>();
 

@@ -26,6 +26,7 @@ const debugSettings: ISettings = {
 
 export class TimedMessage {
 	private _settings: ISettings = defaultSettings;
+
 	private _alreadyCheckedThisSession: boolean = false;
 
 	public constructor(
@@ -42,6 +43,7 @@ export class TimedMessage {
 		if (this._alreadyCheckedThisSession) {
 			return;
 		}
+
 		this._alreadyCheckedThisSession = true;
 
 		// Don't wait
@@ -49,6 +51,7 @@ export class TimedMessage {
 			"considerShowingMessage",
 			async (context: IActionContext) => {
 				context.errorHandling.suppressDisplay = true;
+
 				context.telemetry.properties.message = this._message;
 
 				await this.checkForDebugMode();
@@ -70,6 +73,7 @@ export class TimedMessage {
 				} else if (postponeUntilTime === 0) {
 					// First time - set up initial delay
 					await this.postpone();
+
 					context.telemetry.properties.status = "FirstDelay";
 
 					return;
@@ -90,6 +94,7 @@ export class TimedMessage {
 						moreInfo,
 						neverAskAgain,
 					)) ?? neverAskAgain;
+
 				context.telemetry.properties.response = String(response.title);
 
 				// No matter the response, neve show again
@@ -119,6 +124,7 @@ export class TimedMessage {
 
 	public async neverShowAgain(): Promise<void> {
 		this._alreadyCheckedThisSession = true;
+
 		await ext.context.globalState.update(this._postponeUntilTimeKey, -1);
 	}
 

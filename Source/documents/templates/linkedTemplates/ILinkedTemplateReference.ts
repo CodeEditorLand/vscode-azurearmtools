@@ -8,10 +8,16 @@ import { LinkedFileLoadState } from "./LinkedFileLoadState";
 export interface ILinkedTemplateReference {
 	id: string; // Guid
 	fullUri: string;
+
 	originalPath: string;
+
 	lineNumberInParent: number;
+
 	columnNumberInParent: number;
+
 	parameterValues: { [key: string]: unknown };
+
 	loadState: LinkedFileLoadState;
+
 	loadErrorMessage: string | undefined;
 }

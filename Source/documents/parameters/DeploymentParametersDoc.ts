@@ -40,8 +40,10 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 	private _parameterValueDefinitions: CachedValue<
 		ParameterValueDefinition[]
 	> = new CachedValue<ParameterValueDefinition[]>();
+
 	private _parametersProperty: CachedValue<Json.Property | undefined> =
 		new CachedValue<Json.Property | undefined>();
+
 	private _parameterValuesSource: CachedValue<IParameterValuesSource> =
 		new CachedValue<IParameterValuesSource>();
 
@@ -161,6 +163,7 @@ export class DeploymentParametersDoc extends DeploymentDocument {
 				});
 			}
 		}
+
 		return results;
 	}
 

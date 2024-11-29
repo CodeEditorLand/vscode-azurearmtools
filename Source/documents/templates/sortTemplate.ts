@@ -21,7 +21,9 @@ type CommentsMap = Map<number, Span>;
 
 export class SortQuickPickItem implements vscode.QuickPickItem {
 	public label: string;
+
 	public value: TemplateSectionType;
+
 	public description: string;
 
 	constructor(
@@ -30,13 +32,16 @@ export class SortQuickPickItem implements vscode.QuickPickItem {
 		description: string,
 	) {
 		this.label = label;
+
 		this.value = value;
+
 		this.description = description;
 	}
 }
 
 export function getQuickPickItems(): SortQuickPickItem[] {
 	let items: SortQuickPickItem[] = [];
+
 	items.push(
 		new SortQuickPickItem(
 			"Functions",
@@ -44,6 +49,7 @@ export function getQuickPickItems(): SortQuickPickItem[] {
 			"Sort function namespaces and functions",
 		),
 	);
+
 	items.push(
 		new SortQuickPickItem(
 			"Outputs",
@@ -51,6 +57,7 @@ export function getQuickPickItems(): SortQuickPickItem[] {
 			"Sort outputs",
 		),
 	);
+
 	items.push(
 		new SortQuickPickItem(
 			"Parameters",
@@ -58,6 +65,7 @@ export function getQuickPickItems(): SortQuickPickItem[] {
 			"Sort parameters for the template",
 		),
 	);
+
 	items.push(
 		new SortQuickPickItem(
 			"Resources",
@@ -65,6 +73,7 @@ export function getQuickPickItems(): SortQuickPickItem[] {
 			"Sort resources based on the name including first level of child resources",
 		),
 	);
+
 	items.push(
 		new SortQuickPickItem(
 			"Variables",
@@ -72,6 +81,7 @@ export function getQuickPickItems(): SortQuickPickItem[] {
 			"Sort variables",
 		),
 	);
+
 	items.push(
 		new SortQuickPickItem(
 			"Top level",
@@ -91,6 +101,7 @@ export async function sortTemplate(
 	if (!template) {
 		return;
 	}
+
 	switch (sectionType) {
 		case TemplateSectionType.Functions:
 			await showSortingResultMessage(
@@ -161,6 +172,7 @@ async function showSortingResultMessage(
 	let message = didSorting
 		? `"${part}" section was sorted`
 		: `Nothing in "${part.toLowerCase()}" needed sorting`;
+
 	vscode.window.showInformationMessage(message);
 }
 
@@ -179,6 +191,7 @@ async function sortOutputs(
 	if (!rootValue) {
 		return false;
 	}
+
 	let outputs = Json.asObjectValue(
 		rootValue.getPropertyValue(templateKeys.outputs),
 	);
@@ -192,6 +205,7 @@ async function sortOutputs(
 			textEditor,
 		);
 	}
+
 	return false;
 }
 
@@ -210,6 +224,7 @@ async function sortResources(
 	if (!rootValue) {
 		return false;
 	}
+
 	let resources = Json.asArrayValue(
 		rootValue.getPropertyValue(templateKeys.resources),
 	);
@@ -234,6 +249,7 @@ async function sortResources(
 
 		return didSort1 || didSort2;
 	}
+
 	return false;
 }
 
@@ -252,6 +268,7 @@ async function sortTopLevel(
 	if (!rootValue) {
 		return false;
 	}
+
 	return await sortGeneric<Json.Property>(
 		rootValue.properties,
 		(x) => getTopLevelOrder(x.nameValue.quotedValue),
@@ -342,7 +359,9 @@ function createCommentsMap(
 	let currentCommentsSpan: Span | undefined;
 
 	let allTokens = tokens.concat(commentTokens);
+
 	allTokens.sort((a, b) => a.span.startIndex - b.span.startIndex);
+
 	allTokens.forEach((token, index) => {
 		if (token.type === Json.TokenType.Comment) {
 			currentCommentsSpan = !currentCommentsSpan
@@ -352,9 +371,11 @@ function createCommentsMap(
 			if (currentCommentsSpan) {
 				// This token has comments before it, place comments span into map keyed with the token's starting index
 				commentsMap.set(token.span.startIndex, currentCommentsSpan);
+
 				currentCommentsSpan = undefined;
 			}
 		}
+
 		if (token.span.startIndex > lastSpan.endIndex) {
 			return commentsMap;
 		}
@@ -374,6 +395,7 @@ function expandSpanToPrecedingComments(
 	if (!commentSpan) {
 		return span;
 	}
+
 	return commentSpan.union(span);
 }
 
@@ -381,6 +403,7 @@ function getTopLevelOrder(key: string): string {
 	if (!key) {
 		return "9";
 	}
+
 	switch (key.toLocaleLowerCase().replace(/\"/gi, "")) {
 		case "$schema":
 			return "0";
@@ -421,6 +444,7 @@ async function sortGeneric<T>(
 	if (list.length < 2) {
 		return false;
 	}
+
 	let document = textEditor.document;
 
 	let lastSpan = spanSelector(list[list.length - 1]);
@@ -454,6 +478,7 @@ async function sortGeneric<T>(
 	if (arraysEqual<string>(orderBefore, orderAfter)) {
 		return false;
 	}
+
 	let sortedTexts = sorted.map((value) =>
 		getText(
 			expandSpanToPrecedingComments(spanSelector(value), comments),
@@ -462,6 +487,7 @@ async function sortGeneric<T>(
 	);
 
 	let joined = joinTexts(sortedTexts, indentedTexts);
+
 	await textEditor.edit((x) => x.replace(selectionWithComments, joined));
 
 	return true;
@@ -494,6 +520,7 @@ async function sortGenericDeep<T, TChild>(
 			}
 		}
 	}
+
 	return didSorting;
 }
 
@@ -503,11 +530,13 @@ function getNameFromResource(value: Json.Value): string {
 	if (!objectValue) {
 		return "";
 	}
+
 	let nameProperty = objectValue.getPropertyValue("name");
 
 	if (!nameProperty) {
 		return "";
 	}
+
 	let name = nameProperty.toShortFriendlyString();
 
 	return name;
@@ -519,6 +548,7 @@ function getResourcesFromResource(value: Json.Value): Json.Value[] | undefined {
 	if (!objectValue) {
 		return undefined;
 	}
+
 	let resources = Json.asArrayValue(
 		objectValue.getPropertyValue("resources"),
 	);
@@ -526,6 +556,7 @@ function getResourcesFromResource(value: Json.Value): Json.Value[] | undefined {
 	if (!resources) {
 		return undefined;
 	}
+
 	return resources.elements;
 }
 
@@ -535,6 +566,7 @@ function joinTexts(texts: String[], intendentTexts: String[]): string {
 	for (let index = 0; index < texts.length - 1; index++) {
 		output = `${output}${texts[index]}${intendentTexts[index]}`;
 	}
+
 	output = `${output}${texts[texts.length - 1]}`;
 
 	return output;
@@ -558,8 +590,10 @@ function getIndentTexts<T>(
 				document.positionAt(span2.startIndex),
 			),
 		);
+
 		indentTexts.push(intendentText);
 	}
+
 	return indentTexts;
 }
 
@@ -604,13 +638,16 @@ function arraysEqual<T>(a: T[], b: T[]): boolean {
 	if (!a || !b) {
 		return false;
 	}
+
 	if (a.length !== b.length) {
 		return false;
 	}
+
 	for (let i = 0; i < a.length; ++i) {
 		if (a[i] !== b[i]) {
 			return false;
 		}
 	}
+
 	return true;
 }

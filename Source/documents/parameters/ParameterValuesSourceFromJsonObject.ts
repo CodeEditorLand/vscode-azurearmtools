@@ -33,6 +33,7 @@ export class ParameterValuesSourceFromJsonObject
 		public readonly parameterValuesProperty: Json.Property | undefined,
 		public readonly deploymentRootObject: Json.ObjectValue | undefined,
 	) {}
+
 	public getParameterValue(
 		parameterName: string,
 	): ParameterValueDefinition | undefined {

@@ -71,6 +71,7 @@ export function getDependsOnCompletions(
 			span,
 			currentResource?.parent === resource,
 		);
+
 		completions.push(...items);
 	}
 
@@ -185,6 +186,7 @@ function findClosestEnclosingResource(
 						containsBehavior,
 					),
 			);
+
 			assert(
 				childrenContainingResource.length <= 1,
 				"Shouldn't find multiple children containing the document position",
@@ -206,6 +208,7 @@ function findDescendentsIncludingSelf(
 ): Set<IResourceInfo> {
 	const descendentsIncludingSelf: Set<IResourceInfo> =
 		new Set<IResourceInfo>();
+
 	visit(resource);
 
 	return descendentsIncludingSelf;

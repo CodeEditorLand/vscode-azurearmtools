@@ -109,11 +109,14 @@ export async function stopArmLanguageServer(): Promise<void> {
 	}
 
 	ext.outputChannel.appendLine(`Stopping ${languageServerName}...`);
+
 	ext.languageServerState = LanguageServerState.Stopped;
 
 	if (ext.languageServerClient) {
 		let client: LanguageClient = ext.languageServerClient;
+
 		ext.languageServerClient = undefined;
+
 		await client.stop();
 	}
 
@@ -163,6 +166,7 @@ export function startArmLanguageServerInBackground(): void {
 								// Acquisition failed
 								ext.languageServerStartupError =
 									".dotnet acquisition returned no path";
+
 								ext.languageServerState =
 									LanguageServerState.Failed;
 
@@ -180,6 +184,7 @@ export function startArmLanguageServerInBackground(): void {
 									: LanguageServerState.LoadingInitialSchemas;
 						} catch (error) {
 							ext.languageServerStartupError = `${parseError(error).message}: ${error instanceof Error ? error.stack : "no stack"}`;
+
 							ext.languageServerState =
 								LanguageServerState.Failed;
 
@@ -201,6 +206,7 @@ async function getLangServerVersion(): Promise<string | undefined> {
 		"getLangServerVersion",
 		async (actionContext: IActionContext) => {
 			actionContext.errorHandling.suppressDisplay = true;
+
 			actionContext.telemetry.suppressIfSuccessful = true;
 
 			const packagePath = ext.context.asAbsolutePath("package.json");
@@ -224,6 +230,7 @@ async function startLanguageClient(
 		"startArmLanguageClient",
 		async (actionContext: IActionContext) => {
 			actionContext.errorHandling.rethrow = true;
+
 			actionContext.errorHandling.suppressDisplay = true; // Let caller handle
 
 			// These trace levels are available in the server:
@@ -251,6 +258,7 @@ async function startLanguageClient(
 			if (waitForDebugger) {
 				commonArgs.push("--wait-for-debugger");
 			}
+
 			if (isRunningTests || ext.addCompletedDiagnostic) {
 				// Forces the server to add a completion message to its diagnostics
 				commonArgs.push("--verbose-diagnostics");
@@ -293,6 +301,7 @@ async function startLanguageClient(
 								convertDiagnosticUrisToLinkedTemplateSchema(d);
 							}
 						}
+
 						next(uri, diagnostics);
 					},
 					provideCompletionItem: async (
@@ -338,6 +347,7 @@ async function startLanguageClient(
 
 							if (items instanceof CompletionList) {
 								isIncomplete = items.isIncomplete ?? false;
+
 								items = items.items;
 							}
 
@@ -351,19 +361,24 @@ async function startLanguageClient(
 								// It's a list of apiVersion completions
 								// Show them in reverse order so the newest is at the top of the list
 								const countItems = items.length;
+
 								items = items.map((ci, index) => {
 									if (!ci.sortText) {
 										let sortText = (
 											countItems - index
 										).toString(10);
+
 										sortText = sortText.padStart(
 											10 - sortText.length,
 											"0",
 										);
+
 										ci.sortText = sortText;
 									}
+
 									return ci;
 								});
+
 								result = new CompletionList(
 									items,
 									isIncomplete,
@@ -380,17 +395,22 @@ async function startLanguageClient(
 			// tslint:disable-next-line: strict-boolean-expressions
 			const langServerVersion =
 				(await getLangServerVersion()) || "Unknown";
+
 			actionContext.telemetry.properties.langServerNugetVersion =
 				langServerVersion;
+
 			ext.outputChannel.appendLine(
 				`Starting ${languageServerName} at ${serverDllPath}`,
 			);
+
 			ext.outputChannel.appendLine(
 				`Language server nuget version: ${langServerVersion}`,
 			);
+
 			ext.outputChannel.appendLine(
 				`Client options:${os.EOL}${JSON.stringify(clientOptions, undefined, 2)}`,
 			);
+
 			ext.outputChannel.appendLine(
 				`Server options:${os.EOL}${JSON.stringify(serverOptions, undefined, 2)}`,
 			);
@@ -404,6 +424,7 @@ async function startLanguageClient(
 
 			// Use an error handler that sends telemetry
 			let defaultHandler = client.createDefaultErrorHandler();
+
 			client.clientOptions.errorHandler = new WrappedErrorHandler(
 				defaultHandler,
 			);
@@ -417,6 +438,7 @@ async function startLanguageClient(
 			client.onTelemetry(
 				(telemetryData: {
 					eventName: string;
+
 					properties: { [key: string]: string | undefined };
 				}) => {
 					const eventName = telemetryData.eventName.replace(
@@ -442,6 +464,7 @@ async function startLanguageClient(
 								)) {
 									const value =
 										telemetryData.properties[prop];
+
 									prop = prop.replace(/^\./g, ""); // Remove starting period
 									telemetryActionContext.telemetry.properties[
 										prop
@@ -465,9 +488,11 @@ async function startLanguageClient(
 				// client.trace = Trace.Messages;
 
 				let disposable = client.start();
+
 				ext.context.subscriptions.push(disposable);
 
 				await client.onReady();
+
 				ext.languageServerClient = client;
 
 				client.onRequest(
@@ -521,6 +546,7 @@ function sanitizeTelemetryData(
 				properties[
 					"vS.WebTools.Languages.JSON.apiVersion"
 				]?.toLowerCase();
+
 			properties["vS.WebTools.Languages.JSON.type"] = properties[
 				"vS.WebTools.Languages.JSON.type"
 			]
@@ -539,6 +565,7 @@ async function getDotNetPath(): Promise<string | undefined> {
 		"getDotNetPath",
 		async (actionContext: IActionContext) => {
 			actionContext.errorHandling.rethrow = true;
+
 			actionContext.errorHandling.suppressDisplay = true; // Let caller handle
 
 			let dotnetPath: string | undefined;
@@ -556,6 +583,7 @@ async function getDotNetPath(): Promise<string | undefined> {
 						`This overrides the automatic download and usage of the dotnet runtime and should only be used to work around dotnet installation issues. ` +
 						`If you encounter problems, please try clearing this setting.`,
 				);
+
 				ext.outputChannel.appendLine("");
 
 				if (!(await isFile(overriddenDotNetExePath))) {
@@ -563,7 +591,9 @@ async function getDotNetPath(): Promise<string | undefined> {
 						`Invalid path given for ${configPrefix}.${configKeys.dotnetExePath} setting. Must point to dotnet executable. Could not find file ${overriddenDotNetExePath}`,
 					);
 				}
+
 				dotnetPath = overriddenDotNetExePath;
+
 				actionContext.telemetry.properties.overriddenDotNetExePath =
 					"true";
 			} else {
@@ -577,6 +607,7 @@ async function getDotNetPath(): Promise<string | undefined> {
 				if (!dotnetPath) {
 					// Error is handled by dotnet extension
 					actionContext.errorHandling.suppressDisplay = true;
+
 					actionContext.errorHandling.rethrow = false;
 
 					throw new Error(
@@ -599,6 +630,7 @@ async function getDotNetPath(): Promise<string | undefined> {
 					// tslint:disable-next-line: strict-boolean-expressions
 					const actualVersion =
 						(versionMatch && versionMatch[1]) || "unknown";
+
 					actionContext.telemetry.properties.dotnetVersionInstalled =
 						actualVersion;
 				} catch (error) {
@@ -621,6 +653,7 @@ function findLanguageServer(): string {
 			"findLanguageServer",
 			(actionContext: IActionContext) => {
 				actionContext.errorHandling.rethrow = true;
+
 				actionContext.errorHandling.suppressDisplay = true; // Let caller handle
 
 				let serverDllPathSetting: string | undefined = workspace
@@ -652,6 +685,7 @@ function findLanguageServer(): string {
 							`Cannot find the ${languageServerName} at ${fullPath}. Only template string expression functionality will be available.`,
 						);
 					}
+
 					return fullPath;
 				} else {
 					actionContext.telemetry.properties.customServerDllPath =
@@ -662,6 +696,7 @@ function findLanguageServer(): string {
 					if (fse.statSync(fullPath).isDirectory()) {
 						fullPath = path.join(fullPath, languageServerDllName);
 					}
+
 					if (!fse.existsSync(fullPath)) {
 						throw new Error(
 							`Couldn't find the ${languageServerName} at ${fullPath}.  Please verify or remove your '${configPrefix}.languageServer.path' setting.`,
@@ -702,6 +737,7 @@ function onNotifyTemplateGraph(args: INotifyTemplateGraphArgs): void {
 		"notifyTemplateGraph",
 		async (context: IActionContext) => {
 			context.telemetry.suppressIfSuccessful = true;
+
 			_notifyTemplateGraphAvailableEmitter.fire(
 				<INotifyTemplateGraphArgs & ITelemetryContext>(
 					Object.assign({}, context.telemetry, args)
@@ -723,6 +759,7 @@ function onSchemaValidationNotication(
 	if (!haveFirstSchemasStartedLoading) {
 		haveFirstSchemasStartedLoading = true;
 	}
+
 	if (args.completed && !haveFirstSchemasFinishedLoading) {
 		haveFirstSchemasFinishedLoading = true;
 	}
@@ -739,6 +776,7 @@ function onSchemaValidationNotication(
 						LanguageServerState.LoadingInitialSchemas
 				? LanguageServerState.Running
 				: ext.languageServerState;
+
 	ext.languageServerState = newState;
 
 	ext.isLoadingSchema = !args.completed;
@@ -775,6 +813,7 @@ function showLoadingSchemasProgress(): void {
 											Math.floor(
 												msToSeconds(Date.now() - start),
 											) / 2;
+
 										progress.report({
 											message: ". ".repeat(dots),
 										});
@@ -788,6 +827,7 @@ function showLoadingSchemasProgress(): void {
 							const durationSeconds = Math.round(
 								msToSeconds(Date.now() - start),
 							);
+
 							context.telemetry.properties.seconds =
 								durationSeconds.toString();
 						}
@@ -807,6 +847,7 @@ export async function waitForLanguageServerAvailable(): Promise<void> {
 		case LanguageServerState.Stopped: {
 			const msg =
 				"Cannot start language server. It is in a stopped state.";
+
 			ext.outputChannel.appendLine(msg);
 
 			throw new Error(msg);
@@ -814,6 +855,7 @@ export async function waitForLanguageServerAvailable(): Promise<void> {
 
 		case LanguageServerState.Failed: {
 			const msg = `Language server failed on start-up: ${ext.languageServerStartupError}`;
+
 			ext.outputChannel.appendLine(msg);
 
 			throw new Error(msg);
@@ -840,6 +882,7 @@ export async function waitForLanguageServerAvailable(): Promise<void> {
 		switch (ext.languageServerState) {
 			case LanguageServerState.Failed: {
 				const msg = `Language server failed on start-up: ${ext.languageServerStartupError}`;
+
 				ext.outputChannel.appendLine(msg);
 
 				throw new Error(msg);
@@ -856,6 +899,7 @@ export async function waitForLanguageServerAvailable(): Promise<void> {
 				await delay(1000); // Give vscode time to notice the new formatter available (I don't know of a way to detect this)
 
 				ext.outputChannel.appendLine("Language server is ready.");
+
 				assert(ext.languageServerClient);
 
 				return;

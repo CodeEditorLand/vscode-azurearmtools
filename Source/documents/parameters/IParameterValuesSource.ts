@@ -30,5 +30,6 @@ export interface IParameterValuesSource {
 	getParameterValue(
 		parameterName: string,
 	): ParameterValueDefinition | undefined;
+
 	parameterValueDefinitions: ParameterValueDefinition[];
 }

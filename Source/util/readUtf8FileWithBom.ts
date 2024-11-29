@@ -12,5 +12,6 @@ export async function readUtf8FileWithBom(fsPath: string): Promise<string> {
 	if (contents.charCodeAt(0) === utf8Bom) {
 		contents = contents.slice(1);
 	}
+
 	return contents;
 }

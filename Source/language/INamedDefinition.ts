@@ -21,6 +21,7 @@ export enum DefinitionKind {
  */
 export interface INamedDefinition {
 	definitionKind: DefinitionKind;
+
 	nameValue?: Json.StringValue; // Undefined if the definition is not defined inside the template (e.g. built-in functions)
 	usageInfo: IUsageInfo;
 }

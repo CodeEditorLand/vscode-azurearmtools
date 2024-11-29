@@ -130,9 +130,12 @@ export function setLangIdToArm(
 	languages.setTextDocumentLanguage(document, armTemplateLanguageId);
 
 	actionContext.telemetry.properties.switchedToArm = "true";
+
 	actionContext.telemetry.properties.docLangId = document.languageId;
+
 	actionContext.telemetry.properties.docExtension = path.extname(
 		document.fileName,
 	);
+
 	actionContext.telemetry.suppressIfSuccessful = false;
 }

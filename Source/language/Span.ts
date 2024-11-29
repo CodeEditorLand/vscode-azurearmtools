@@ -150,10 +150,12 @@ export class Span {
 				this.afterEndIndex,
 				rhs.afterEndIndex,
 			);
+
 			result = new Span(minStart, maxAfterEndIndex - minStart);
 		} else {
 			result = this;
 		}
+
 		return result;
 	}
 
@@ -192,6 +194,7 @@ export class Span {
 			// if (lhs.endIndex < rhs.startIndex) {
 			//     return undefined;
 			// }
+
 			let start = rhs.startIndex;
 
 			let afterEnd =

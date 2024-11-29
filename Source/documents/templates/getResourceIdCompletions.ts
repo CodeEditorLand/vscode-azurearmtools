@@ -254,6 +254,7 @@ function filterResourceInfosByType(
 	if (!typeExpression) {
 		return [];
 	}
+
 	const typeExpressionLC = typeExpression.toLowerCase();
 
 	return infos.filter(
@@ -270,6 +271,7 @@ function filterResourceInfosByNameSegment(
 	if (!segmentExpression) {
 		return [];
 	}
+
 	const segmentExpressionLC = lowerCaseAndNoWhitespace(segmentExpression);
 
 	return infos.filter(

@@ -8,6 +8,8 @@ import { DeploymentScopeKind } from "./scopes/DeploymentScopeKind";
 
 export interface ISchemaInfo {
 	normalizedSchema: allSchemas;
+
 	deploymentScopeKind: DeploymentScopeKind;
+
 	isDeprecated: boolean;
 }

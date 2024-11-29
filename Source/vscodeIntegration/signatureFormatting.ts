@@ -40,6 +40,7 @@ export function getFunctionUsage(
 	if (outputType) {
 		usage += ` [${outputType}]`;
 	}
+
 	return usage;
 }
 

@@ -22,6 +22,7 @@ export function validateUserFunctionCallArgCounts(
 	let maximumArguments: number | undefined;
 
 	actualFullFunctionName = functionDefinition.fullName;
+
 	minimumArguments = maximumArguments =
 		functionDefinition.parameterDefinitions.length;
 
@@ -46,6 +47,7 @@ export function validateBuiltInFunctionCallArgCounts(
 	actualFullFunctionName = functionMetadata.fullName;
 
 	minimumArguments = functionMetadata.minimumArguments;
+
 	assert(
 		typeof minimumArguments === "number",
 		`TLE function metadata for '${actualFullFunctionName}' has a null or undefined minimum argument value.`,

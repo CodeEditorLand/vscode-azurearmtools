@@ -8,5 +8,6 @@ import { Span } from "./Span";
 
 export interface IReference {
 	document: IJsonDocument;
+
 	span: Span;
 }

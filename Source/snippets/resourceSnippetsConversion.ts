@@ -79,6 +79,7 @@ export function createResourceSnippetFromFile(
 		description !== undefined,
 		`Resource snippet "${snippetName}" is missing metadata.description`,
 	);
+
 	assert(
 		prefix,
 		`Resource snippet "${snippetName}" is missing metadata.prefix`,
@@ -154,6 +155,7 @@ function getBodyFromResourceSnippetJson(json: {
 		let text = lineWithTabs
 			.replace(/EMBEDDEDSTRING!/, "${")
 			.replace(/!EMBEDDEDSTRING/, "}");
+
 		text = text
 			.replace(/\"NOTASTRING!/, "${")
 			.replace(/!NOTASTRING\"/, "}");

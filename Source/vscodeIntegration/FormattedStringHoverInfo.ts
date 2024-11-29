@@ -29,7 +29,9 @@ export class FormattedStringHoverInfo implements IHoverInfo {
 			.replace(/\\t/g, "\t");
 
 		const markdown = new MarkdownString();
+
 		markdown.appendMarkdown("Multi-line string:");
+
 		markdown.appendCodeblock(formattedString, "plaintext");
 
 		return markdown;

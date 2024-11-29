@@ -16,6 +16,7 @@ export class ReferenceList {
 		private _refs: IReference[] = [],
 	) {
 		nonNullValue(_type, "_type");
+
 		nonNullValue(_refs, "_refs");
 	}
 

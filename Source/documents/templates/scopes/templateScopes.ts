@@ -98,6 +98,7 @@ export class UserFunctionScope extends TemplateScope {
 
 abstract class TemplateScopeFromObject extends TemplateScope {
 	private _parameterDefinitionsSource: IParameterDefinitionsSource;
+
 	public constructor(
 		parent: TemplateScope | undefined,
 		document: IJsonDocument,
@@ -112,6 +113,7 @@ abstract class TemplateScopeFromObject extends TemplateScope {
 			getDeploymentScopeReferenceFromRootObject(_templateRootObject),
 			__debugDisplay,
 		);
+
 		this._parameterDefinitionsSource = new SimpleParameterDefinitionsSource(
 			getParameterDefinitionsFromObject(
 				this.document,
@@ -423,6 +425,7 @@ export class NestedTemplateOuterScope extends TemplateScope {
 	protected getParameterDefinitionsSource(): IParameterDefinitionsSource {
 		return this.parentScope.parameterDefinitionsSource;
 	}
+
 	protected getVariableDefinitions(): IVariableDefinition[] | undefined {
 		return this.parentScope.variableDefinitions;
 	}
@@ -446,6 +449,7 @@ export class LinkedTemplateScope
 
 	// This is detected after the tree is created, so is set when available.
 	private _linkedFileReferences: ILinkedTemplateReference[] | undefined;
+
 	private _linkedFileParameterDefinitionsSource: SimpleParameterDefinitionsSource =
 		new SimpleParameterDefinitionsSource();
 
@@ -499,6 +503,7 @@ export class LinkedTemplateScope
 		provideOpenDocuments: IProvideOpenedDocuments,
 	): void {
 		this._linkedFileReferences = linkedFileReferences;
+
 		this._linkedFileParameterDefinitionsSource.setParameterDefinitions([]);
 
 		if (linkedFileReferences && linkedFileReferences.length > 0) {
@@ -511,6 +516,7 @@ export class LinkedTemplateScope
 					firstLinkedFileReference,
 					provideOpenDocuments,
 				);
+
 			this._linkedFileParameterDefinitionsSource.setParameterDefinitions(
 				parameterDefinitions,
 			);

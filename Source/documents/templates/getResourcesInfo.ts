@@ -21,6 +21,7 @@ export function getResourcesInfo({
 	recognizeDecoupledChildren,
 }: {
 	scope: TemplateScope;
+
 	recognizeDecoupledChildren: boolean;
 }): IJsonResourceInfo[] {
 	const resourcesArray = scope.rootObject?.getPropertyValue(
@@ -154,6 +155,7 @@ export class ResourceInfo implements IResourceInfo {
 			parent.children.push(this);
 		}
 	}
+
 	public isDecoupledChild: boolean = false;
 
 	public get shortNameExpression(): string {
@@ -227,6 +229,7 @@ export class ResourceInfo implements IResourceInfo {
 		fullType,
 	}: {
 		fullName?: boolean;
+
 		fullType?: boolean;
 	}): string {
 		return getFriendlyResourceLabel({ resource: this, fullName, fullType });
@@ -394,6 +397,7 @@ function getInfoFromResourceObject(
 			resourceObject,
 			parent,
 		);
+
 		results.push(info);
 
 		if (processChildren) {
@@ -407,6 +411,7 @@ function getInfoFromResourceObject(
 					childResources,
 					info,
 				);
+
 				results.push(...childrenInfo);
 			}
 
@@ -463,6 +468,7 @@ function getInfoFromResourceObject(
 							subnetObject,
 							info,
 						);
+
 						results.push(subnetInfo);
 					}
 				}
@@ -558,6 +564,7 @@ function splitResourceTypeIntoSegments(
 							segmentsAsExpressions.slice(0, 2),
 							"/",
 						) ?? "";
+
 					segmentsAsExpressions = [combinedSegment].concat(
 						segmentsAsExpressions.slice(2),
 					);
@@ -608,6 +615,7 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
 									arg.unquotedValue,
 									"/",
 								).map((s) => `'${s}'`);
+
 							rewrittenArgs.push(...refactoredArg);
 						} else {
 							// tslint:disable-next-line: no-non-null-assertion // checked with .every() above
@@ -632,12 +640,15 @@ function splitExpressionIntoSegments(jsonString: string): string[] {
 
 						if (arg === `'/'`) {
 							separatorFound = true;
+
 							segmentGroups.push(newGroup);
+
 							newGroup = [];
 						} else {
 							newGroup.push(argAsString);
 						}
 					}
+
 					segmentGroups.push(newGroup);
 
 					if (
@@ -675,6 +686,7 @@ function splitStringAndKeepSeparators(s: string, separator: string): string[] {
 		if (!first) {
 			result.push("/");
 		}
+
 		first = false;
 
 		result.push(substring);
@@ -688,6 +700,7 @@ function getFriendlyNameExpression({
 	fullName,
 }: {
 	resource: IResourceInfo | IJsonResourceInfo;
+
 	fullName?: boolean;
 }): string {
 	const resourceObject =
@@ -726,11 +739,13 @@ function getFriendlyTypeExpression({
 	fullType,
 }: {
 	resource: IResourceInfo;
+
 	fullType?: boolean;
 }): string {
 	let friendlyType = fullType
 		? resource.getFullTypeExpression()
 		: resource.shortTypeExpression;
+
 	friendlyType = friendlyType
 		? getFriendlyExpressionFromTleExpression(friendlyType)
 		: "(no type)";
@@ -744,7 +759,9 @@ function getFriendlyResourceLabel({
 	fullType,
 }: {
 	resource: IResourceInfo;
+
 	fullName?: boolean;
+
 	fullType?: boolean;
 }): string {
 	let nameLabel: string = getFriendlyNameExpression({ resource, fullName });
@@ -767,6 +784,7 @@ function findAndSetDecoupledChildren(infos: IJsonResourceInfo[]): void {
 	for (const parent of possibleParents) {
 		// Note: a resource could be a parent of multiple children (some nested, some decoupled)
 		const removeIndices: number[] = [];
+
 		possibleChildren.slice().forEach((child, index) => {
 			// slice() makes a copy of the array so we can modify it while looping
 			assert(
@@ -776,7 +794,9 @@ function findAndSetDecoupledChildren(infos: IJsonResourceInfo[]): void {
 
 			if (areDecoupledChildAndParent(child, parent)) {
 				parent.children.push(child);
+
 				child.parent = parent;
+
 				child.isDecoupledChild = true;
 
 				// A resource can't have two parents (whether nested or decoupled), so remove from possibilities

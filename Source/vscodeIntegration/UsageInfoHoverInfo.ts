@@ -12,6 +12,7 @@ import { IHoverInfo } from "./IHoverInfo";
 
 export interface IUsageInfo {
 	usage: string;
+
 	friendlyType: string; // e.g "parameter", "user function"
 	description: string | undefined;
 }

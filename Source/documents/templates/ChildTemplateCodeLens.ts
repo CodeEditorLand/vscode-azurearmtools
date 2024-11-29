@@ -31,6 +31,7 @@ abstract class ChildTemplateCodeLens extends ResolvableCodeLens {}
 export class NestedTemplateCodeLens extends ChildTemplateCodeLens {
 	private constructor(scope: TemplateScope, span: Span, title: string) {
 		super(scope, span);
+
 		this.command = {
 			title: title,
 			command: "",
@@ -113,6 +114,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 		tooltip?: string,
 	) {
 		super(scope, span);
+
 		this.command = {
 			title: title,
 			command: linkedFileUri
@@ -180,6 +182,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 
 		try {
 			const templateUri = scope.document.documentUri;
+
 			linkedUri = firstLinkedTemplateRef?.fullUri
 				? parseUri(firstLinkedTemplateRef.fullUri)
 				: undefined;
@@ -190,7 +193,9 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 				linkedUri.scheme === documentSchemes.file
 			) {
 				const templateFolder = path.dirname(templateUri.fsPath);
+
 				friendlyPath = path.relative(templateFolder, linkedUri.fsPath);
+
 				fullPath = linkedUri.fsPath;
 
 				if (
@@ -203,6 +208,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 				const maxQueryLength = 40;
 
 				let shortenedUri = linkedUri;
+
 				fullPath = linkedUri?.toString(true);
 
 				if (linkedUri && linkedUri?.query.length > maxQueryLength) {
@@ -210,6 +216,7 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 						query: `${linkedUri.query.slice(0, maxQueryLength)}...`,
 					});
 				}
+
 				friendlyPath = shortenedUri
 					? shortenedUri.toString(true)
 					: undefined;
@@ -268,12 +275,14 @@ export class LinkedTemplateCodeLens extends ChildTemplateCodeLens {
 export class ReloadLinkedTemplateCodeLens extends ResolvableCodeLens {
 	public constructor(scope: TemplateScope, span: Span, linkedFileUri: Uri) {
 		super(scope, span);
+
 		this.command = {
 			title: "Reload",
 			command: "azurerm-vscode-tools.codeLens.reloadLinkedTemplateFile",
 			arguments: [linkedFileUri],
 		};
 	}
+
 	public async resolve(): Promise<boolean> {
 		return true;
 	}

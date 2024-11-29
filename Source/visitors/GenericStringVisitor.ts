@@ -19,6 +19,7 @@ export class GenericStringVisitor extends Json.Visitor {
 		onStringValue: (jsonStringValue: Json.StringValue) => void,
 	): void {
 		const visitor = new GenericStringVisitor(onStringValue);
+
 		value.accept(visitor);
 	}
 

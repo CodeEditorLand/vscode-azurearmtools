@@ -38,6 +38,7 @@ export class ReferenceInVariableDefinitionsVisitor extends Json.Visitor {
 
 		if (tleParseResult.parseResult.expression) {
 			const tleVisitor = new ReferenceInVariableDefinitionTLEVisitor();
+
 			tleParseResult.parseResult.expression.accept(tleVisitor);
 
 			const jsonValueStartIndex: number = value.startIndex;

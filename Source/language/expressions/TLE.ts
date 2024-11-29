@@ -143,6 +143,7 @@ export class StringValue extends Value {
 		super();
 
 		assert(_token);
+
 		assert.strictEqual(TokenType.QuotedString, _token.getType());
 	}
 
@@ -254,6 +255,7 @@ export class NumberValue extends Value {
 		super();
 
 		assert(_token);
+
 		assert.deepEqual(TokenType.Number, _token.getType());
 	}
 
@@ -294,11 +296,14 @@ export class ArrayAccessValue extends ParentValue {
 		super();
 
 		assert(_source);
+
 		assert(_leftSquareBracketToken);
+
 		assert.deepStrictEqual(
 			TokenType.LeftSquareBracket,
 			_leftSquareBracketToken.getType(),
 		);
+
 		assert(
 			!_rightSquareBracketToken ||
 				_rightSquareBracketToken.getType() ===
@@ -377,9 +382,11 @@ export class ArrayAccessValue extends ParentValue {
 		if (!!this._indexValue) {
 			result += this._indexValue.toString();
 		}
+
 		if (!!this._rightSquareBracketToken) {
 			result += "]";
 		}
+
 		return result;
 	}
 
@@ -410,6 +417,7 @@ export class ArrayAccessValue extends ParentValue {
 				options,
 				currentIndent + options.multiline.tabSize,
 			);
+
 			indexExpression = `\n${preTab}${indexExpressionRaw}`;
 		} else {
 			// Single-line formatting
@@ -418,6 +426,7 @@ export class ArrayAccessValue extends ParentValue {
 				currentIndent,
 			);
 		}
+
 		result += indexExpression;
 
 		// Closing "]"
@@ -448,11 +457,14 @@ export class FunctionCallValue extends ParentValue {
 			_namespaceToken || _nameToken,
 			"Must have a namespace or name token",
 		);
+
 		assert(
 			!(_namespaceToken && _nameToken) || periodToken,
 			"If we have a namespace and name, we should have a period token",
 		);
+
 		assert(_commaTokens);
+
 		assert(_argumentExpressions);
 
 		for (const argumentExpression of this._argumentExpressions) {
@@ -596,6 +608,7 @@ export class FunctionCallValue extends ParentValue {
 			) {
 				for (
 					let i = this._argumentExpressions.length - 1;
+
 					0 <= i;
 					--i
 				) {
@@ -670,6 +683,7 @@ export class FunctionCallValue extends ParentValue {
 							return `\${${arg1.unquotedValue}}`;
 						}
 					}
+
 					break;
 			}
 		}
@@ -707,6 +721,7 @@ export class FunctionCallValue extends ParentValue {
 					? `,\n${" ".repeat(currentIndent + tabSize)}`
 					: ", ";
 			}
+
 			result += argExpr
 				? argExpr.formatCore(options, currentIndent + tabSize)
 				: " ";
@@ -828,9 +843,11 @@ export class PropertyAccess extends ParentValue {
 		super();
 
 		assert(_source);
+
 		assert(_periodToken);
 
 		assert(!this._source.parent, "Parent already assigned");
+
 		this._source.parent = this;
 	}
 
@@ -851,6 +868,7 @@ export class PropertyAccess extends ParentValue {
 
 		while (propertyAccessSource && propertyAccessSource.nameToken) {
 			result.push(propertyAccessSource.nameToken.stringValue);
+
 			propertyAccessSource = asPropertyAccessValue(
 				propertyAccessSource.source,
 			);
@@ -868,10 +886,12 @@ export class PropertyAccess extends ParentValue {
 		while (currentSource instanceof PropertyAccess) {
 			const propertyAccess: PropertyAccess | undefined =
 				asPropertyAccessValue(currentSource);
+
 			assert(propertyAccess);
 			// tslint:disable-next-line:no-non-null-assertion // Asserted
 			currentSource = propertyAccess!.source;
 		}
+
 		return asFunctionCallValue(currentSource);
 	}
 
@@ -912,6 +932,7 @@ export class PropertyAccess extends ParentValue {
 		if (!!this._nameToken) {
 			result += this._nameToken.stringValue;
 		}
+
 		return result;
 	}
 
@@ -924,6 +945,7 @@ export class PropertyAccess extends ParentValue {
 		if (!!this._nameToken) {
 			result += this._nameToken.stringValue;
 		}
+
 		return result;
 	}
 }
@@ -1032,6 +1054,7 @@ export class BraceHighlighter {
 		tleParseResult: TleParseResult,
 	): void {
 		assert(tleParseResult);
+
 		assert(tleParseResult.leftSquareBracketToken);
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted above
@@ -1051,6 +1074,7 @@ export class BraceHighlighter {
 		tleFunction: FunctionCallValue,
 	): void {
 		assert(tleFunction);
+
 		assert(tleFunction.leftParenthesisToken);
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted
@@ -1070,6 +1094,7 @@ export class BraceHighlighter {
 		tleArrayAccess: ArrayAccessValue,
 	): void {
 		assert(tleArrayAccess);
+
 		assert(tleArrayAccess.leftSquareBracketToken);
 
 		highlightCharacterIndexes.push(
@@ -1093,6 +1118,7 @@ export abstract class TleVisitor {
 	): void {
 		if (tleArrayAccess) {
 			assert(tleArrayAccess.source);
+
 			tleArrayAccess.source.accept(this);
 
 			if (tleArrayAccess.indexValue) {
@@ -1120,6 +1146,7 @@ export abstract class TleVisitor {
 	): void {
 		if (tlePropertyAccess) {
 			assert(tlePropertyAccess.source);
+
 			tlePropertyAccess.source.accept(this);
 		}
 	}
@@ -1158,10 +1185,12 @@ export class Parser {
 	public static parse(quotedStringValue: string): TleParseResult {
 		// Handles any JSON string, not just those that are actually TLE expressions beginning with bracket
 		assert(quotedStringValue, "TLE strings cannot be undefined.");
+
 		assert(
 			1 <= quotedStringValue.length,
 			"TLE strings must be at least 1 character.",
 		);
+
 		assert(
 			Utilities.isQuoteCharacter(quotedStringValue[0]),
 			"The first character in the TLE string to parse must be a quote character.",
@@ -1184,6 +1213,7 @@ export class Parser {
 			);
 		} else {
 			let tokenizer = Tokenizer.fromString(quotedStringValue);
+
 			tokenizer.next();
 
 			if (
@@ -1197,6 +1227,7 @@ export class Parser {
 				);
 			} else {
 				leftSquareBracketToken = tokenizer.current;
+
 				tokenizer.next();
 
 				while (
@@ -1211,6 +1242,7 @@ export class Parser {
 							IssueKind.tleSyntax,
 						),
 					);
+
 					tokenizer.next();
 				}
 
@@ -1222,6 +1254,7 @@ export class Parser {
 						TokenType.RightSquareBracket
 					) {
 						rightSquareBracketToken = tokenizer.current;
+
 						tokenizer.next();
 
 						break;
@@ -1233,6 +1266,7 @@ export class Parser {
 								IssueKind.tleSyntax,
 							),
 						);
+
 						tokenizer.next();
 					}
 				}
@@ -1246,6 +1280,7 @@ export class Parser {
 								IssueKind.tleSyntax,
 							),
 						);
+
 						tokenizer.next();
 					}
 				} else {
@@ -1266,6 +1301,7 @@ export class Parser {
 							rightSquareBracketToken.span,
 						);
 					}
+
 					errors.push(
 						new Issue(
 							errorSpan,
@@ -1310,10 +1346,13 @@ export class Parser {
 						),
 					);
 				}
+
 				rootExpression = new StringValue(token);
+
 				tokenizer.next();
 			} else if (tokenType === TokenType.Number) {
 				rootExpression = new NumberValue(token);
+
 				tokenizer.next();
 			} else if (
 				tokenType !== TokenType.RightSquareBracket &&
@@ -1326,6 +1365,7 @@ export class Parser {
 						IssueKind.tleSyntax,
 					),
 				);
+
 				tokenizer.next();
 			}
 
@@ -1342,6 +1382,7 @@ export class Parser {
 		while (<Token | undefined>tokenizer.current) {
 			if (tokenizer.current.getType() === TokenType.Period) {
 				let periodToken = tokenizer.current;
+
 				tokenizer.next();
 
 				let propertyNameToken: Token | undefined;
@@ -1351,6 +1392,7 @@ export class Parser {
 				if (<Token | undefined>tokenizer.current) {
 					if (tokenizer.current.getType() === TokenType.Literal) {
 						propertyNameToken = tokenizer.current;
+
 						tokenizer.next();
 					} else {
 						errorSpan = tokenizer.current.span;
@@ -1392,6 +1434,7 @@ export class Parser {
 				tokenizer.current.getType() === TokenType.LeftSquareBracket
 			) {
 				let leftSquareBracketToken: Token = tokenizer.current;
+
 				tokenizer.next();
 
 				let indexValue: Value | undefined = Parser.parseExpression(
@@ -1406,6 +1449,7 @@ export class Parser {
 					tokenizer.current.getType() === TokenType.RightSquareBracket
 				) {
 					rightSquareBracketToken = tokenizer.current;
+
 					tokenizer.next();
 				}
 
@@ -1429,6 +1473,7 @@ export class Parser {
 		errors: Issue[],
 	): FunctionCallValue {
 		assert(tokenizer);
+
 		assert(tokenizer.current, "tokenizer must have a current token.");
 		// tslint:disable-next-line:no-non-null-assertion // Asserted
 		assert.deepEqual(
@@ -1436,6 +1481,7 @@ export class Parser {
 			tokenizer.current!.getType(),
 			"tokenizer's current token must be a literal.",
 		);
+
 		assert(errors);
 
 		let namespaceToken: Token | undefined;
@@ -1446,6 +1492,7 @@ export class Parser {
 
 		// tslint:disable-next-line:no-non-null-assertion // Asserted
 		let firstToken: Token = tokenizer.current!;
+
 		tokenizer.next();
 
 		// Check for <namespace>.<functionname>
@@ -1456,7 +1503,9 @@ export class Parser {
 		) {
 			// It's a user-defined function because it has a namespace before the function name
 			periodToken = tokenizer.current;
+
 			namespaceToken = firstToken;
+
 			tokenizer.next();
 
 			// Get the function name following the period
@@ -1465,6 +1514,7 @@ export class Parser {
 				tokenizer.current.getType() === TokenType.Literal
 			) {
 				nameToken = tokenizer.current;
+
 				tokenizer.next();
 			} else {
 				errors.push(
@@ -1493,6 +1543,7 @@ export class Parser {
 			while (tokenizer.current) {
 				if (tokenizer.current.getType() === TokenType.LeftParenthesis) {
 					leftParenthesisToken = tokenizer.current;
+
 					tokenizer.next();
 
 					break;
@@ -1517,6 +1568,7 @@ export class Parser {
 							IssueKind.tleSyntax,
 						),
 					);
+
 					tokenizer.next();
 				}
 			}
@@ -1557,11 +1609,15 @@ export class Parser {
 							),
 						);
 					}
+
 					argumentExpressions.push(expression);
+
 					expectingArgument = false;
 				} else if (tokenizer.current.getType() === TokenType.Comma) {
 					expectingArgument = true;
+
 					commaTokens.push(tokenizer.current);
+
 					tokenizer.next();
 				} else {
 					errors.push(
@@ -1571,6 +1627,7 @@ export class Parser {
 							IssueKind.tleSyntax,
 						),
 					);
+
 					tokenizer.next();
 				}
 			}
@@ -1594,6 +1651,7 @@ export class Parser {
 
 					errorSpan = commaTokens[commaTokens.length - 1].span;
 				}
+
 				errors.push(
 					new Issue(
 						errorSpan,
@@ -1617,6 +1675,7 @@ export class Parser {
 			switch (tokenizer.current.getType()) {
 				case TokenType.RightParenthesis:
 					rightParenthesisToken = tokenizer.current;
+
 					tokenizer.next();
 
 					break;
@@ -1631,6 +1690,7 @@ export class Parser {
 							),
 						);
 					}
+
 					break;
 			}
 		}
@@ -1791,7 +1851,9 @@ export class Tokenizer {
 
 	public static fromString(stringValue: string): Tokenizer {
 		assert(stringValue);
+
 		assert(1 <= stringValue.length);
+
 		assert(Utilities.isQuoteCharacter(stringValue[0]));
 
 		const initialQuoteCharacter: string = stringValue[0];
@@ -1858,6 +1920,7 @@ export class Tokenizer {
 					this._current = Token.createLeftParenthesis(
 						this._currentTokenStartIndex,
 					);
+
 					this.nextBasicToken();
 
 					break;
@@ -1866,6 +1929,7 @@ export class Tokenizer {
 					this._current = Token.createRightParenthesis(
 						this._currentTokenStartIndex,
 					);
+
 					this.nextBasicToken();
 
 					break;
@@ -1874,6 +1938,7 @@ export class Tokenizer {
 					this._current = Token.createLeftSquareBracket(
 						this._currentTokenStartIndex,
 					);
+
 					this.nextBasicToken();
 
 					break;
@@ -1882,6 +1947,7 @@ export class Tokenizer {
 					this._current = Token.createRightSquareBracket(
 						this._currentTokenStartIndex,
 					);
+
 					this.nextBasicToken();
 
 					break;
@@ -1890,6 +1956,7 @@ export class Tokenizer {
 					this._current = Token.createComma(
 						this._currentTokenStartIndex,
 					);
+
 					this.nextBasicToken();
 
 					break;
@@ -1898,6 +1965,7 @@ export class Tokenizer {
 					this._current = Token.createPeriod(
 						this._currentTokenStartIndex,
 					);
+
 					this.nextBasicToken();
 
 					break;
@@ -1949,6 +2017,7 @@ export class Tokenizer {
 
 				default:
 					const literalTokens: basic.Token[] = [currentBasicToken];
+
 					this.nextBasicToken();
 
 					while (
@@ -1961,6 +2030,7 @@ export class Tokenizer {
 								basic.TokenType.Underscore)
 					) {
 						literalTokens.push(this.currentBasicToken);
+
 						this.nextBasicToken();
 					}
 
@@ -1978,6 +2048,7 @@ export class Tokenizer {
 
 	public next(): boolean {
 		const result = !!this.readToken();
+
 		this.skipWhitespace();
 
 		return result;
@@ -1998,7 +2069,9 @@ export class Tokenizer {
  */
 export class Token {
 	private _type: TokenType;
+
 	private _span: Span;
+
 	private _stringValue: string;
 
 	public constructor(
@@ -2007,10 +2080,13 @@ export class Token {
 		stringValue: string,
 	) {
 		assert(typeof tokenType === "number");
+
 		assert(typeof stringValue === "string");
 
 		this._type = tokenType;
+
 		this._span = new Span(startIndex, stringValue.length);
+
 		this._stringValue = stringValue;
 	}
 
@@ -2059,6 +2135,7 @@ export class Token {
 		stringValue: string,
 	): Token {
 		assert(stringValue);
+
 		assert(1 <= stringValue.length);
 
 		return new Token(TokenType.Whitespace, startIndex, stringValue);
@@ -2069,7 +2146,9 @@ export class Token {
 		stringValue: string,
 	): Token {
 		nonNullValue(stringValue, "stringValue");
+
 		assert(1 <= stringValue.length);
+
 		assert(Utilities.isQuoteCharacter(stringValue[0]));
 
 		return new Token(TokenType.QuotedString, startIndex, stringValue);
@@ -2077,7 +2156,9 @@ export class Token {
 
 	public static createNumber(startIndex: number, stringValue: string): Token {
 		nonNullValue(stringValue, "stringValue");
+
 		assert(1 <= stringValue.length);
+
 		assert(stringValue[0] === "-" || Utilities.isDigit(stringValue[0]));
 
 		return new Token(TokenType.Number, startIndex, stringValue);
@@ -2088,6 +2169,7 @@ export class Token {
 		stringValue: string,
 	): Token {
 		nonNullValue(stringValue, "stringValue");
+
 		assert(1 <= stringValue.length);
 
 		return new Token(TokenType.Literal, startIndex, stringValue);
@@ -2127,6 +2209,7 @@ export function readQuotedTLEString(
 	assert(iterator.current()!.getType() === basic.TokenType.SingleQuote);
 	// tslint:disable-next-line:no-non-null-assertion // Asserted
 	const quotedStringTokens: basic.Token[] = [iterator.current()!];
+
 	iterator.moveNext();
 
 	let escaped: boolean = false;
@@ -2134,6 +2217,7 @@ export function readQuotedTLEString(
 	while (iterator.current()) {
 		// tslint:disable-next-line:no-non-null-assertion // guaranteed by while
 		const current = iterator.current()!;
+
 		quotedStringTokens.push(current);
 
 		if (escaped) {

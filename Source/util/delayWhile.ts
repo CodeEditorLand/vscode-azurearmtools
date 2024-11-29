@@ -16,6 +16,7 @@ export async function delayWhile(
 			try {
 				if (!predicate()) {
 					clearInterval(handler);
+
 					resolve();
 				} else if (timeout > 0 && Date.now() - start > timeout) {
 					reject(new Error(timeoutErrorMessage));

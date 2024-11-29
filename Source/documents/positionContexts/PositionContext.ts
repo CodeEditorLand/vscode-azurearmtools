@@ -29,6 +29,7 @@ export enum ReferenceSiteKind {
 
 export interface ICompletionItemsResult {
 	items: Completion.Item[];
+
 	triggerSuggest?: boolean;
 }
 
@@ -53,6 +54,7 @@ export interface IReferenceSite {
 	 * The definition that the reference refers to
 	 */
 	definition: INamedDefinition;
+
 	definitionScope: TemplateScope | undefined;
 
 	/**
@@ -68,10 +70,13 @@ export interface IReferenceSite {
 export abstract class PositionContext {
 	private _documentPosition: InitializeBeforeUse<LineColPos> =
 		new InitializeBeforeUse<LineColPos>("_documentPosition");
+
 	private _documentCharacterIndex: InitializeBeforeUse<number> =
 		new InitializeBeforeUse<number>("_documentCharacterIndex");
+
 	private _jsonToken: CachedValue<Json.Token | undefined> =
 		new CachedValue<Json.Token>();
+
 	private _jsonValue: CachedValue<Json.Value | undefined> = new CachedValue<
 		Json.Value | undefined
 	>();
@@ -89,8 +94,11 @@ export abstract class PositionContext {
 		allowOutOfBounds: boolean = true,
 	): void {
 		nonNullValue(documentLineIndex, "documentLineIndex");
+
 		assert(documentLineIndex >= 0, "documentLineIndex cannot be negative");
+
 		nonNullValue(documentColumnIndex, "documentColumnIndex");
+
 		assert(
 			documentColumnIndex >= 0,
 			"documentColumnIndex cannot be negative",
@@ -104,6 +112,7 @@ export abstract class PositionContext {
 
 			documentLineIndex = this._document.lineCount - 1;
 		}
+
 		if (
 			documentColumnIndex >
 			this._document.getMaxColumnIndex(documentLineIndex)
@@ -121,6 +130,7 @@ export abstract class PositionContext {
 			documentLineIndex,
 			documentColumnIndex,
 		);
+
 		this._documentCharacterIndex.value =
 			this._document.getDocumentCharacterIndex(
 				documentLineIndex,
@@ -134,6 +144,7 @@ export abstract class PositionContext {
 		allowOutOfBounds: boolean = true,
 	): void {
 		nonNullValue(documentCharacterIndex, "documentCharacterIndex");
+
 		assert(
 			documentCharacterIndex >= 0,
 			"documentCharacterIndex cannot be negative",
@@ -149,6 +160,7 @@ export abstract class PositionContext {
 		}
 
 		this._documentCharacterIndex.value = documentCharacterIndex;
+
 		this._documentPosition.value = this._document.getDocumentPosition(
 			documentCharacterIndex,
 		);
@@ -244,6 +256,7 @@ export abstract class PositionContext {
 	 */
 	public getCompletionReplacementSpanInfo(): {
 		span: Span | undefined;
+
 		token: Json.Token | undefined;
 	} {
 		const index = this.documentCharacterIndex;
@@ -327,6 +340,7 @@ export abstract class PositionContext {
 			const span = reference.unquotedReferenceSpan;
 
 			const definition = reference.definition;
+
 			infos.push(
 				new UsageInfoHoverInfo(
 					definition.definitionKind,
@@ -353,6 +367,7 @@ export abstract class PositionContext {
 	// tslint:disable-next-line: max-func-body-length cyclomatic-complexity
 	public getInsertionContext(options: {
 		triggerCharacter?: string;
+
 		allowInsideJsonString?: boolean;
 	}): InsertionContext {
 		const triggerCharacter = options.triggerCharacter;
@@ -379,6 +394,7 @@ export abstract class PositionContext {
 					this.jsonTokenStartIndex,
 					this._associatedDocument,
 				);
+
 			insertionParent = pcAtStartOfString.getInsertionParent();
 		}
 
@@ -387,6 +403,7 @@ export abstract class PositionContext {
 				| (Json.ArrayValue | Json.ObjectValue | Json.Property)[]
 				| undefined =
 				this.document.topLevelValue.findLineage(insertionParent);
+
 			assert(
 				lineage,
 				`Couldn't find JSON value inside the top-level value: ${insertionParent.toFullFriendlyString()}`,
@@ -394,6 +411,7 @@ export abstract class PositionContext {
 
 			// parents = a list of all ancestors, starting with insertionParent
 			parents = lineage.reverse();
+
 			parents.unshift(insertionParent);
 
 			if (

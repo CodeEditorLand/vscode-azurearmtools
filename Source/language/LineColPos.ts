@@ -12,8 +12,11 @@ export class LineColPos {
 		private _column: number,
 	) {
 		nonNullValue(_line, "_line");
+
 		assert(_line >= 0, "_line cannot be less than 0");
+
 		nonNullValue(_column, "_column");
+
 		assert(_column >= 0, "_column cannot be less than 0");
 	}
 

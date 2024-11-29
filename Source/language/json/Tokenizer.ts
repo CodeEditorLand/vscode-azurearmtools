@@ -155,6 +155,7 @@ export function Unrecognized(text: string): Token {
  */
 export class Tokenizer implements Iterator.Iterator<Token> {
 	private _textLength: number;
+
 	private _textIndex: number = -1;
 
 	private _currentToken: Token | undefined;
@@ -222,108 +223,126 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 			switch (this.currentCharacter) {
 				case "{":
 					this._currentToken = LeftCurlyBracket;
+
 					this.nextCharacter();
 
 					break;
 
 				case "}":
 					this._currentToken = RightCurlyBracket;
+
 					this.nextCharacter();
 
 					break;
 
 				case "[":
 					this._currentToken = LeftSquareBracket;
+
 					this.nextCharacter();
 
 					break;
 
 				case "]":
 					this._currentToken = RightSquareBracket;
+
 					this.nextCharacter();
 
 					break;
 
 				case "(":
 					this._currentToken = LeftParenthesis;
+
 					this.nextCharacter();
 
 					break;
 
 				case ")":
 					this._currentToken = RightParenthesis;
+
 					this.nextCharacter();
 
 					break;
 
 				case "_":
 					this._currentToken = Underscore;
+
 					this.nextCharacter();
 
 					break;
 
 				case ".":
 					this._currentToken = Period;
+
 					this.nextCharacter();
 
 					break;
 
 				case "-":
 					this._currentToken = Dash;
+
 					this.nextCharacter();
 
 					break;
 
 				case "+":
 					this._currentToken = Plus;
+
 					this.nextCharacter();
 
 					break;
 
 				case ",":
 					this._currentToken = Comma;
+
 					this.nextCharacter();
 
 					break;
 
 				case ":":
 					this._currentToken = Colon;
+
 					this.nextCharacter();
 
 					break;
 
 				case `'`:
 					this._currentToken = SingleQuote;
+
 					this.nextCharacter();
 
 					break;
 
 				case `"`:
 					this._currentToken = DoubleQuote;
+
 					this.nextCharacter();
 
 					break;
 
 				case "\\":
 					this._currentToken = Backslash;
+
 					this.nextCharacter();
 
 					break;
 
 				case "/":
 					this._currentToken = ForwardSlash;
+
 					this.nextCharacter();
 
 					break;
 
 				case "*":
 					this._currentToken = Asterisk;
+
 					this.nextCharacter();
 
 					break;
 
 				case "\n":
 					this._currentToken = NewLine;
+
 					this.nextCharacter();
 
 					break;
@@ -336,20 +355,24 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 						this.currentCharacter.toString() === "\n"
 					) {
 						this._currentToken = CarriageReturnNewLine;
+
 						this.nextCharacter();
 					} else {
 						this._currentToken = CarriageReturn;
 					}
+
 					break;
 
 				case " ":
 					this._currentToken = Space;
+
 					this.nextCharacter();
 
 					break;
 
 				case "\t":
 					this._currentToken = Tab;
+
 					this.nextCharacter();
 
 					break;
@@ -363,8 +386,10 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 						this._currentToken = Unrecognized(
 							this.currentCharacter,
 						);
+
 						this.nextCharacter();
 					}
+
 					break;
 			}
 		}
@@ -379,10 +404,12 @@ export class Tokenizer implements Iterator.Iterator<Token> {
 	private readWhile(condition: (character: string) => boolean): string {
 		// tslint:disable-next-line: strict-boolean-expressions
 		let result: string = this.currentCharacter || "";
+
 		this.nextCharacter();
 
 		while (this.currentCharacter && condition(this.currentCharacter)) {
 			result += this.currentCharacter;
+
 			this.nextCharacter();
 		}
 

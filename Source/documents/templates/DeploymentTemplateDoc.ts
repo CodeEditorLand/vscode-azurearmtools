@@ -82,6 +82,7 @@ import { UserFunctionParameterDefinition } from "./UserFunctionParameterDefiniti
 
 export interface IScopedParseResult {
 	parseResult: TLE.TleParseResult;
+
 	scope: TemplateScope;
 }
 
@@ -308,6 +309,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 				if (tleParseResult.parseResult.expression) {
 					// tslint:disable-next-line:no-non-null-assertion // Guaranteed by if
 					const scope = tleParseResult.scope;
+
 					FindReferencesAndErrorsVisitor.visit(
 						scope,
 						jsonStringValue.startIndex,
@@ -408,6 +410,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							: IssueKind.cannotValidateNestedTemplate;
 
 					const message = `${kind === IssueKind.cannotValidateLinkedTemplate ? "Linked template" : "Nested template"} "${scope.owningDeploymentResource.nameValue?.unquotedValue ?? "unknown"}" will not have validation or parameter completion. To enable, either add default values to all top-level parameters or add a parameter file ("Select/Create Parameter File" command).`;
+
 					issues.push(new Issue(span, message, kind));
 				}
 			}
@@ -543,6 +546,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 								message: "The schema is specified here",
 							});
 						}
+
 						warnings.push(warning);
 					}
 				}
@@ -561,6 +565,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					scope.parameterValuesSource,
 					scope.parameterDefinitionsSource,
 				);
+
 				errors.push(...scopeErrors);
 			}
 		}
@@ -636,13 +641,16 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
 						if (match) {
 							resourceType = match[1];
+
 							apiVersion = match[2];
+
 							apiVersionsForType =
 								availableResourceTypesAndVersions.get(
 									resourceType,
 								);
 						} else {
 							resourceType = key;
+
 							apiVersion = "";
 						}
 
@@ -709,6 +717,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 						const fullKey = parentKey
 							? `${simpleKey}[parent=${parentKey}]`
 							: simpleKey;
+
 						resourceCounts.add(fullKey);
 
 						// Check for child resources
@@ -729,6 +738,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
 	public getMultilineStringCount(): number {
 		let count = 0;
+
 		this.visitAllReachableStringValues((jsonStringValue) => {
 			if (jsonStringValue.unquotedValue.indexOf("\n") >= 0) {
 				++count;
@@ -740,9 +750,13 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 
 	public getChildTemplatesInfo(): {
 		nestedOuterCount: number;
+
 		nestedInnerCount: number;
+
 		linkedTemplatesCount: number;
+
 		linkedTemplatesUriCount: number;
+
 		linkedTemplatesRelativePathCount: number;
 	} {
 		const scopes = this.allScopes;
@@ -832,6 +846,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			parseResult: tleParseResult,
 			scope: this.topLevelScope,
 		};
+
 		this.quotedStringToTleParseResultMap.set(jsonStringValue, scopedResult);
 
 		return scopedResult;
@@ -895,6 +910,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					range,
 					context,
 				);
+
 				actions.push(...scopeActions);
 			}
 		}
@@ -938,6 +954,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					if (!scope.rootObject) {
 						return [];
 					}
+
 					let resources = scope.rootObject.getPropertyValue(
 						templateKeys.resources,
 					);
@@ -948,6 +965,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					) {
 						return [];
 					}
+
 					let jsonValue =
 						pc.document.getJSONValueAtDocumentCharacterIndex(
 							pc.jsonTokenStartIndex,
@@ -957,6 +975,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					if (!jsonValue) {
 						return [];
 					}
+
 					const stringValue = jsonValue.asStringValue;
 
 					if (stringValue) {
@@ -986,6 +1005,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 							) {
 								return [];
 							}
+
 							if (
 								pc.jsonValue &&
 								jsonValue.span === pc.jsonValue.span &&
@@ -1046,6 +1066,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		if (text.startsWith("[") && text.endsWith("]")) {
 			return text;
 		}
+
 		let extendedSpan = span.extendLeft(1).extendRight(1);
 
 		let extendedText = this.getDocumentText(extendedSpan);
@@ -1053,6 +1074,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		if (extendedText.startsWith("[") && extendedText.endsWith("]")) {
 			return extendedText;
 		}
+
 		return text;
 	}
 
@@ -1066,6 +1088,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		if (text.startsWith(start) && text.endsWith(end)) {
 			return text;
 		}
+
 		let extendedSpan = span.extendLeft(1).extendRight(1);
 
 		let extendedText = this.getDocumentText(extendedSpan);
@@ -1073,6 +1096,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		if (extendedText.startsWith(start) && extendedText.endsWith(end)) {
 			return extendedText;
 		}
+
 		return text;
 	}
 
@@ -1086,6 +1110,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		if (text.startsWith('"[') || text.endsWith(']"')) {
 			return false;
 		}
+
 		return text.startsWith('"') && text.endsWith('"');
 	}
 
@@ -1104,17 +1129,21 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 		if (!text) {
 			return false;
 		}
+
 		if (text === selectedText) {
 			return true;
 		}
+
 		if (text.startsWith("[") && text.endsWith("]")) {
 			text = text.substr(1, text.length - 2);
 		}
+
 		return text === selectedText;
 	}
 
 	private createExtractCommand(title: string, command: string): CodeAction {
 		const action = new CodeAction(title, CodeActionKind.RefactorExtract);
+
 		action.command = {
 			command: `azurerm-vscode-tools.codeAction.${command}`,
 			title: "",
@@ -1159,6 +1188,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 				} else {
 					// For anything other than the top level, we already have the parameter values source, no need to resolve lazily
 					const parameterValuesSource = scope.parameterValuesSource;
+
 					paramValuesSourceProvider = parameterValuesSource
 						? new SynchronousParameterValuesSourceProvider(
 								parameterValuesSource,
@@ -1170,6 +1200,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					scope,
 					paramValuesSourceProvider,
 				);
+
 				lenses.push(...codelenses);
 			}
 
@@ -1180,6 +1211,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 				scope,
 				recognizeDecoupledChildren: true,
 			});
+
 			lenses.push(...getParentAndChildCodeLenses(scope, infos));
 		}
 
@@ -1224,6 +1256,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 					uniqueScope instanceof TopLevelTemplateScope,
 					"Expecting top-level scope",
 				);
+
 				lenses.push(
 					new ShowCurrentParameterFileCodeLens(
 						uniqueScope,
@@ -1290,6 +1323,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 								),
 							);
 						}
+
 						break;
 
 					case TemplateScopeKind.LinkedDeployment:
@@ -1315,6 +1349,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 								),
 							);
 						}
+
 						break;
 
 					default:
@@ -1394,6 +1429,7 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 	public get allScopes(): TemplateScope[] {
 		return this._allScopes.getOrCacheValue(() => {
 			let scopes: TemplateScope[] = [this.topLevelScope];
+
 			traverse(this.topLevelScope);
 
 			return scopes;
@@ -1401,7 +1437,9 @@ export class DeploymentTemplateDoc extends DeploymentDocument {
 			function traverse(scope: TemplateScope | undefined): void {
 				for (let childScope of scope?.childScopes ?? []) {
 					assert(scopes.indexOf(childScope) < 0, "Already in array");
+
 					scopes.push(childScope);
+
 					traverse(childScope);
 				}
 			}
@@ -1416,13 +1454,18 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 		Json.StringValue,
 		IScopedParseResult
 	> = new Map<Json.StringValue, IScopedParseResult>();
+
 	private readonly _scopeStack: TemplateScope[] = [];
+
 	private _currentScope: TemplateScope;
+
 	private readonly _uniqueTemplateScopes: TemplateScope[] = [];
 
 	public constructor(private readonly _dt: DeploymentTemplateDoc) {
 		super();
+
 		this._currentScope = _dt.topLevelScope;
+
 		this._uniqueTemplateScopes = _dt.uniqueScopes;
 	}
 
@@ -1449,6 +1492,7 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 		let tleParseResult: TLE.TleParseResult = TLE.Parser.parse(
 			jsonStringValue.quotedValue,
 		);
+
 		this._jsonStringValueToTleParseResultMap.set(jsonStringValue, {
 			parseResult: tleParseResult,
 			scope: this._currentScope,
@@ -1464,6 +1508,7 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 
 		if (newScope) {
 			this._scopeStack.push(this._currentScope);
+
 			this._currentScope = newScope;
 		}
 
@@ -1471,10 +1516,12 @@ class StringParseAndScopeAssignmentVisitor extends Json.Visitor {
 
 		if (newScope) {
 			assert(this._currentScope === newScope);
+
 			this._currentScope = nonNullValue(
 				this._scopeStack.pop(),
 				"Scopes stack should not be empty",
 			);
+
 			assert(this._currentScope === currentScope);
 		}
 	}
