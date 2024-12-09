@@ -1,5 +1,5 @@
 {
-	"name": "azurerm-@codeeditorland/tools",
+	"name": "azurerm-vscode-tools",
 	"displayName": "Azure Resource Manager (ARM) Tools",
 	"description": "Language server, editing tools and snippets for Azure Resource Manager (ARM) template files.",
 	"main": "main",
