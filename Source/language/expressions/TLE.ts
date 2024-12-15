@@ -608,7 +608,6 @@ export class FunctionCallValue extends ParentValue {
 			) {
 				for (
 					let i = this._argumentExpressions.length - 1;
-
 					0 <= i;
 					--i
 				) {

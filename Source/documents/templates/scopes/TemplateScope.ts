@@ -197,7 +197,6 @@ export abstract class TemplateScope
 				let i =
 					this.parameterDefinitionsSource.parameterDefinitions
 						.length - 1;
-
 				i >= 0;
 				--i
 			) {

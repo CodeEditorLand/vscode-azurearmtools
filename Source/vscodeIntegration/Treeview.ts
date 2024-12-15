@@ -349,9 +349,7 @@ export class JsonOutlineProvider
 						// tslint:disable-next-line:one-variable-per-declaration
 						for (
 							let i = 0, il = this.tree.value.properties.length;
-
 							i < il;
-
 							i++
 						) {
 							let item = this.getElementInfo(
@@ -378,9 +376,7 @@ export class JsonOutlineProvider
 						// tslint:disable-next-line:one-variable-per-declaration
 						for (
 							let i = 0, il = valueNode.properties.length;
-
 							i < il;
-
 							i++
 						) {
 							let item = this.getElementInfo(
@@ -771,9 +767,7 @@ export class JsonOutlineProvider
 				// tslint:disable-next-line:one-variable-per-declaration
 				for (
 					var i = 0, il = keyOrResourceNode.properties.length;
-
 					i < il;
-
 					i++
 				) {
 					const name = keyOrResourceNode.properties[i].nameValue;
